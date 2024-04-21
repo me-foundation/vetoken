@@ -170,13 +170,13 @@ impl Proposal {
         if !self.has_quorum() {
             return false;
         }
-        let quorum = self.total_votes() * Proposal::MIN_PASS_BP / 10000;
-        self.num_choice_0 > quorum
-            || self.num_choice_1 > quorum
-            || self.num_choice_2 > quorum
-            || self.num_choice_3 > quorum
-            || self.num_choice_4 > quorum
-            || self.num_choice_5 > quorum
+        let pass_threshold = self.total_votes() * Proposal::MIN_PASS_BP / 10000;
+        self.num_choice_0 > pass_threshold
+            || self.num_choice_1 > pass_threshold
+            || self.num_choice_2 > pass_threshold
+            || self.num_choice_3 > pass_threshold
+            || self.num_choice_4 > pass_threshold
+            || self.num_choice_5 > pass_threshold
     }
 
     pub fn has_votes(&self) -> bool {
