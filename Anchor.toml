@@ -1,0 +1,21 @@
+[registry]
+url = "https://anchor.projectserum.com"
+
+[scripts]
+copy_idl = "cp ./target/idl/vetoken.json ./src/vetoken.json"
+copy_types = "cp ./target/types/vetoken.ts ./src/vetoken.ts"
+
+[provider]
+cluster = "localnet"
+wallet = "~/.config/solana/id.json"
+
+[test.validator]
+url = "https://api.mainnet-beta.solana.com"
+
+[features]
+seeds = false
+skip-lint = false
+
+[toolchain]
+anchor_version = "0.29.0"
+solana_version = "1.18.11"
