@@ -1,3 +1,5 @@
+use std::cmp::max;
+
 use anchor_lang::{prelude::*, AnchorDeserialize};
 use solana_program::pubkey;
 
@@ -50,9 +52,10 @@ pub struct Lockup {
 
 impl Lockup {
     pub const DEFAULT_TARGET_REWARDS_BP: u16 = 10000;
-    pub const DEFAULT_TARGET_VOTING_BP: u16 = 10000;
-    pub const MIN_LOCKUP_DURATION: i64 = 86400 * 30; // 30 day
+    pub const DEFAULT_TARGET_VOTING_BP: u16 = 10000; // 100% more (as bonus) voting power if lockup saturation if met
+    pub const MIN_LOCKUP_DURATION: i64 = 86400 * 30; // 30 day in seconds
     pub const MIN_LOCKUP_AMOUNT: u64 = 1000;
+    pub const MAX_LOCKUP_SATURATION: u64 = 86400 * 365 * 4; // 4 years in seconds
 
     pub fn min_end_ts(&self, g: &Global) -> i64 {
         g.now() + Lockup::MIN_LOCKUP_DURATION
@@ -61,17 +64,37 @@ impl Lockup {
     pub fn voting_power(&self, g: &Global) -> u64 {
         let now = g.now();
 
-        if now > self.end_ts {
+        if now >= self.end_ts {
             return self.amount;
         }
 
-        // voting power should be proportional to the amount of lockup time elapsed
-        // TODO
-        self.amount
+        let max_bonus = self
+            .amount
+            .checked_mul(Lockup::DEFAULT_TARGET_VOTING_BP as u64)
+            .expect("should not overflow")
+            .checked_div(10000)
+            .expect("should not overflow");
+
+        if now <= self.start_ts {
+            return self
+                .amount
+                .checked_add(max_bonus)
+                .expect("should not overflow");
+        };
+
+        let remainning_time = max(Lockup::MAX_LOCKUP_SATURATION, (self.end_ts - now) as u64);
+
+        let bonus = max_bonus
+            .checked_mul(remainning_time)
+            .expect("should not overflow")
+            .checked_div(Lockup::MAX_LOCKUP_SATURATION)
+            .expect("should not overflow");
+
+        self.amount.checked_add(bonus).expect("should not overflow")
     }
 
     pub fn rewards_power(&self, g: &Global) -> u64 {
-        self.amount // TODO
+        self.voting_power(g)
     }
 }
 
@@ -101,11 +124,9 @@ impl Proposal {
     pub const MIN_TOTAL_PARTICIPATION_VOTING_POWER: u64 = 100000; // minimum participation voting power
     pub const MIN_PASS_BP: u64 = 6000; // 60%, the population is total_votes
 
-    pub const MAX_STATUS: u8 = 3;
     pub const STATUS_CREATED: u8 = 0;
     pub const STATUS_ACTIVATED: u8 = 1; // voting passed the minimum participation
     pub const STATUS_PASSED: u8 = 2;
-    pub const STATUS_EXECUTED: u8 = 3;
 
     pub fn set_status(&mut self, override_status: Option<u8>) {
         if override_status.is_some() {
