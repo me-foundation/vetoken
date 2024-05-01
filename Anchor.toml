@@ -2,8 +2,8 @@
 url = "https://anchor.projectserum.com"
 
 [scripts]
-copy_idl = "cp ./target/idl/vetoken.json ./src/vetoken.json"
-copy_types = "cp ./target/types/vetoken.ts ./src/vetoken.ts"
+copy_idl = "cp ./target/idl/vetoken.json ./src/idl/vetoken.json"
+copy_types = "cp ./target/types/vetoken.ts ./src/types/vetoken.ts"
 
 [provider]
 cluster = "localnet"

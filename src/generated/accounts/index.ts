@@ -1,0 +1,8 @@
+export { Global } from "./Global"
+export type { GlobalFields, GlobalJSON } from "./Global"
+export { Lockup } from "./Lockup"
+export type { LockupFields, LockupJSON } from "./Lockup"
+export { Proposal } from "./Proposal"
+export type { ProposalFields, ProposalJSON } from "./Proposal"
+export { VoteRecord } from "./VoteRecord"
+export type { VoteRecordFields, VoteRecordJSON } from "./VoteRecord"
