@@ -17,6 +17,7 @@ import {
 import BN from "bn.js";
 
 export * from "./generated/instructions";
+export * from "./generated/accounts";
 
 const ASSOCIATED_TOKEN_PROGRAM_ID = new PublicKey(
   "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
@@ -99,7 +100,7 @@ export class VeTokenSDK {
     return tx;
   }
 
-  txCreateGlobal() {
+  txInitGlobal() {
     const ix = initGlobal({
       authority: this.deployer,
       securityCouncil: this.securityCouncil,

@@ -16,13 +16,13 @@ pub struct Global {
 
 impl Global {
     pub const DEPLOYER: Pubkey = if cfg!(feature = "anchor-test") {
-        pubkey!("CcQQ9E8N1YDLY7dRffTzyACRPUDyv94UGdy6H2uiHycB")
+        pubkey!("tstCcqtDJtqnNDjqqg3UdZfUyrUmzfZ1wo1vpmXbM2S")
     } else {
         pubkey!("CNTuB1JiQD8Xh5SoRcEmF61yivN9F7uzdSaGnRex36wi")
     };
 
     pub const TOKEN_MINT: Pubkey = if cfg!(feature = "anchor-test") {
-        pubkey!("CcQQ9E8N1YDLY7dRffTzyACRPUDyv94UGdy6H2uiHycB")
+        pubkey!("8SMdDN9nZg2ntiBYieVKx7zeXL3DPPvFSTqV4KpsZAMH")
     } else {
         pubkey!("CNTuB1JiQD8Xh5SoRcEmF61yivN9F7uzdSaGnRex36wi")
     };
