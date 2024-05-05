@@ -1,0 +1,26 @@
+{
+  "name": "vetoken",
+  "version": "1.0.0",
+  "description": "VeToken is an open source vote escrow based simplified solana staking program for veNFT.",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@coral-xyz/borsh": "^0.30.0",
+    "@solana/spl-token": "^0.4.6",
+    "@solana/web3.js": "^1.91.7",
+    "bn.js": "^5.2.1",
+    "buffer": "^6.0.3"
+  },
+  "devDependencies": {
+    "@types/bn.js": "^5.1.5",
+    "solana-bankrun": "^0.3.0",
+    "typescript": "^5.4.5",
+    "vitest": "^1.5.3"
+  }
+}

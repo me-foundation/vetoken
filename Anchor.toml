@@ -1,16 +1,43 @@
 [registry]
 url = "https://anchor.projectserum.com"
 
+[programs.localnet]
+vetoken = "veTbq5fF2HWYpgmkwjGKTYLVpY6miWYYmakML7R7LRf"
+
 [scripts]
-copy_idl = "cp ./target/idl/vetoken.json ./src/vetoken.json"
-copy_types = "cp ./target/types/vetoken.ts ./src/vetoken.ts"
+copy_idl = "cp ./target/idl/vetoken.json ./src/idl/vetoken.json"
+copy_types = "cp ./target/types/vetoken.ts ./src/types/vetoken.ts"
 
 [provider]
 cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [test.validator]
-url = "https://api.mainnet-beta.solana.com"
+url = "https://api.devnet.solana.com"
+
+[[test.validator.clone]]
+address = "8SMdDN9nZg2ntiBYieVKx7zeXL3DPPvFSTqV4KpsZAMH" # Token Mint
+
+[[test.validator.clone]]
+address = "tstCcqtDJtqnNDjqqg3UdZfUyrUmzfZ1wo1vpmXbM2S" # Deployer
+
+[[test.validator.clone]]
+address = "tstpKQMFhqMPsvJPu4wQdu1ZRA4a2H8EJD5TXc9KpBq" # Security Council
+
+[[test.validator.clone]]
+address = "3uBkwbANNfN6PwKxpfCw9TTJQkidZLNYrzUrChTCxqye" # Security Council Token Account
+
+[[test.validator.clone]]
+address = "tstRBjm2iwuCPSsU4DqGGG75N9rj4LDxxkGg9FTuDFn" # User 1
+
+[[test.validator.clone]]
+address = "3ELCctzemzgoZ9Ty6TDtVwoL47uKWnSAZvRZUz3Zxisd" # User 1 Token Account
+
+[[test.validator.clone]]
+address = "tstxJsqAgEZUwHHfgq4MdLVD715jDPqYjBAZiSD5cRz" # User 2
+
+[[test.validator.clone]]
+address = "KuQAnBWzobmeKLGYvgd9btF9SqygGpryjUY6KPW6vuv" # User 2 Token Account
 
 [features]
 seeds = false
