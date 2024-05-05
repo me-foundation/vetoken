@@ -71,7 +71,7 @@ export class VeTokenSDK {
 
   pdaVoteRecord(owner: PublicKey, proposal: PublicKey): PublicKey {
     const [pda] = PublicKey.findProgramAddressSync(
-      [Buffer.from("vote"), owner.toBuffer(), proposal.toBuffer()],
+      [Buffer.from("vote_record"), owner.toBuffer(), proposal.toBuffer()],
       PROGRAM_ID,
     );
     return pda;
