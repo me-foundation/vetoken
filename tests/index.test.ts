@@ -394,7 +394,22 @@ describe("proposal", async () => {
       tx.sign(ctx.payer, signers.user1);
       expect(ctx.banksClient.processTransaction(tx)).rejects.toThrow("0xbc4");
     });
+
+    test("update proposal from the staked user2 who created the proposal before voting", async () => {
+      const tx = sdk.txUpdateProposal(
+        signers.user2.publicKey,
+        sdk.pdaProposal(0), // nonce 0
+        "https://example.com/0",
+        startTs,
+        endTs
+      );
+      tx.recentBlockhash = ctx.lastBlockhash;
+      tx.sign(ctx.payer, signers.user2);
+      const confirmed = await ctx.banksClient.processTransaction(tx);
+      assert(confirmed);
+    });
   });
+
 
   describe("proposal with voting", async () => {
     test("vote by user2", async () => {
