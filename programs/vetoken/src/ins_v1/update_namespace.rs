@@ -1,10 +1,19 @@
-use crate::{id, states::Namespace};
+use crate::states::Namespace;
 use anchor_lang::prelude::*;
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct UpdateNamespaceArgs {
-    new_security_council: Pubkey,
+    security_council: Option<Pubkey>,
     debug_ts_offset: Option<i64>,
+
+    lockup_default_target_rewards_bp: Option<u16>,
+    lockup_default_target_voting_bp: Option<u16>,
+    lockup_min_duration: Option<i64>,
+    lockup_min_amount: Option<u64>,
+    lockup_max_saturation: Option<u64>,
+    proposal_min_voting_power_for_creation: Option<u64>,
+    proposal_min_voting_power_for_quorum: Option<u64>,
+    proposal_min_pass_bp: Option<u16>,
 }
 
 #[derive(Accounts)]
@@ -15,19 +24,51 @@ pub struct UpdateNamespace<'info> {
 
     #[account(
       mut,
-      owner = id(),
       has_one = security_council,
     )]
-    ns: Account<'info, Namespace>,
+    ns: Box<Account<'info, Namespace>>,
 }
 
 pub fn handle<'info>(
     ctx: Context<'_, '_, '_, 'info, UpdateNamespace<'info>>,
     args: UpdateNamespaceArgs,
 ) -> Result<()> {
-    ctx.accounts.ns.security_council = args.new_security_council;
+    let ns = &mut ctx.accounts.ns;
+
     if cfg!(feature = "anchor-test") {
-        ctx.accounts.ns.debug_ts_offset = args.debug_ts_offset.unwrap_or(0);
+        ns.debug_ts_offset = args.debug_ts_offset.unwrap_or(0);
     }
+
+    if let Some(security_council) = args.security_council {
+        ns.security_council = security_council;
+    }
+
+    if let Some(lockup_default_target_rewards_bp) = args.lockup_default_target_rewards_bp {
+        ns.lockup_default_target_rewards_bp = lockup_default_target_rewards_bp;
+    }
+    if let Some(lockup_default_target_voting_bp) = args.lockup_default_target_voting_bp {
+        ns.lockup_default_target_voting_bp = lockup_default_target_voting_bp;
+    }
+    if let Some(lockup_min_duration) = args.lockup_min_duration {
+        ns.lockup_min_duration = lockup_min_duration;
+    }
+    if let Some(lockup_min_amount) = args.lockup_min_amount {
+        ns.lockup_min_amount = lockup_min_amount;
+    }
+    if let Some(lockup_max_saturation) = args.lockup_max_saturation {
+        ns.lockup_max_saturation = lockup_max_saturation;
+    }
+    if let Some(proposal_min_voting_power_for_creation) =
+        args.proposal_min_voting_power_for_creation
+    {
+        ns.proposal_min_voting_power_for_creation = proposal_min_voting_power_for_creation;
+    }
+    if let Some(proposal_min_voting_power_for_quorum) = args.proposal_min_voting_power_for_quorum {
+        ns.proposal_min_voting_power_for_quorum = proposal_min_voting_power_for_quorum;
+    }
+    if let Some(proposal_min_pass_bp) = args.proposal_min_pass_bp {
+        ns.proposal_min_pass_bp = proposal_min_pass_bp;
+    }
+
     Ok(())
 }

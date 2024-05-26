@@ -126,7 +126,7 @@ async function setupNamespace() {
   const tx = sdk.txInitNamespace();
   tx.recentBlockhash = ctx.lastBlockhash;
   tx.sign(ctx.payer, signers.deployer);
-  await ctx.banksClient.processTransaction(tx);
+  await ctx.banksClient.tryProcessTransaction(tx);
   return nsPDA;
 }
 
@@ -269,8 +269,8 @@ describe("stake", async () => {
       const tx = sdk.txStake(signers.user1.publicKey, new BN(400 * 1e6), endTs);
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user1);
-      const confirmed = await ctx.banksClient.processTransaction(tx);
-      assert(confirmed);
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      assert(confirmed.result === null);
       const lockup = await getLockup(ctx, sdk, signers.user1.publicKey);
       assert(lockup);
       assert(lockup.amount.eq(new BN(400 * 1e6)));
@@ -283,8 +283,8 @@ describe("stake", async () => {
       const tx = sdk.txStake(signers.user1.publicKey, new BN(300 * 1e6), endTs);
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user1);
-      const confirmed = await ctx.banksClient.processTransaction(tx);
-      assert(confirmed);
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      assert(confirmed.result === null);
       const lockup = await getLockup(ctx, sdk, signers.user1.publicKey);
       assert(lockup);
       assert(lockup.amount.eq(new BN(700 * 1e6)));
@@ -308,7 +308,7 @@ describe("stake", async () => {
       const tx = sdk.txUnstake(signers.user1.publicKey);
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user1);
-      assert(await ctx.banksClient.processTransaction(tx));
+      assert(await ctx.banksClient.tryProcessTransaction(tx));
       ctx.setClock(currentClock);
     });
 
@@ -316,8 +316,8 @@ describe("stake", async () => {
       const tx = sdk.txStakeTo(signers.user2.publicKey, new BN(400 * 1e6), endTs);
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.securityCouncil); // only security council can stakeTo
-      const confirmed = await ctx.banksClient.processTransaction(tx);
-      assert(confirmed);
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      assert(confirmed.result === null);
       const lockup = await getLockup(ctx, sdk, signers.user2.publicKey);
       assert(lockup);
       assert(lockup.amount.eq(new BN(400 * 1e6)));
@@ -330,7 +330,8 @@ describe("stake", async () => {
       const tx = sdk.txUnstake(signers.user2.publicKey);
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user2);
-      expect(ctx.banksClient.processTransaction(tx)).rejects.toThrow("0x1773");
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      expect(confirmed.result).contains("0x1773");
     });
 
   });
@@ -362,8 +363,8 @@ describe("proposal", async () => {
       );
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user2);
-      const confirmed = await ctx.banksClient.processTransaction(tx);
-      assert(confirmed);
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      assert(confirmed.result === null);
     });
 
     test("create proposal with nonce 1 and staked user2", async () => {
@@ -376,8 +377,8 @@ describe("proposal", async () => {
       );
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user2);
-      const confirmed = await ctx.banksClient.processTransaction(tx);
-      assert(confirmed);
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      assert(confirmed.result === null);
     });
 
     test("create proposal with nonce 0 and staked user2 should failed because it's already created", async () => {
@@ -390,7 +391,8 @@ describe("proposal", async () => {
       );
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user2);
-      expect(ctx.banksClient.processTransaction(tx)).rejects.toThrow("0x7d6");
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      expect(confirmed.result).contains("0x7d6");
     });
 
     test("create proposal from unstaked user1 will fail", async () => {
@@ -403,7 +405,8 @@ describe("proposal", async () => {
       );
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user1);
-      expect(ctx.banksClient.processTransaction(tx)).rejects.toThrow("0xbc4");
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      expect(confirmed.result).contains("0xbc4");
     });
 
     test("update proposal from the staked user2 who created the proposal before voting", async () => {
@@ -416,8 +419,8 @@ describe("proposal", async () => {
       );
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user2);
-      const confirmed = await ctx.banksClient.processTransaction(tx);
-      assert(confirmed);
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      assert(confirmed.result === null);
     });
   });
 
@@ -431,8 +434,8 @@ describe("proposal", async () => {
       );
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user2);
-      const confirmed = await ctx.banksClient.processTransaction(tx);
-      assert(confirmed);
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      assert(confirmed.result === null);
       const vr = await getVoteRecord(ctx, sdk, signers.user2.publicKey, sdk.pdaProposal(0));
       assert(vr);
       expect(vr.choice).toBe(0);

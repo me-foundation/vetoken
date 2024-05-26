@@ -8,9 +8,17 @@ export interface NamespaceFields {
   tokenMint: PublicKey
   deployer: PublicKey
   securityCouncil: PublicKey
+  debugTsOffset: BN
+  lockupDefaultTargetRewardsBp: number
+  lockupDefaultTargetVotingBp: number
+  lockupMinDuration: BN
+  lockupMinAmount: BN
+  lockupMaxSaturation: BN
+  proposalMinVotingPowerForCreation: BN
+  proposalMinVotingPowerForQuorum: BN
+  proposalMinPassBp: number
   lockupAmount: BN
   proposalNonce: number
-  debugTsOffset: BN
   padding: Array<number>
 }
 
@@ -18,9 +26,17 @@ export interface NamespaceJSON {
   tokenMint: string
   deployer: string
   securityCouncil: string
+  debugTsOffset: string
+  lockupDefaultTargetRewardsBp: number
+  lockupDefaultTargetVotingBp: number
+  lockupMinDuration: string
+  lockupMinAmount: string
+  lockupMaxSaturation: string
+  proposalMinVotingPowerForCreation: string
+  proposalMinVotingPowerForQuorum: string
+  proposalMinPassBp: number
   lockupAmount: string
   proposalNonce: number
-  debugTsOffset: string
   padding: Array<number>
 }
 
@@ -28,9 +44,17 @@ export class Namespace {
   readonly tokenMint: PublicKey
   readonly deployer: PublicKey
   readonly securityCouncil: PublicKey
+  readonly debugTsOffset: BN
+  readonly lockupDefaultTargetRewardsBp: number
+  readonly lockupDefaultTargetVotingBp: number
+  readonly lockupMinDuration: BN
+  readonly lockupMinAmount: BN
+  readonly lockupMaxSaturation: BN
+  readonly proposalMinVotingPowerForCreation: BN
+  readonly proposalMinVotingPowerForQuorum: BN
+  readonly proposalMinPassBp: number
   readonly lockupAmount: BN
   readonly proposalNonce: number
-  readonly debugTsOffset: BN
   readonly padding: Array<number>
 
   static readonly discriminator = Buffer.from([
@@ -41,9 +65,17 @@ export class Namespace {
     borsh.publicKey("tokenMint"),
     borsh.publicKey("deployer"),
     borsh.publicKey("securityCouncil"),
+    borsh.i64("debugTsOffset"),
+    borsh.u16("lockupDefaultTargetRewardsBp"),
+    borsh.u16("lockupDefaultTargetVotingBp"),
+    borsh.i64("lockupMinDuration"),
+    borsh.u64("lockupMinAmount"),
+    borsh.u64("lockupMaxSaturation"),
+    borsh.u64("proposalMinVotingPowerForCreation"),
+    borsh.u64("proposalMinVotingPowerForQuorum"),
+    borsh.u16("proposalMinPassBp"),
     borsh.u64("lockupAmount"),
     borsh.u32("proposalNonce"),
-    borsh.i64("debugTsOffset"),
     borsh.array(borsh.u8(), 240, "padding"),
   ])
 
@@ -51,9 +83,19 @@ export class Namespace {
     this.tokenMint = fields.tokenMint
     this.deployer = fields.deployer
     this.securityCouncil = fields.securityCouncil
+    this.debugTsOffset = fields.debugTsOffset
+    this.lockupDefaultTargetRewardsBp = fields.lockupDefaultTargetRewardsBp
+    this.lockupDefaultTargetVotingBp = fields.lockupDefaultTargetVotingBp
+    this.lockupMinDuration = fields.lockupMinDuration
+    this.lockupMinAmount = fields.lockupMinAmount
+    this.lockupMaxSaturation = fields.lockupMaxSaturation
+    this.proposalMinVotingPowerForCreation =
+      fields.proposalMinVotingPowerForCreation
+    this.proposalMinVotingPowerForQuorum =
+      fields.proposalMinVotingPowerForQuorum
+    this.proposalMinPassBp = fields.proposalMinPassBp
     this.lockupAmount = fields.lockupAmount
     this.proposalNonce = fields.proposalNonce
-    this.debugTsOffset = fields.debugTsOffset
     this.padding = fields.padding
   }
 
@@ -104,9 +146,17 @@ export class Namespace {
       tokenMint: dec.tokenMint,
       deployer: dec.deployer,
       securityCouncil: dec.securityCouncil,
+      debugTsOffset: dec.debugTsOffset,
+      lockupDefaultTargetRewardsBp: dec.lockupDefaultTargetRewardsBp,
+      lockupDefaultTargetVotingBp: dec.lockupDefaultTargetVotingBp,
+      lockupMinDuration: dec.lockupMinDuration,
+      lockupMinAmount: dec.lockupMinAmount,
+      lockupMaxSaturation: dec.lockupMaxSaturation,
+      proposalMinVotingPowerForCreation: dec.proposalMinVotingPowerForCreation,
+      proposalMinVotingPowerForQuorum: dec.proposalMinVotingPowerForQuorum,
+      proposalMinPassBp: dec.proposalMinPassBp,
       lockupAmount: dec.lockupAmount,
       proposalNonce: dec.proposalNonce,
-      debugTsOffset: dec.debugTsOffset,
       padding: dec.padding,
     })
   }
@@ -116,9 +166,19 @@ export class Namespace {
       tokenMint: this.tokenMint.toString(),
       deployer: this.deployer.toString(),
       securityCouncil: this.securityCouncil.toString(),
+      debugTsOffset: this.debugTsOffset.toString(),
+      lockupDefaultTargetRewardsBp: this.lockupDefaultTargetRewardsBp,
+      lockupDefaultTargetVotingBp: this.lockupDefaultTargetVotingBp,
+      lockupMinDuration: this.lockupMinDuration.toString(),
+      lockupMinAmount: this.lockupMinAmount.toString(),
+      lockupMaxSaturation: this.lockupMaxSaturation.toString(),
+      proposalMinVotingPowerForCreation:
+        this.proposalMinVotingPowerForCreation.toString(),
+      proposalMinVotingPowerForQuorum:
+        this.proposalMinVotingPowerForQuorum.toString(),
+      proposalMinPassBp: this.proposalMinPassBp,
       lockupAmount: this.lockupAmount.toString(),
       proposalNonce: this.proposalNonce,
-      debugTsOffset: this.debugTsOffset.toString(),
       padding: this.padding,
     }
   }
@@ -128,9 +188,21 @@ export class Namespace {
       tokenMint: new PublicKey(obj.tokenMint),
       deployer: new PublicKey(obj.deployer),
       securityCouncil: new PublicKey(obj.securityCouncil),
+      debugTsOffset: new BN(obj.debugTsOffset),
+      lockupDefaultTargetRewardsBp: obj.lockupDefaultTargetRewardsBp,
+      lockupDefaultTargetVotingBp: obj.lockupDefaultTargetVotingBp,
+      lockupMinDuration: new BN(obj.lockupMinDuration),
+      lockupMinAmount: new BN(obj.lockupMinAmount),
+      lockupMaxSaturation: new BN(obj.lockupMaxSaturation),
+      proposalMinVotingPowerForCreation: new BN(
+        obj.proposalMinVotingPowerForCreation
+      ),
+      proposalMinVotingPowerForQuorum: new BN(
+        obj.proposalMinVotingPowerForQuorum
+      ),
+      proposalMinPassBp: obj.proposalMinPassBp,
       lockupAmount: new BN(obj.lockupAmount),
       proposalNonce: obj.proposalNonce,
-      debugTsOffset: new BN(obj.debugTsOffset),
       padding: obj.padding,
     })
   }

@@ -1,6 +1,5 @@
 use crate::{
     errors::CustomError,
-    id,
     states::{Lockup, Namespace, Proposal, VoteRecord},
 };
 use anchor_lang::prelude::*;
@@ -41,8 +40,8 @@ pub struct Vote<'info> {
     )]
     vote_record: Box<Account<'info, VoteRecord>>,
 
-    #[account( owner = id() )]
-    ns: Account<'info, Namespace>,
+    #[account()]
+    ns: Box<Account<'info, Namespace>>,
 
     system_program: Program<'info, System>,
 }
@@ -55,7 +54,7 @@ pub fn handle<'info>(ctx: Context<'_, '_, '_, 'info, Vote<'info>>, args: VoteArg
     let voting_power = lockup.voting_power(ns);
 
     proposal.cast_vote(args.choice, voting_power);
-    proposal.set_status(None);
+    proposal.set_status(ns, None);
 
     vote_record.ns = ns.key();
     vote_record.choice = args.choice;

@@ -1,6 +1,5 @@
 use crate::{
     errors::CustomError,
-    id,
     states::{Lockup, Namespace, Proposal},
 };
 use anchor_lang::prelude::*;
@@ -23,7 +22,7 @@ pub struct InitProposal<'info> {
       seeds=[b"proposal", ns.key().as_ref(), ns.proposal_nonce.to_le_bytes().as_ref()],
       payer=owner,
       space=8+Proposal::INIT_SPACE,
-      constraint = lockup.voting_power(&ns) >= Proposal::MIN_PROPOSAL_VOTING_POWER @ CustomError::InvalidVotingPower,
+      constraint = lockup.voting_power(&ns) >= ns.proposal_min_voting_power_for_creation @ CustomError::InvalidVotingPower,
       constraint = args.end_ts >= args.start_ts @ CustomError::InvalidTimestamp,
       bump,
     )]
@@ -37,8 +36,8 @@ pub struct InitProposal<'info> {
     )]
     lockup: Box<Account<'info, Lockup>>,
 
-    #[account(mut, owner = id() )]
-    ns: Account<'info, Namespace>,
+    #[account(mut)]
+    ns: Box<Account<'info, Namespace>>,
 
     system_program: Program<'info, System>,
 }

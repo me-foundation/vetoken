@@ -1,6 +1,6 @@
 use crate::{
     errors::CustomError,
-    id, lockup_seeds,
+    lockup_seeds,
     states::{Lockup, Namespace},
 };
 use anchor_lang::prelude::*;
@@ -44,10 +44,9 @@ pub struct Unstake<'info> {
 
     #[account(
         mut,
-        owner = id(),
         has_one = token_mint,
     )]
-    ns: Account<'info, Namespace>,
+    ns: Box<Account<'info, Namespace>>,
 
     token_program: Interface<'info, TokenInterface>,
 }

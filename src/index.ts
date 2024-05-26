@@ -122,12 +122,31 @@ export class VeTokenSDK {
     return this.newTx().add(ix);
   }
 
-  txUpdateNamespace(newSecurityCouncil: PublicKey, debugTsOffset: BN | null) {
+  txUpdateNamespace(
+    securityCouncil: PublicKey | null,
+    debugTsOffset: BN | null,
+    lockupDefaultTargetRewardsBp: number | null,
+    lockupDefaultTargetVotingBp: number | null,
+    lockupMinDuration: BN | null,
+    lockupMinAmount: BN | null,
+    lockupMaxSaturation: BN | null,
+    proposalMinVotingPowerForCreation: BN | null,
+    proposalMinVotingPowerForQuorum: BN | null,
+    proposalMinPassBp: number | null
+  ) {
     const ix = updateNamespace(
       {
         args: {
-          newSecurityCouncil,
+          securityCouncil,
           debugTsOffset,
+          lockupDefaultTargetRewardsBp,
+          lockupDefaultTargetVotingBp,
+          lockupMinDuration,
+          lockupMinAmount,
+          lockupMaxSaturation,
+          proposalMinVotingPowerForCreation,
+          proposalMinVotingPowerForQuorum,
+          proposalMinPassBp,
         },
       },
       {

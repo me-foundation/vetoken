@@ -1,6 +1,5 @@
 use crate::{
     errors::CustomError,
-    id,
     states::{Lockup, Namespace},
 };
 use anchor_lang::{prelude::*, AnchorDeserialize};
@@ -42,7 +41,7 @@ pub struct StakeTo<'info> {
       payer=security_council,
       seeds=[b"lockup", ns.key().as_ref(), owner.key().as_ref()],
       space= 8 + Lockup::INIT_SPACE,
-      constraint = args.amount > Lockup::MIN_LOCKUP_AMOUNT @ CustomError::InvalidLockupAmount,
+      constraint = args.amount > ns.lockup_min_amount @ CustomError::InvalidLockupAmount,
       constraint = args.end_ts >= lockup.min_end_ts(&ns) @ CustomError::InvalidTimestamp,
       bump
     )]
@@ -60,11 +59,10 @@ pub struct StakeTo<'info> {
 
     #[account(
         mut,
-        owner = id(),
         has_one = token_mint,
         has_one = security_council,
     )]
-    ns: Account<'info, Namespace>,
+    ns: Box<Account<'info, Namespace>>,
 
     token_program: Interface<'info, TokenInterface>,
     system_program: Program<'info, System>,
@@ -99,10 +97,10 @@ pub fn handle<'info>(
     lockup.owner = ctx.accounts.owner.key();
     lockup.target_rewards_bp = match args.disable_rewards_bp {
         true => 0,
-        false => Lockup::DEFAULT_TARGET_REWARDS_BP,
+        false => ns.lockup_default_target_rewards_bp,
     };
     if lockup.target_voting_bp == 0 {
-        lockup.target_voting_bp = Lockup::DEFAULT_TARGET_VOTING_BP;
+        lockup.target_voting_bp = ns.lockup_default_target_voting_bp;
     }
 
     ns.lockup_amount += args.amount;

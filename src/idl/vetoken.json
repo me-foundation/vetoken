@@ -347,16 +347,48 @@
             "type": "publicKey"
           },
           {
+            "name": "debugTsOffset",
+            "type": "i64"
+          },
+          {
+            "name": "lockupDefaultTargetRewardsBp",
+            "type": "u16"
+          },
+          {
+            "name": "lockupDefaultTargetVotingBp",
+            "type": "u16"
+          },
+          {
+            "name": "lockupMinDuration",
+            "type": "i64"
+          },
+          {
+            "name": "lockupMinAmount",
+            "type": "u64"
+          },
+          {
+            "name": "lockupMaxSaturation",
+            "type": "u64"
+          },
+          {
+            "name": "proposalMinVotingPowerForCreation",
+            "type": "u64"
+          },
+          {
+            "name": "proposalMinVotingPowerForQuorum",
+            "type": "u64"
+          },
+          {
+            "name": "proposalMinPassBp",
+            "type": "u16"
+          },
+          {
             "name": "lockupAmount",
             "type": "u64"
           },
           {
             "name": "proposalNonce",
             "type": "u32"
-          },
-          {
-            "name": "debugTsOffset",
-            "type": "i64"
           },
           {
             "name": "padding",
@@ -599,13 +631,63 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "newSecurityCouncil",
-            "type": "publicKey"
+            "name": "securityCouncil",
+            "type": {
+              "option": "publicKey"
+            }
           },
           {
             "name": "debugTsOffset",
             "type": {
               "option": "i64"
+            }
+          },
+          {
+            "name": "lockupDefaultTargetRewardsBp",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "lockupDefaultTargetVotingBp",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "lockupMinDuration",
+            "type": {
+              "option": "i64"
+            }
+          },
+          {
+            "name": "lockupMinAmount",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "lockupMaxSaturation",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "proposalMinVotingPowerForCreation",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "proposalMinVotingPowerForQuorum",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "proposalMinPassBp",
+            "type": {
+              "option": "u16"
             }
           }
         ]

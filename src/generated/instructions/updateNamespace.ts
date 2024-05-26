@@ -22,7 +22,7 @@ export function updateNamespace(
 ) {
   const keys: Array<AccountMeta> = [
     { pubkey: accounts.securityCouncil, isSigner: true, isWritable: false },
-    { pubkey: accounts.ns, isSigner: false, isWritable: false },
+    { pubkey: accounts.ns, isSigner: false, isWritable: true },
   ]
   const identifier = Buffer.from([61, 107, 207, 79, 239, 88, 36, 255])
   const buffer = Buffer.alloc(1000)

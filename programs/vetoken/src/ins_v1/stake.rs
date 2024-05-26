@@ -1,6 +1,5 @@
 use crate::{
     errors::CustomError,
-    id,
     states::{Lockup, Namespace},
 };
 use anchor_lang::{prelude::*, AnchorDeserialize};
@@ -34,9 +33,9 @@ pub struct Stake<'info> {
     #[account(
       init_if_needed,
       payer=owner,
-      seeds=[b"lockup", ns.key().as_ref(), owner.key().as_ref()],
+      seeds=[b"lockup", ns.key().as_ref(), owner.key.as_ref()],
       space= 8 + Lockup::INIT_SPACE,
-      constraint = args.amount > Lockup::MIN_LOCKUP_AMOUNT @ CustomError::InvalidLockupAmount,
+      constraint = args.amount >= ns.lockup_min_amount @ CustomError::InvalidLockupAmount,
       constraint = args.end_ts >= lockup.min_end_ts(&ns) @ CustomError::InvalidTimestamp,
       bump
     )]
@@ -54,10 +53,9 @@ pub struct Stake<'info> {
 
     #[account(
         mut,
-        owner = id(),
         has_one = token_mint,
     )]
-    ns: Account<'info, Namespace>,
+    ns: Box<Account<'info, Namespace>>,
 
     token_program: Interface<'info, TokenInterface>,
     system_program: Program<'info, System>,
@@ -82,21 +80,21 @@ pub fn handle<'info>(ctx: Context<'_, '_, '_, 'info, Stake<'info>>, args: StakeA
         ctx.accounts.token_mint.decimals,
     )?;
 
-    // Staker can only extend the lockup period, not reduce it.
-    if args.end_ts > lockup.end_ts {
-        lockup.start_ts = ns.now();
-        lockup.end_ts = args.end_ts;
-    }
-
     lockup.ns = ns.key();
     lockup.amount += args.amount;
     lockup.owner = ctx.accounts.owner.key();
 
-    if lockup.target_rewards_bp == 0 {
-        lockup.target_rewards_bp = Lockup::DEFAULT_TARGET_REWARDS_BP;
+    // only the first time staking can set the default values for target rewards and voting power
+    // this is to prevent the staker from overriding what's set by stake_to by security council, if any
+    if lockup.amount == 0 {
+        lockup.target_rewards_bp = ns.lockup_default_target_rewards_bp;
+        lockup.target_voting_bp = ns.lockup_default_target_voting_bp;
     }
-    if lockup.target_voting_bp == 0 {
-        lockup.target_voting_bp = Lockup::DEFAULT_TARGET_VOTING_BP;
+
+    // Staker can only extend the lockup period, not reduce it.
+    if args.end_ts > lockup.end_ts {
+        lockup.start_ts = ns.now();
+        lockup.end_ts = args.end_ts;
     }
 
     ns.lockup_amount += args.amount;
