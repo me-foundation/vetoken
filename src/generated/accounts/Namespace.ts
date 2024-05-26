@@ -4,45 +4,55 @@ import * as borsh from "@coral-xyz/borsh" // eslint-disable-line @typescript-esl
 import * as types from "../types" // eslint-disable-line @typescript-eslint/no-unused-vars
 import { PROGRAM_ID } from "../programId"
 
-export interface GlobalFields {
+export interface NamespaceFields {
+  tokenMint: PublicKey
+  deployer: PublicKey
+  securityCouncil: PublicKey
   lockupAmount: BN
   proposalNonce: number
-  securityCouncil: PublicKey
   debugTsOffset: BN
   padding: Array<number>
 }
 
-export interface GlobalJSON {
+export interface NamespaceJSON {
+  tokenMint: string
+  deployer: string
+  securityCouncil: string
   lockupAmount: string
   proposalNonce: number
-  securityCouncil: string
   debugTsOffset: string
   padding: Array<number>
 }
 
-export class Global {
+export class Namespace {
+  readonly tokenMint: PublicKey
+  readonly deployer: PublicKey
+  readonly securityCouncil: PublicKey
   readonly lockupAmount: BN
   readonly proposalNonce: number
-  readonly securityCouncil: PublicKey
   readonly debugTsOffset: BN
   readonly padding: Array<number>
 
   static readonly discriminator = Buffer.from([
-    167, 232, 232, 177, 200, 108, 114, 127,
+    41, 55, 77, 19, 60, 94, 223, 107,
   ])
 
   static readonly layout = borsh.struct([
+    borsh.publicKey("tokenMint"),
+    borsh.publicKey("deployer"),
+    borsh.publicKey("securityCouncil"),
     borsh.u64("lockupAmount"),
     borsh.u32("proposalNonce"),
-    borsh.publicKey("securityCouncil"),
     borsh.i64("debugTsOffset"),
     borsh.array(borsh.u8(), 240, "padding"),
   ])
 
-  constructor(fields: GlobalFields) {
+  constructor(fields: NamespaceFields) {
+    this.tokenMint = fields.tokenMint
+    this.deployer = fields.deployer
+    this.securityCouncil = fields.securityCouncil
     this.lockupAmount = fields.lockupAmount
     this.proposalNonce = fields.proposalNonce
-    this.securityCouncil = fields.securityCouncil
     this.debugTsOffset = fields.debugTsOffset
     this.padding = fields.padding
   }
@@ -51,7 +61,7 @@ export class Global {
     c: Connection,
     address: PublicKey,
     programId: PublicKey = PROGRAM_ID
-  ): Promise<Global | null> {
+  ): Promise<Namespace | null> {
     const info = await c.getAccountInfo(address)
 
     if (info === null) {
@@ -68,7 +78,7 @@ export class Global {
     c: Connection,
     addresses: PublicKey[],
     programId: PublicKey = PROGRAM_ID
-  ): Promise<Array<Global | null>> {
+  ): Promise<Array<Namespace | null>> {
     const infos = await c.getMultipleAccountsInfo(addresses)
 
     return infos.map((info) => {
@@ -83,37 +93,43 @@ export class Global {
     })
   }
 
-  static decode(data: Buffer): Global {
-    if (!data.slice(0, 8).equals(Global.discriminator)) {
+  static decode(data: Buffer): Namespace {
+    if (!data.slice(0, 8).equals(Namespace.discriminator)) {
       throw new Error("invalid account discriminator")
     }
 
-    const dec = Global.layout.decode(data.slice(8))
+    const dec = Namespace.layout.decode(data.slice(8))
 
-    return new Global({
+    return new Namespace({
+      tokenMint: dec.tokenMint,
+      deployer: dec.deployer,
+      securityCouncil: dec.securityCouncil,
       lockupAmount: dec.lockupAmount,
       proposalNonce: dec.proposalNonce,
-      securityCouncil: dec.securityCouncil,
       debugTsOffset: dec.debugTsOffset,
       padding: dec.padding,
     })
   }
 
-  toJSON(): GlobalJSON {
+  toJSON(): NamespaceJSON {
     return {
+      tokenMint: this.tokenMint.toString(),
+      deployer: this.deployer.toString(),
+      securityCouncil: this.securityCouncil.toString(),
       lockupAmount: this.lockupAmount.toString(),
       proposalNonce: this.proposalNonce,
-      securityCouncil: this.securityCouncil.toString(),
       debugTsOffset: this.debugTsOffset.toString(),
       padding: this.padding,
     }
   }
 
-  static fromJSON(obj: GlobalJSON): Global {
-    return new Global({
+  static fromJSON(obj: NamespaceJSON): Namespace {
+    return new Namespace({
+      tokenMint: new PublicKey(obj.tokenMint),
+      deployer: new PublicKey(obj.deployer),
+      securityCouncil: new PublicKey(obj.securityCouncil),
       lockupAmount: new BN(obj.lockupAmount),
       proposalNonce: obj.proposalNonce,
-      securityCouncil: new PublicKey(obj.securityCouncil),
       debugTsOffset: new BN(obj.debugTsOffset),
       padding: obj.padding,
     })

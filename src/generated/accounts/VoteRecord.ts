@@ -5,6 +5,7 @@ import * as types from "../types" // eslint-disable-line @typescript-eslint/no-u
 import { PROGRAM_ID } from "../programId"
 
 export interface VoteRecordFields {
+  ns: PublicKey
   owner: PublicKey
   proposal: PublicKey
   lockup: PublicKey
@@ -14,6 +15,7 @@ export interface VoteRecordFields {
 }
 
 export interface VoteRecordJSON {
+  ns: string
   owner: string
   proposal: string
   lockup: string
@@ -23,6 +25,7 @@ export interface VoteRecordJSON {
 }
 
 export class VoteRecord {
+  readonly ns: PublicKey
   readonly owner: PublicKey
   readonly proposal: PublicKey
   readonly lockup: PublicKey
@@ -35,6 +38,7 @@ export class VoteRecord {
   ])
 
   static readonly layout = borsh.struct([
+    borsh.publicKey("ns"),
     borsh.publicKey("owner"),
     borsh.publicKey("proposal"),
     borsh.publicKey("lockup"),
@@ -44,6 +48,7 @@ export class VoteRecord {
   ])
 
   constructor(fields: VoteRecordFields) {
+    this.ns = fields.ns
     this.owner = fields.owner
     this.proposal = fields.proposal
     this.lockup = fields.lockup
@@ -96,6 +101,7 @@ export class VoteRecord {
     const dec = VoteRecord.layout.decode(data.slice(8))
 
     return new VoteRecord({
+      ns: dec.ns,
       owner: dec.owner,
       proposal: dec.proposal,
       lockup: dec.lockup,
@@ -107,6 +113,7 @@ export class VoteRecord {
 
   toJSON(): VoteRecordJSON {
     return {
+      ns: this.ns.toString(),
       owner: this.owner.toString(),
       proposal: this.proposal.toString(),
       lockup: this.lockup.toString(),
@@ -118,6 +125,7 @@ export class VoteRecord {
 
   static fromJSON(obj: VoteRecordJSON): VoteRecord {
     return new VoteRecord({
+      ns: new PublicKey(obj.ns),
       owner: new PublicKey(obj.owner),
       proposal: new PublicKey(obj.proposal),
       lockup: new PublicKey(obj.lockup),

@@ -11,7 +11,7 @@ export interface UpdateProposalArgs {
 export interface UpdateProposalAccounts {
   payer: PublicKey
   proposal: PublicKey
-  global: PublicKey
+  ns: PublicKey
 }
 
 export const layout = borsh.struct([types.UpdateProposalArgs.layout("args")])
@@ -24,7 +24,7 @@ export function updateProposal(
   const keys: Array<AccountMeta> = [
     { pubkey: accounts.payer, isSigner: true, isWritable: true },
     { pubkey: accounts.proposal, isSigner: false, isWritable: true },
-    { pubkey: accounts.global, isSigner: false, isWritable: false },
+    { pubkey: accounts.ns, isSigner: false, isWritable: false },
   ]
   const identifier = Buffer.from([47, 144, 37, 102, 101, 215, 171, 47])
   const buffer = Buffer.alloc(1000)

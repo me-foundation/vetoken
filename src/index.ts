@@ -6,13 +6,14 @@ import {
 } from "@solana/web3.js";
 import { PROGRAM_ID } from "./generated/programId";
 import {
-  initGlobal,
+  initNamespace,
   initProposal,
   stake,
   unstake,
-  updateGlobal,
+  updateNamespace,
   updateProposal,
   vote,
+  stakeTo,
 } from "./generated/instructions";
 import BN from "bn.js";
 
@@ -20,7 +21,7 @@ export * from "./generated/instructions";
 export * from "./generated/accounts";
 
 const ASSOCIATED_TOKEN_PROGRAM_ID = new PublicKey(
-  "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
+  "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
 );
 
 export class VeTokenSDK {
@@ -33,7 +34,7 @@ export class VeTokenSDK {
     deployer: PublicKey,
     securityCouncil: PublicKey,
     tokenMint: PublicKey,
-    tokenProgram: PublicKey,
+    tokenProgram: PublicKey
   ) {
     this.deployer = deployer;
     this.securityCouncil = securityCouncil;
@@ -48,31 +49,40 @@ export class VeTokenSDK {
         this.tokenProgram.toBuffer(),
         this.tokenMint.toBuffer(),
       ],
-      ASSOCIATED_TOKEN_PROGRAM_ID,
+      ASSOCIATED_TOKEN_PROGRAM_ID
     );
     return ata;
   }
 
-  pdaGlobal() {
+  pdaNamespace() {
     const [pda] = PublicKey.findProgramAddressSync(
-      [Buffer.from("global")],
-      PROGRAM_ID,
+      [
+        Buffer.from("namespace"),
+        this.tokenMint.toBuffer(),
+        this.deployer.toBuffer(),
+      ],
+      PROGRAM_ID
     );
     return pda;
   }
 
   pdaLockup(owner: PublicKey) {
     const [pda] = PublicKey.findProgramAddressSync(
-      [Buffer.from("lockup"), owner.toBuffer()],
-      PROGRAM_ID,
+      [Buffer.from("lockup"), this.pdaNamespace().toBuffer(), owner.toBuffer()],
+      PROGRAM_ID
     );
     return pda;
   }
 
   pdaVoteRecord(owner: PublicKey, proposal: PublicKey): PublicKey {
     const [pda] = PublicKey.findProgramAddressSync(
-      [Buffer.from("vote_record"), owner.toBuffer(), proposal.toBuffer()],
-      PROGRAM_ID,
+      [
+        Buffer.from("vote_record"),
+        this.pdaNamespace().toBuffer(),
+        owner.toBuffer(),
+        proposal.toBuffer(),
+      ],
+      PROGRAM_ID
     );
     return pda;
   }
@@ -81,9 +91,10 @@ export class VeTokenSDK {
     const [pda] = PublicKey.findProgramAddressSync(
       [
         Buffer.from("proposal"),
+        this.pdaNamespace().toBuffer(),
         new BN(proposal_nonce).toArrayLike(Buffer, "le", 4),
       ],
-      PROGRAM_ID,
+      PROGRAM_ID
     );
     return pda;
   }
@@ -95,23 +106,24 @@ export class VeTokenSDK {
       }),
       ComputeBudgetProgram.setComputeUnitPrice({
         microLamports: 10_000,
-      }),
+      })
     );
     return tx;
   }
 
-  txInitGlobal() {
-    const ix = initGlobal({
-      authority: this.deployer,
+  txInitNamespace() {
+    const ix = initNamespace({
+      deployer: this.deployer,
       securityCouncil: this.securityCouncil,
-      global: this.pdaGlobal(),
+      ns: this.pdaNamespace(),
       systemProgram: SystemProgram.programId,
+      tokenMint: this.tokenMint,
     });
     return this.newTx().add(ix);
   }
 
-  txUpdateGlobal(newSecurityCouncil: PublicKey, debugTsOffset: BN | null) {
-    const ix = updateGlobal(
+  txUpdateNamespace(newSecurityCouncil: PublicKey, debugTsOffset: BN | null) {
+    const ix = updateNamespace(
       {
         args: {
           newSecurityCouncil,
@@ -120,8 +132,8 @@ export class VeTokenSDK {
       },
       {
         securityCouncil: this.securityCouncil,
-        global: this.pdaGlobal(),
-      },
+        ns: this.pdaNamespace(),
+      }
     );
     return this.newTx().add(ix);
   }
@@ -138,11 +150,33 @@ export class VeTokenSDK {
         tokenAccount: this.ata(owner),
         lockup,
         lockupTokenAccount: this.ata(lockup),
-        global: this.pdaGlobal(),
+        ns: this.pdaNamespace(),
         tokenProgram: this.tokenProgram,
         systemProgram: SystemProgram.programId,
         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+      }
+    );
+    return this.newTx().add(ix);
+  }
+
+  txStakeTo(owner: PublicKey, amount: BN, endTs: BN) {
+    const lockup = this.pdaLockup(owner);
+    const ix = stakeTo(
+      {
+        args: { amount, endTs, disableRewardsBp: true },
       },
+      {
+        securityCouncil: this.securityCouncil,
+        owner,
+        tokenMint: this.tokenMint,
+        tokenAccount: this.ata(this.securityCouncil),
+        lockup,
+        lockupTokenAccount: this.ata(lockup),
+        ns: this.pdaNamespace(),
+        tokenProgram: this.tokenProgram,
+        systemProgram: SystemProgram.programId,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+      }
     );
     return this.newTx().add(ix);
   }
@@ -155,7 +189,7 @@ export class VeTokenSDK {
       tokenAccount: this.ata(owner),
       lockup,
       lockupTokenAccount: this.ata(lockup),
-      global: this.pdaGlobal(),
+      ns: this.pdaNamespace(),
       tokenProgram: this.tokenProgram,
     });
     return this.newTx().add(ix);
@@ -166,7 +200,7 @@ export class VeTokenSDK {
     proposal_nonce: number,
     uri: string,
     startTs: BN,
-    endTs: BN,
+    endTs: BN
   ) {
     const ix = initProposal(
       {
@@ -179,10 +213,10 @@ export class VeTokenSDK {
       {
         owner,
         lockup: this.pdaLockup(owner),
-        global: this.pdaGlobal(),
+        ns: this.pdaNamespace(),
         proposal: this.pdaProposal(proposal_nonce),
         systemProgram: SystemProgram.programId,
-      },
+      }
     );
     return this.newTx().add(ix);
   }
@@ -192,7 +226,7 @@ export class VeTokenSDK {
     proposal: PublicKey,
     uri: string,
     startTs: BN,
-    endTs: BN,
+    endTs: BN
   ) {
     const ix = updateProposal(
       {
@@ -203,10 +237,10 @@ export class VeTokenSDK {
         },
       },
       {
-        global: this.pdaGlobal(),
+        ns: this.pdaNamespace(),
         proposal,
         payer,
-      },
+      }
     );
     return this.newTx().add(ix);
   }
@@ -217,13 +251,13 @@ export class VeTokenSDK {
         args: { choice },
       },
       {
-        global: this.pdaGlobal(),
+        ns: this.pdaNamespace(),
         owner,
         proposal,
         lockup: this.pdaLockup(owner),
         voteRecord: this.pdaVoteRecord(owner, proposal),
         systemProgram: SystemProgram.programId,
-      },
+      }
     );
     return this.newTx().add(ix);
   }

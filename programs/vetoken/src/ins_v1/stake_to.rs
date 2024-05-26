@@ -8,16 +8,22 @@ use anchor_spl::associated_token::AssociatedToken;
 use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface};
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
-pub struct StakeArgs {
+pub struct StakeToArgs {
     amount: u64,
     end_ts: i64,
+    disable_rewards_bp: bool, // optionally disable target_rewards_bp for the owner
 }
 
+// StakeTo means that security_council is staking tokens to the lockup account for the owner.
 #[derive(Accounts)]
-#[instruction(args:StakeArgs)]
-pub struct Stake<'info> {
+#[instruction(args:StakeToArgs)]
+pub struct StakeTo<'info> {
     #[account(mut)]
-    owner: Signer<'info>,
+    security_council: Signer<'info>,
+
+    /// CHECK: owner is an input parameter, it will be the owner of the lockup account
+    #[account()]
+    owner: UncheckedAccount<'info>,
 
     #[account()]
     token_mint: Box<InterfaceAccount<'info, Mint>>,
@@ -26,14 +32,14 @@ pub struct Stake<'info> {
         mut,
         associated_token::token_program = token_program,
         associated_token::mint = token_mint,
-        associated_token::authority = owner,
+        associated_token::authority = security_council, // should be owned by the security_council to start stake_to
         constraint = token_account.amount >= args.amount @ CustomError::InvalidTokenAmount,
     )]
     token_account: Box<InterfaceAccount<'info, TokenAccount>>,
 
     #[account(
-      init_if_needed,
-      payer=owner,
+      init, // we should assume that the person has not staked before
+      payer=security_council,
       seeds=[b"lockup", ns.key().as_ref(), owner.key().as_ref()],
       space= 8 + Lockup::INIT_SPACE,
       constraint = args.amount > Lockup::MIN_LOCKUP_AMOUNT @ CustomError::InvalidLockupAmount,
@@ -48,7 +54,7 @@ pub struct Stake<'info> {
         associated_token::token_program = token_program,
         associated_token::mint = token_mint,
         associated_token::authority = lockup,
-        payer = owner,
+        payer = security_council,
     )]
     lockup_token_account: Box<InterfaceAccount<'info, TokenAccount>>,
 
@@ -56,6 +62,7 @@ pub struct Stake<'info> {
         mut,
         owner = id(),
         has_one = token_mint,
+        has_one = security_council,
     )]
     ns: Account<'info, Namespace>,
 
@@ -64,7 +71,10 @@ pub struct Stake<'info> {
     associated_token_program: Program<'info, AssociatedToken>,
 }
 
-pub fn handle<'info>(ctx: Context<'_, '_, '_, 'info, Stake<'info>>, args: StakeArgs) -> Result<()> {
+pub fn handle<'info>(
+    ctx: Context<'_, '_, '_, 'info, StakeTo<'info>>,
+    args: StakeToArgs,
+) -> Result<()> {
     let lockup = &mut ctx.accounts.lockup;
     let ns = &mut ctx.accounts.ns;
 
@@ -75,26 +85,22 @@ pub fn handle<'info>(ctx: Context<'_, '_, '_, 'info, Stake<'info>>, args: StakeA
                 from: ctx.accounts.token_account.to_account_info(),
                 mint: ctx.accounts.token_mint.to_account_info(),
                 to: ctx.accounts.lockup_token_account.to_account_info(),
-                authority: ctx.accounts.owner.to_account_info(),
+                authority: ctx.accounts.security_council.to_account_info(),
             },
         ),
         args.amount,
         ctx.accounts.token_mint.decimals,
     )?;
 
-    // Staker can only extend the lockup period, not reduce it.
-    if args.end_ts > lockup.end_ts {
-        lockup.start_ts = ns.now();
-        lockup.end_ts = args.end_ts;
-    }
-
     lockup.ns = ns.key();
-    lockup.amount += args.amount;
+    lockup.start_ts = ns.now();
+    lockup.end_ts = args.end_ts;
+    lockup.amount = args.amount;
     lockup.owner = ctx.accounts.owner.key();
-
-    if lockup.target_rewards_bp == 0 {
-        lockup.target_rewards_bp = Lockup::DEFAULT_TARGET_REWARDS_BP;
-    }
+    lockup.target_rewards_bp = match args.disable_rewards_bp {
+        true => 0,
+        false => Lockup::DEFAULT_TARGET_REWARDS_BP,
+    };
     if lockup.target_voting_bp == 0 {
         lockup.target_voting_bp = Lockup::DEFAULT_TARGET_VOTING_BP;
     }

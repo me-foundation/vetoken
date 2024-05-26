@@ -1,11 +1,14 @@
-pub mod init_global;
-pub use init_global::*;
+pub mod init_namespace;
+pub use init_namespace::*;
 
-pub mod update_global;
-pub use update_global::*;
+pub mod update_namespace;
+pub use update_namespace::*;
 
 pub mod stake;
 pub use stake::*;
+
+pub mod stake_to;
+pub use stake_to::*;
 
 pub mod unstake;
 pub use unstake::*;

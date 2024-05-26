@@ -15,7 +15,7 @@ import {
 } from "@solana/web3.js";
 import { Clock, ProgramTestContext, startAnchor } from "solana-bankrun";
 import { assert, describe, expect, test } from "vitest";
-import { VeTokenSDK, Global, Lockup, VoteRecord } from "../src";
+import { VeTokenSDK, Namespace, Lockup, VoteRecord } from "../src";
 import fs from "fs";
 import BN from "bn.js";
 
@@ -39,12 +39,22 @@ async function setupCloneAccounts() {
     info: (await conn.getAccountInfo(signers.deployer.publicKey))!,
   });
   _cloneAccounts.push({
+    address: TOKEN_MINT,
+    info: (await conn.getAccountInfo(TOKEN_MINT))!,
+  });
+  _cloneAccounts.push({
     address: signers.securityCouncil.publicKey,
     info: (await conn.getAccountInfo(signers.securityCouncil.publicKey))!,
   });
   _cloneAccounts.push({
-    address: TOKEN_MINT,
-    info: (await conn.getAccountInfo(TOKEN_MINT))!,
+    address: getAssociatedTokenAddressSync(
+      TOKEN_MINT,
+      signers.securityCouncil.publicKey,
+      true
+    ),
+    info: (await conn.getAccountInfo(
+      getAssociatedTokenAddressSync(TOKEN_MINT, signers.securityCouncil.publicKey, true)
+    ))!,
   });
   _cloneAccounts.push({
     address: signers.user1.publicKey,
@@ -87,7 +97,7 @@ async function setupCtx() {
   return _ctx;
 }
 
-async function setupGlobal() {
+async function setupNamespace() {
   const ctx = await setupCtx();
   const signers = useSigners();
   await airdrop(ctx, signers.deployer.publicKey, 10 * LAMPORTS_PER_SOL);
@@ -107,17 +117,17 @@ async function setupGlobal() {
     TOKEN_PROGRAM_ID
   );
 
-  const globalPDA = sdk.pdaGlobal();
-  const globalAcct = await ctx.banksClient.getAccount(globalPDA);
-  if (globalAcct) {
-    return globalPDA;
+  const nsPDA = sdk.pdaNamespace();
+  const nsAcct = await ctx.banksClient.getAccount(nsPDA);
+  if (nsAcct) {
+    return nsPDA;
   }
 
-  const tx = sdk.txInitGlobal();
+  const tx = sdk.txInitNamespace();
   tx.recentBlockhash = ctx.lastBlockhash;
   tx.sign(ctx.payer, signers.deployer);
   await ctx.banksClient.processTransaction(tx);
-  return globalPDA;
+  return nsPDA;
 }
 
 async function getToken(
@@ -221,20 +231,20 @@ test("token balance", async () => {
   expect(user2TokenAcct.amount).toBe(BigInt(30000 * 1e6));
 });
 
-describe("global", async () => {
-  test("init global", async () => {
+describe("ns", async () => {
+  test("init namespace", async () => {
     const ctx = await setupCtx();
-    const globalPDA = await setupGlobal();
-    const globalBytes = await ctx.banksClient.getAccount(globalPDA);
-    assert(globalPDA);
-    assert(globalBytes);
+    const nsPDA = await setupNamespace();
+    const nsBytes = await ctx.banksClient.getAccount(nsPDA);
+    assert(nsPDA);
+    assert(nsBytes);
 
-    const global = Global.decode(Buffer.from(globalBytes.data));
-    assert(global.lockupAmount.eqn(0));
-    assert(global.debugTsOffset.eqn(0));
-    assert(global.proposalNonce === 0);
+    const ns = Namespace.decode(Buffer.from(nsBytes.data));
+    assert(ns.lockupAmount.eqn(0));
+    assert(ns.debugTsOffset.eqn(0));
+    assert(ns.proposalNonce === 0);
     assert(
-      global.securityCouncil.equals(useSigners().securityCouncil.publicKey)
+      ns.securityCouncil.equals(useSigners().securityCouncil.publicKey)
     );
   });
 });
@@ -302,10 +312,10 @@ describe("stake", async () => {
       ctx.setClock(currentClock);
     });
 
-    test("stake first time for user2", async () => {
-      const tx = sdk.txStake(signers.user2.publicKey, new BN(400 * 1e6), endTs);
+    test("stakeTo first time for user2 by security council", async () => {
+      const tx = sdk.txStakeTo(signers.user2.publicKey, new BN(400 * 1e6), endTs);
       tx.recentBlockhash = ctx.lastBlockhash;
-      tx.sign(ctx.payer, signers.user2);
+      tx.sign(ctx.payer, signers.securityCouncil); // only security council can stakeTo
       const confirmed = await ctx.banksClient.processTransaction(tx);
       assert(confirmed);
       const lockup = await getLockup(ctx, sdk, signers.user2.publicKey);
@@ -322,6 +332,7 @@ describe("stake", async () => {
       tx.sign(ctx.payer, signers.user2);
       expect(ctx.banksClient.processTransaction(tx)).rejects.toThrow("0x1773");
     });
+
   });
 });
 
@@ -358,7 +369,7 @@ describe("proposal", async () => {
     test("create proposal with nonce 1 and staked user2", async () => {
       const tx = sdk.txInitProposal(
         signers.user2.publicKey,
-        1, // nonce 0
+        1, // nonce 1
         "https://example.com/1",
         startTs,
         endTs

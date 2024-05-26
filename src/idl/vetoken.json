@@ -3,10 +3,10 @@
   "name": "vetoken",
   "instructions": [
     {
-      "name": "initGlobal",
+      "name": "initNamespace",
       "accounts": [
         {
-          "name": "authority",
+          "name": "deployer",
           "isMut": true,
           "isSigner": true
         },
@@ -16,7 +16,12 @@
           "isSigner": false
         },
         {
-          "name": "global",
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "ns",
           "isMut": true,
           "isSigner": false
         },
@@ -29,7 +34,7 @@
       "args": []
     },
     {
-      "name": "updateGlobal",
+      "name": "updateNamespace",
       "accounts": [
         {
           "name": "securityCouncil",
@@ -37,8 +42,8 @@
           "isSigner": true
         },
         {
-          "name": "global",
-          "isMut": false,
+          "name": "ns",
+          "isMut": true,
           "isSigner": false
         }
       ],
@@ -46,7 +51,7 @@
         {
           "name": "args",
           "type": {
-            "defined": "UpdateGlobalArgs"
+            "defined": "UpdateNamespaceArgs"
           }
         }
       ]
@@ -80,7 +85,7 @@
           "isSigner": false
         },
         {
-          "name": "global",
+          "name": "ns",
           "isMut": true,
           "isSigner": false
         },
@@ -105,6 +110,69 @@
           "name": "args",
           "type": {
             "defined": "StakeArgs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "stakeTo",
+      "accounts": [
+        {
+          "name": "securityCouncil",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "owner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "lockup",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "lockupTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ns",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": "StakeToArgs"
           }
         }
       ]
@@ -138,7 +206,7 @@
           "isSigner": false
         },
         {
-          "name": "global",
+          "name": "ns",
           "isMut": true,
           "isSigner": false
         },
@@ -169,7 +237,7 @@
           "isSigner": false
         },
         {
-          "name": "global",
+          "name": "ns",
           "isMut": true,
           "isSigner": false
         },
@@ -202,7 +270,7 @@
           "isSigner": false
         },
         {
-          "name": "global",
+          "name": "ns",
           "isMut": false,
           "isSigner": false
         }
@@ -240,7 +308,7 @@
           "isSigner": false
         },
         {
-          "name": "global",
+          "name": "ns",
           "isMut": false,
           "isSigner": false
         },
@@ -262,10 +330,22 @@
   ],
   "accounts": [
     {
-      "name": "Global",
+      "name": "Namespace",
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "tokenMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "deployer",
+            "type": "publicKey"
+          },
+          {
+            "name": "securityCouncil",
+            "type": "publicKey"
+          },
           {
             "name": "lockupAmount",
             "type": "u64"
@@ -273,10 +353,6 @@
           {
             "name": "proposalNonce",
             "type": "u32"
-          },
-          {
-            "name": "securityCouncil",
-            "type": "publicKey"
           },
           {
             "name": "debugTsOffset",
@@ -299,6 +375,10 @@
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "ns",
+            "type": "publicKey"
+          },
           {
             "name": "owner",
             "type": "publicKey"
@@ -340,6 +420,10 @@
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "ns",
+            "type": "publicKey"
+          },
           {
             "name": "nonce",
             "type": "u32"
@@ -411,6 +495,10 @@
         "kind": "struct",
         "fields": [
           {
+            "name": "ns",
+            "type": "publicKey"
+          },
+          {
             "name": "owner",
             "type": "publicKey"
           },
@@ -470,6 +558,26 @@
       }
     },
     {
+      "name": "StakeToArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "endTs",
+            "type": "i64"
+          },
+          {
+            "name": "disableRewardsBp",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
       "name": "StakeArgs",
       "type": {
         "kind": "struct",
@@ -486,7 +594,7 @@
       }
     },
     {
-      "name": "UpdateGlobalArgs",
+      "name": "UpdateNamespaceArgs",
       "type": {
         "kind": "struct",
         "fields": [

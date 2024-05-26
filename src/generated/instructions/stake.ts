@@ -14,7 +14,7 @@ export interface StakeAccounts {
   tokenAccount: PublicKey
   lockup: PublicKey
   lockupTokenAccount: PublicKey
-  global: PublicKey
+  ns: PublicKey
   tokenProgram: PublicKey
   systemProgram: PublicKey
   associatedTokenProgram: PublicKey
@@ -33,7 +33,7 @@ export function stake(
     { pubkey: accounts.tokenAccount, isSigner: false, isWritable: true },
     { pubkey: accounts.lockup, isSigner: false, isWritable: true },
     { pubkey: accounts.lockupTokenAccount, isSigner: false, isWritable: true },
-    { pubkey: accounts.global, isSigner: false, isWritable: true },
+    { pubkey: accounts.ns, isSigner: false, isWritable: true },
     { pubkey: accounts.tokenProgram, isSigner: false, isWritable: false },
     { pubkey: accounts.systemProgram, isSigner: false, isWritable: false },
     {

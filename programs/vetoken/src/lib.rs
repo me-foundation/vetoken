@@ -11,15 +11,17 @@ anchor_lang::declare_id!("veTbq5fF2HWYpgmkwjGKTYLVpY6miWYYmakML7R7LRf");
 pub mod vetoken {
     use super::*;
 
-    pub fn init_global<'info>(ctx: Context<'_, '_, '_, 'info, InitGlobal<'info>>) -> Result<()> {
-        ins_v1::init_global::handle(ctx)
+    pub fn init_namespace<'info>(
+        ctx: Context<'_, '_, '_, 'info, InitNamespace<'info>>,
+    ) -> Result<()> {
+        ins_v1::init_namespace::handle(ctx)
     }
 
-    pub fn update_global<'info>(
-        ctx: Context<'_, '_, '_, 'info, UpdateGlobal<'info>>,
-        args: UpdateGlobalArgs,
+    pub fn update_namespace<'info>(
+        ctx: Context<'_, '_, '_, 'info, UpdateNamespace<'info>>,
+        args: UpdateNamespaceArgs,
     ) -> Result<()> {
-        ins_v1::update_global::handle(ctx, args)
+        ins_v1::update_namespace::handle(ctx, args)
     }
 
     pub fn stake<'info>(
@@ -27,6 +29,13 @@ pub mod vetoken {
         args: StakeArgs,
     ) -> Result<()> {
         ins_v1::stake::handle(ctx, args)
+    }
+
+    pub fn stake_to<'info>(
+        ctx: Context<'_, '_, '_, 'info, StakeTo<'info>>,
+        args: StakeToArgs,
+    ) -> Result<()> {
+        ins_v1::stake_to::handle(ctx, args)
     }
 
     pub fn unstake<'info>(ctx: Context<'_, '_, '_, 'info, Unstake<'info>>) -> Result<()> {
@@ -54,7 +63,12 @@ pub mod vetoken {
 
 #[macro_export]
 macro_rules! lockup_seeds {
-    ( $owner:expr, $bump:expr ) => {
-        &[b"lockup".as_ref(), $owner.key.as_ref(), &[$bump]]
+    ( $ns:expr, $owner:expr, $bump:expr ) => {
+        &[
+            b"lockup".as_ref(),
+            $ns.key().as_ref(),
+            $owner.key.as_ref(),
+            &[$bump],
+        ]
     };
 }

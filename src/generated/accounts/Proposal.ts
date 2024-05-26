@@ -5,6 +5,7 @@ import * as types from "../types" // eslint-disable-line @typescript-eslint/no-u
 import { PROGRAM_ID } from "../programId"
 
 export interface ProposalFields {
+  ns: PublicKey
   nonce: number
   owner: PublicKey
   uri: Array<number>
@@ -21,6 +22,7 @@ export interface ProposalFields {
 }
 
 export interface ProposalJSON {
+  ns: string
   nonce: number
   owner: string
   uri: Array<number>
@@ -37,6 +39,7 @@ export interface ProposalJSON {
 }
 
 export class Proposal {
+  readonly ns: PublicKey
   readonly nonce: number
   readonly owner: PublicKey
   readonly uri: Array<number>
@@ -56,6 +59,7 @@ export class Proposal {
   ])
 
   static readonly layout = borsh.struct([
+    borsh.publicKey("ns"),
     borsh.u32("nonce"),
     borsh.publicKey("owner"),
     borsh.array(borsh.u8(), 256, "uri"),
@@ -72,6 +76,7 @@ export class Proposal {
   ])
 
   constructor(fields: ProposalFields) {
+    this.ns = fields.ns
     this.nonce = fields.nonce
     this.owner = fields.owner
     this.uri = fields.uri
@@ -131,6 +136,7 @@ export class Proposal {
     const dec = Proposal.layout.decode(data.slice(8))
 
     return new Proposal({
+      ns: dec.ns,
       nonce: dec.nonce,
       owner: dec.owner,
       uri: dec.uri,
@@ -149,6 +155,7 @@ export class Proposal {
 
   toJSON(): ProposalJSON {
     return {
+      ns: this.ns.toString(),
       nonce: this.nonce,
       owner: this.owner.toString(),
       uri: this.uri,
@@ -167,6 +174,7 @@ export class Proposal {
 
   static fromJSON(obj: ProposalJSON): Proposal {
     return new Proposal({
+      ns: new PublicKey(obj.ns),
       nonce: obj.nonce,
       owner: new PublicKey(obj.owner),
       uri: obj.uri,

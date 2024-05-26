@@ -1,6 +1,7 @@
 use crate::{
     errors::CustomError,
-    states::{Global, Proposal},
+    id,
+    states::{Namespace, Proposal},
 };
 use anchor_lang::prelude::*;
 
@@ -19,16 +20,14 @@ pub struct UpdateProposal<'info> {
 
     #[account(
       mut,
-      constraint = payer.key() == global.security_council || payer.key() == proposal.owner @ CustomError::InvalidPayer,
-      constraint = payer.key() == global.security_council || !proposal.has_votes() @ CustomError::InvalidProposalState,
+      has_one=ns,
+      constraint = payer.key() == ns.security_council || payer.key() == proposal.owner @ CustomError::InvalidPayer,
+      constraint = payer.key() == ns.security_council || !proposal.has_votes() @ CustomError::InvalidProposalState,
     )]
     proposal: Box<Account<'info, Proposal>>,
 
-    #[account(
-      seeds = [b"global"],
-      bump,
-    )]
-    global: Box<Account<'info, Global>>,
+    #[account( owner = id() )]
+    ns: Account<'info, Namespace>,
 }
 
 pub fn handle<'info>(

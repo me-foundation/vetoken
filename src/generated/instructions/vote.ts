@@ -13,7 +13,7 @@ export interface VoteAccounts {
   proposal: PublicKey
   lockup: PublicKey
   voteRecord: PublicKey
-  global: PublicKey
+  ns: PublicKey
   systemProgram: PublicKey
 }
 
@@ -29,7 +29,7 @@ export function vote(
     { pubkey: accounts.proposal, isSigner: false, isWritable: true },
     { pubkey: accounts.lockup, isSigner: false, isWritable: false },
     { pubkey: accounts.voteRecord, isSigner: false, isWritable: true },
-    { pubkey: accounts.global, isSigner: false, isWritable: false },
+    { pubkey: accounts.ns, isSigner: false, isWritable: false },
     { pubkey: accounts.systemProgram, isSigner: false, isWritable: false },
   ]
   const identifier = Buffer.from([227, 110, 155, 23, 136, 126, 172, 25])

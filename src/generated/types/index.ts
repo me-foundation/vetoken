@@ -3,13 +3,15 @@ export type {
   InitProposalArgsFields,
   InitProposalArgsJSON,
 } from "./InitProposalArgs"
+export { StakeToArgs } from "./StakeToArgs"
+export type { StakeToArgsFields, StakeToArgsJSON } from "./StakeToArgs"
 export { StakeArgs } from "./StakeArgs"
 export type { StakeArgsFields, StakeArgsJSON } from "./StakeArgs"
-export { UpdateGlobalArgs } from "./UpdateGlobalArgs"
+export { UpdateNamespaceArgs } from "./UpdateNamespaceArgs"
 export type {
-  UpdateGlobalArgsFields,
-  UpdateGlobalArgsJSON,
-} from "./UpdateGlobalArgs"
+  UpdateNamespaceArgsFields,
+  UpdateNamespaceArgsJSON,
+} from "./UpdateNamespaceArgs"
 export { UpdateProposalArgs } from "./UpdateProposalArgs"
 export type {
   UpdateProposalArgsFields,

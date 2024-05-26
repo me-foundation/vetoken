@@ -1,7 +1,7 @@
 use crate::{
     errors::CustomError,
-    lockup_seeds,
-    states::{Global, Lockup},
+    id, lockup_seeds,
+    states::{Lockup, Namespace},
 };
 use anchor_lang::prelude::*;
 use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface};
@@ -11,7 +11,7 @@ pub struct Unstake<'info> {
     #[account(mut)]
     owner: Signer<'info>,
 
-    #[account(address = Global::TOKEN_MINT)]
+    #[account()]
     token_mint: Box<InterfaceAccount<'info, Mint>>,
 
     #[account(
@@ -24,9 +24,10 @@ pub struct Unstake<'info> {
 
     #[account(
       mut,
-      seeds=[b"lockup", owner.key().as_ref()],
-      constraint = lockup.end_ts <= global.now() @ CustomError::InvalidTimestamp,
-      constraint = global.lockup_amount >= lockup.amount @ CustomError::Overflow,
+      seeds=[b"lockup", ns.key().as_ref(), owner.key().as_ref()],
+      has_one=ns,
+      constraint = lockup.end_ts <= ns.now() @ CustomError::InvalidTimestamp,
+      constraint = ns.lockup_amount >= lockup.amount @ CustomError::Overflow,
       bump,
       close=owner,
     )]
@@ -41,15 +42,19 @@ pub struct Unstake<'info> {
     )]
     lockup_token_account: Box<InterfaceAccount<'info, TokenAccount>>,
 
-    #[account(mut, seeds=[b"global"], bump)]
-    global: Account<'info, Global>,
+    #[account(
+        mut,
+        owner = id(),
+        has_one = token_mint,
+    )]
+    ns: Account<'info, Namespace>,
 
     token_program: Interface<'info, TokenInterface>,
 }
 
 pub fn handle<'info>(ctx: Context<'_, '_, '_, 'info, Unstake<'info>>) -> Result<()> {
     let lockup = &mut ctx.accounts.lockup;
-    let global = &mut ctx.accounts.global;
+    let ns = &mut ctx.accounts.ns;
     let amount = lockup.amount;
     let owner = &ctx.accounts.owner;
     let bump = ctx.bumps.lockup;
@@ -63,7 +68,7 @@ pub fn handle<'info>(ctx: Context<'_, '_, '_, 'info, Unstake<'info>>) -> Result<
                 to: ctx.accounts.token_account.to_account_info(),
                 authority: lockup.to_account_info(),
             },
-            &[lockup_seeds!(owner, bump)],
+            &[lockup_seeds!(ns, owner, bump)],
         ),
         amount,
         ctx.accounts.token_mint.decimals,
@@ -77,11 +82,11 @@ pub fn handle<'info>(ctx: Context<'_, '_, '_, 'info, Unstake<'info>>) -> Result<
                 destination: owner.to_account_info(),
                 authority: lockup.to_account_info(),
             },
-            &[lockup_seeds!(owner, bump)],
+            &[lockup_seeds!(ns, owner, bump)],
         ))?;
     }
 
-    global.lockup_amount -= amount;
+    ns.lockup_amount -= amount;
     lockup.amount = 0;
 
     Ok(())

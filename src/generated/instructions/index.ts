@@ -1,9 +1,14 @@
-export { initGlobal } from "./initGlobal"
-export type { InitGlobalAccounts } from "./initGlobal"
-export { updateGlobal } from "./updateGlobal"
-export type { UpdateGlobalArgs, UpdateGlobalAccounts } from "./updateGlobal"
+export { initNamespace } from "./initNamespace"
+export type { InitNamespaceAccounts } from "./initNamespace"
+export { updateNamespace } from "./updateNamespace"
+export type {
+  UpdateNamespaceArgs,
+  UpdateNamespaceAccounts,
+} from "./updateNamespace"
 export { stake } from "./stake"
 export type { StakeArgs, StakeAccounts } from "./stake"
+export { stakeTo } from "./stakeTo"
+export type { StakeToArgs, StakeToAccounts } from "./stakeTo"
 export { unstake } from "./unstake"
 export type { UnstakeAccounts } from "./unstake"
 export { initProposal } from "./initProposal"

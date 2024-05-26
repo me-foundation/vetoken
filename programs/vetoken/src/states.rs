@@ -1,32 +1,22 @@
 use std::cmp::max;
 
 use anchor_lang::{prelude::*, AnchorDeserialize};
-use solana_program::pubkey;
 
 #[account]
 #[derive(Copy, InitSpace)]
-pub struct Global {
+pub struct Namespace {
+    pub token_mint: Pubkey, // TODO: devnet example 8SMdDN9nZg2ntiBYieVKx7zeXL3DPPvFSTqV4KpsZAMH
+    pub deployer: Pubkey,   // TODO: devnet example tstCcqtDJtqnNDjqqg3UdZfUyrUmzfZ1wo1vpmXbM2S
+    pub security_council: Pubkey,
+
     pub lockup_amount: u64,
     pub proposal_nonce: u32,
-    pub security_council: Pubkey,
     pub debug_ts_offset: i64,
 
     pub _padding: [u8; 240],
 }
 
-impl Global {
-    pub const DEPLOYER: Pubkey = if cfg!(feature = "anchor-test") {
-        pubkey!("tstCcqtDJtqnNDjqqg3UdZfUyrUmzfZ1wo1vpmXbM2S")
-    } else {
-        pubkey!("CNTuB1JiQD8Xh5SoRcEmF61yivN9F7uzdSaGnRex36wi")
-    };
-
-    pub const TOKEN_MINT: Pubkey = if cfg!(feature = "anchor-test") {
-        pubkey!("8SMdDN9nZg2ntiBYieVKx7zeXL3DPPvFSTqV4KpsZAMH")
-    } else {
-        pubkey!("CNTuB1JiQD8Xh5SoRcEmF61yivN9F7uzdSaGnRex36wi")
-    };
-
+impl Namespace {
     pub fn now(&self) -> i64 {
         Clock::get()
             .expect("we should be able to get the clock timestamp")
@@ -38,6 +28,7 @@ impl Global {
 #[account]
 #[derive(Copy, InitSpace)]
 pub struct Lockup {
+    pub ns: Pubkey,
     pub owner: Pubkey,
     pub amount: u64,
 
@@ -57,12 +48,12 @@ impl Lockup {
     pub const MIN_LOCKUP_AMOUNT: u64 = 1000;
     pub const MAX_LOCKUP_SATURATION: u64 = 86400 * 365 * 4; // 4 years in seconds
 
-    pub fn min_end_ts(&self, g: &Global) -> i64 {
-        g.now() + Lockup::MIN_LOCKUP_DURATION
+    pub fn min_end_ts(&self, ns: &Namespace) -> i64 {
+        ns.now() + Lockup::MIN_LOCKUP_DURATION
     }
 
-    pub fn voting_power(&self, g: &Global) -> u64 {
-        let now = g.now();
+    pub fn voting_power(&self, ns: &Namespace) -> u64 {
+        let now = ns.now();
 
         if now >= self.end_ts {
             return self.amount;
@@ -93,14 +84,16 @@ impl Lockup {
         self.amount.checked_add(bonus).expect("should not overflow")
     }
 
-    pub fn rewards_power(&self, g: &Global) -> u64 {
-        self.voting_power(g)
+    #[allow(dead_code)]
+    pub fn rewards_power(&self, ns: &Namespace) -> u64 {
+        self.voting_power(ns)
     }
 }
 
 #[account]
 #[derive(Copy, InitSpace)]
 pub struct Proposal {
+    pub ns: Pubkey,
     pub nonce: u32,
     pub owner: Pubkey,
 
@@ -153,6 +146,7 @@ impl Proposal {
         }
     }
 
+    #[allow(dead_code)]
     pub fn winning_choice(&self) -> usize {
         let choices = [
             self.num_choice_0,
@@ -208,6 +202,7 @@ impl Proposal {
 #[account]
 #[derive(Copy, InitSpace)]
 pub struct VoteRecord {
+    pub ns: Pubkey,
     pub owner: Pubkey,
     pub proposal: Pubkey,
 
