@@ -5,8 +5,7 @@ url = "https://anchor.projectserum.com"
 vetoken = "veTbq5fF2HWYpgmkwjGKTYLVpY6miWYYmakML7R7LRf"
 
 [scripts]
-copy_idl = "cp ./target/idl/vetoken.json ./src/idl/vetoken.json"
-copy_types = "cp ./target/types/vetoken.ts ./src/types/vetoken.ts"
+update_idl = "cp ./target/idl/vetoken.json ./src/idl/vetoken.json && cp ./target/types/vetoken.ts ./src/types/vetoken.ts && npx anchor-client-gen ./target/idl/vetoken.json src/generated"
 
 [provider]
 cluster = "localnet"

@@ -279,6 +279,7 @@ describe("stake", async () => {
       assert(lockup);
       assert(lockup.amount.eq(new BN(400 * 1e6)));
       assert(lockup.endTs.eq(endTs));
+      assert(lockup.targetRewardsBp !== 0);
       assert(lockup.owner.equals(signers.user1.publicKey));
       assert(!lockup.startTs.eqn(0));
     });
@@ -330,6 +331,7 @@ describe("stake", async () => {
       assert(lockup.amount.eq(new BN(400 * 1e6)));
       assert(lockup.endTs.eq(endTs));
       assert(lockup.owner.equals(signers.user2.publicKey));
+      assert(lockup.targetRewardsBp === 0);
       assert(!lockup.startTs.eqn(0));
     });
 

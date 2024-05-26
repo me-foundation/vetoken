@@ -78,11 +78,7 @@ pub fn handle<'info>(ctx: Context<'_, '_, '_, 'info, Stake<'info>>, args: StakeA
         ),
         args.amount,
         ctx.accounts.token_mint.decimals,
-    )?;
-
-    lockup.ns = ns.key();
-    lockup.amount += args.amount;
-    lockup.owner = ctx.accounts.owner.key();
+    )?; // Transfer the staked tokens to the lockup account
 
     // only the first time staking can set the default values for target rewards and voting power
     // this is to prevent the staker from overriding what's set by stake_to by security council, if any
@@ -96,6 +92,10 @@ pub fn handle<'info>(ctx: Context<'_, '_, '_, 'info, Stake<'info>>, args: StakeA
         lockup.start_ts = ns.now();
         lockup.end_ts = args.end_ts;
     }
+
+    lockup.ns = ns.key();
+    lockup.amount += args.amount;
+    lockup.owner = ctx.accounts.owner.key();
 
     ns.lockup_amount += args.amount;
 
