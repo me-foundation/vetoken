@@ -59,6 +59,7 @@ impl Lockup {
         ns.now() + ns.lockup_min_duration
     }
 
+    // Linear decay of the voting power based on the target_voting_bp
     pub fn voting_power(&self, ns: &Namespace) -> u64 {
         let now = ns.now();
 

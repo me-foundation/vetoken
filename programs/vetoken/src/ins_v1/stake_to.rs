@@ -95,13 +95,11 @@ pub fn handle<'info>(
     lockup.end_ts = args.end_ts;
     lockup.amount = args.amount;
     lockup.owner = ctx.accounts.owner.key();
+    lockup.target_voting_bp = ns.lockup_default_target_voting_bp;
     lockup.target_rewards_bp = match args.disable_rewards_bp {
         true => 0,
         false => ns.lockup_default_target_rewards_bp,
     };
-    if lockup.target_voting_bp == 0 {
-        lockup.target_voting_bp = ns.lockup_default_target_voting_bp;
-    }
 
     ns.lockup_amount += args.amount;
 
