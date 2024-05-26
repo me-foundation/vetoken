@@ -16,6 +16,11 @@ export type Vetoken = {
           "isSigner": false
         },
         {
+          "name": "reviewCouncil",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "tokenMint",
           "isMut": false,
           "isSigner": false
@@ -222,18 +227,13 @@ export type Vetoken = {
       "name": "initProposal",
       "accounts": [
         {
-          "name": "owner",
+          "name": "reviewCouncil",
           "isMut": true,
           "isSigner": true
         },
         {
           "name": "proposal",
           "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "lockup",
-          "isMut": false,
           "isSigner": false
         },
         {
@@ -260,7 +260,7 @@ export type Vetoken = {
       "name": "updateProposal",
       "accounts": [
         {
-          "name": "payer",
+          "name": "reviewCouncil",
           "isMut": true,
           "isSigner": true
         },
@@ -347,6 +347,10 @@ export type Vetoken = {
             "type": "publicKey"
           },
           {
+            "name": "reviewCouncil",
+            "type": "publicKey"
+          },
+          {
             "name": "debugTsOffset",
             "type": "i64"
           },
@@ -368,10 +372,6 @@ export type Vetoken = {
           },
           {
             "name": "lockupMaxSaturation",
-            "type": "u64"
-          },
-          {
-            "name": "proposalMinVotingPowerForCreation",
             "type": "u64"
           },
           {
@@ -637,6 +637,12 @@ export type Vetoken = {
             }
           },
           {
+            "name": "reviewCouncil",
+            "type": {
+              "option": "publicKey"
+            }
+          },
+          {
             "name": "debugTsOffset",
             "type": {
               "option": "i64"
@@ -668,12 +674,6 @@ export type Vetoken = {
           },
           {
             "name": "lockupMaxSaturation",
-            "type": {
-              "option": "u64"
-            }
-          },
-          {
-            "name": "proposalMinVotingPowerForCreation",
             "type": {
               "option": "u64"
             }
@@ -798,6 +798,11 @@ export const IDL: Vetoken = {
           "isSigner": false
         },
         {
+          "name": "reviewCouncil",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "tokenMint",
           "isMut": false,
           "isSigner": false
@@ -1004,18 +1009,13 @@ export const IDL: Vetoken = {
       "name": "initProposal",
       "accounts": [
         {
-          "name": "owner",
+          "name": "reviewCouncil",
           "isMut": true,
           "isSigner": true
         },
         {
           "name": "proposal",
           "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "lockup",
-          "isMut": false,
           "isSigner": false
         },
         {
@@ -1042,7 +1042,7 @@ export const IDL: Vetoken = {
       "name": "updateProposal",
       "accounts": [
         {
-          "name": "payer",
+          "name": "reviewCouncil",
           "isMut": true,
           "isSigner": true
         },
@@ -1129,6 +1129,10 @@ export const IDL: Vetoken = {
             "type": "publicKey"
           },
           {
+            "name": "reviewCouncil",
+            "type": "publicKey"
+          },
+          {
             "name": "debugTsOffset",
             "type": "i64"
           },
@@ -1150,10 +1154,6 @@ export const IDL: Vetoken = {
           },
           {
             "name": "lockupMaxSaturation",
-            "type": "u64"
-          },
-          {
-            "name": "proposalMinVotingPowerForCreation",
             "type": "u64"
           },
           {
@@ -1419,6 +1419,12 @@ export const IDL: Vetoken = {
             }
           },
           {
+            "name": "reviewCouncil",
+            "type": {
+              "option": "publicKey"
+            }
+          },
+          {
             "name": "debugTsOffset",
             "type": {
               "option": "i64"
@@ -1450,12 +1456,6 @@ export const IDL: Vetoken = {
           },
           {
             "name": "lockupMaxSaturation",
-            "type": {
-              "option": "u64"
-            }
-          },
-          {
-            "name": "proposalMinVotingPowerForCreation",
             "type": {
               "option": "u64"
             }

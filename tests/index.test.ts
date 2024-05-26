@@ -113,6 +113,7 @@ async function setupNamespace() {
   const sdk = new VeTokenSDK(
     signers.deployer.publicKey,
     signers.securityCouncil.publicKey,
+    signers.reviewCouncil.publicKey,
     TOKEN_MINT,
     TOKEN_PROGRAM_ID
   );
@@ -176,6 +177,8 @@ function useSigners(): { [key: string]: Keypair } {
     deployer:
       "./tests/test-keys/tstCcqtDJtqnNDjqqg3UdZfUyrUmzfZ1wo1vpmXbM2S.json",
     securityCouncil:
+      "./tests/test-keys/tstpKQMFhqMPsvJPu4wQdu1ZRA4a2H8EJD5TXc9KpBq.json",
+    reviewCouncil:
       "./tests/test-keys/tstpKQMFhqMPsvJPu4wQdu1ZRA4a2H8EJD5TXc9KpBq.json",
     user1: "./tests/test-keys/tstRBjm2iwuCPSsU4DqGGG75N9rj4LDxxkGg9FTuDFn.json",
     user2: "./tests/test-keys/tstxJsqAgEZUwHHfgq4MdLVD715jDPqYjBAZiSD5cRz.json",
@@ -257,6 +260,7 @@ describe("stake", async () => {
     const sdk = new VeTokenSDK(
       signers.deployer.publicKey,
       signers.securityCouncil.publicKey,
+      signers.reviewCouncil.publicKey,
       TOKEN_MINT,
       TOKEN_PROGRAM_ID
     );
@@ -308,7 +312,10 @@ describe("stake", async () => {
       const tx = sdk.txUnstake(signers.user1.publicKey);
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user1);
-      assert(await ctx.banksClient.tryProcessTransaction(tx));
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      assert(confirmed.result === null);
+      const lockup = await getLockup(ctx, sdk, signers.user1.publicKey);
+      assert(lockup === null);
       ctx.setClock(currentClock);
     });
 
@@ -344,6 +351,7 @@ describe("proposal", async () => {
   const sdk = new VeTokenSDK(
     signers.deployer.publicKey,
     signers.securityCouncil.publicKey,
+    signers.reviewCouncil.publicKey,
     TOKEN_MINT,
     TOKEN_PROGRAM_ID
   );
@@ -353,38 +361,52 @@ describe("proposal", async () => {
     (new Date().getTime() + 1000 * 60 * 60 * 24 * 30) / 1000
   );
   describe("proposal happy path", async () => {
-    test("create proposal with nonce 0 and staked user2", async () => {
+    test("create proposal with nonce 0 by review council", async () => {
       const tx = sdk.txInitProposal(
-        signers.user2.publicKey,
+        signers.reviewCouncil.publicKey,
         0, // nonce 0
         "https://example.com/0",
         startTs,
         endTs
       );
       tx.recentBlockhash = ctx.lastBlockhash;
-      tx.sign(ctx.payer, signers.user2);
+      tx.sign(ctx.payer, signers.reviewCouncil);
       const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
       assert(confirmed.result === null);
     });
 
-    test("create proposal with nonce 1 and staked user2", async () => {
+    test("create proposal with nonce 1 by review council", async () => {
       const tx = sdk.txInitProposal(
-        signers.user2.publicKey,
+        signers.reviewCouncil.publicKey,
         1, // nonce 1
         "https://example.com/1",
         startTs,
         endTs
       );
       tx.recentBlockhash = ctx.lastBlockhash;
-      tx.sign(ctx.payer, signers.user2);
+      tx.sign(ctx.payer, signers.reviewCouncil);
       const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
       assert(confirmed.result === null);
     });
 
-    test("create proposal with nonce 0 and staked user2 should failed because it's already created", async () => {
+    test("update proposal from the reviewCouncil should be fine", async () => {
+      const tx = sdk.txUpdateProposal(
+        signers.reviewCouncil.publicKey,
+        sdk.pdaProposal(0), // nonce 0
+        "https://example.com/new_url/0",
+        startTs,
+        endTs
+      );
+      tx.recentBlockhash = ctx.lastBlockhash;
+      tx.sign(ctx.payer, signers.reviewCouncil);
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      assert(confirmed.result === null);
+    });
+
+    test("create proposal with nonce 2 with user 2 should failed because user 1 is not review council", async () => {
       const tx = sdk.txInitProposal(
         signers.user2.publicKey,
-        0, // nonce 0
+        2, // nonce 2
         "https://example.com/00",
         startTs,
         endTs
@@ -392,24 +414,10 @@ describe("proposal", async () => {
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user2);
       const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
-      expect(confirmed.result).contains("0x7d6");
+      expect(confirmed.result).contains("0x7d1");
     });
 
-    test("create proposal from unstaked user1 will fail", async () => {
-      const tx = sdk.txInitProposal(
-        signers.user1.publicKey,
-        1,
-        "https://example.com/1",
-        startTs,
-        endTs
-      );
-      tx.recentBlockhash = ctx.lastBlockhash;
-      tx.sign(ctx.payer, signers.user1);
-      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
-      expect(confirmed.result).contains("0xbc4");
-    });
-
-    test("update proposal from the staked user2 who created the proposal before voting", async () => {
+    test("update proposal from user2 should fail because user 2 is not review council", async () => {
       const tx = sdk.txUpdateProposal(
         signers.user2.publicKey,
         sdk.pdaProposal(0), // nonce 0
@@ -420,7 +428,7 @@ describe("proposal", async () => {
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user2);
       const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
-      assert(confirmed.result === null);
+      expect(confirmed.result).contains("0x7d1");
     });
   });
 

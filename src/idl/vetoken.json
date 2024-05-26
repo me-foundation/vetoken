@@ -16,6 +16,11 @@
           "isSigner": false
         },
         {
+          "name": "reviewCouncil",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "tokenMint",
           "isMut": false,
           "isSigner": false
@@ -222,18 +227,13 @@
       "name": "initProposal",
       "accounts": [
         {
-          "name": "owner",
+          "name": "reviewCouncil",
           "isMut": true,
           "isSigner": true
         },
         {
           "name": "proposal",
           "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "lockup",
-          "isMut": false,
           "isSigner": false
         },
         {
@@ -260,7 +260,7 @@
       "name": "updateProposal",
       "accounts": [
         {
-          "name": "payer",
+          "name": "reviewCouncil",
           "isMut": true,
           "isSigner": true
         },
@@ -347,6 +347,10 @@
             "type": "publicKey"
           },
           {
+            "name": "reviewCouncil",
+            "type": "publicKey"
+          },
+          {
             "name": "debugTsOffset",
             "type": "i64"
           },
@@ -368,10 +372,6 @@
           },
           {
             "name": "lockupMaxSaturation",
-            "type": "u64"
-          },
-          {
-            "name": "proposalMinVotingPowerForCreation",
             "type": "u64"
           },
           {
@@ -637,6 +637,12 @@
             }
           },
           {
+            "name": "reviewCouncil",
+            "type": {
+              "option": "publicKey"
+            }
+          },
+          {
             "name": "debugTsOffset",
             "type": {
               "option": "i64"
@@ -668,12 +674,6 @@
           },
           {
             "name": "lockupMaxSaturation",
-            "type": {
-              "option": "u64"
-            }
-          },
-          {
-            "name": "proposalMinVotingPowerForCreation",
             "type": {
               "option": "u64"
             }

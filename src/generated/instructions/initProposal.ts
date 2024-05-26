@@ -9,9 +9,8 @@ export interface InitProposalArgs {
 }
 
 export interface InitProposalAccounts {
-  owner: PublicKey
+  reviewCouncil: PublicKey
   proposal: PublicKey
-  lockup: PublicKey
   ns: PublicKey
   systemProgram: PublicKey
 }
@@ -24,9 +23,8 @@ export function initProposal(
   programId: PublicKey = PROGRAM_ID
 ) {
   const keys: Array<AccountMeta> = [
-    { pubkey: accounts.owner, isSigner: true, isWritable: true },
+    { pubkey: accounts.reviewCouncil, isSigner: true, isWritable: true },
     { pubkey: accounts.proposal, isSigner: false, isWritable: true },
-    { pubkey: accounts.lockup, isSigner: false, isWritable: false },
     { pubkey: accounts.ns, isSigner: false, isWritable: true },
     { pubkey: accounts.systemProgram, isSigner: false, isWritable: false },
   ]

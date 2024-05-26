@@ -1,7 +1,4 @@
-use crate::{
-    errors::CustomError,
-    states::{Namespace, Proposal},
-};
+use crate::states::{Namespace, Proposal};
 use anchor_lang::prelude::*;
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
@@ -15,17 +12,17 @@ pub struct UpdateProposalArgs {
 #[instruction(args:UpdateProposalArgs)]
 pub struct UpdateProposal<'info> {
     #[account(mut)]
-    payer: Signer<'info>,
+    review_council: Signer<'info>,
 
     #[account(
       mut,
       has_one=ns,
-      constraint = payer.key() == ns.security_council || payer.key() == proposal.owner @ CustomError::InvalidPayer,
-      constraint = payer.key() == ns.security_council || !proposal.has_votes() @ CustomError::InvalidProposalState,
     )]
     proposal: Box<Account<'info, Proposal>>,
 
-    #[account()]
+    #[account(
+      has_one=review_council,
+    )]
     ns: Box<Account<'info, Namespace>>,
 }
 

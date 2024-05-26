@@ -9,7 +9,7 @@ export interface UpdateProposalArgs {
 }
 
 export interface UpdateProposalAccounts {
-  payer: PublicKey
+  reviewCouncil: PublicKey
   proposal: PublicKey
   ns: PublicKey
 }
@@ -22,7 +22,7 @@ export function updateProposal(
   programId: PublicKey = PROGRAM_ID
 ) {
   const keys: Array<AccountMeta> = [
-    { pubkey: accounts.payer, isSigner: true, isWritable: true },
+    { pubkey: accounts.reviewCouncil, isSigner: true, isWritable: true },
     { pubkey: accounts.proposal, isSigner: false, isWritable: true },
     { pubkey: accounts.ns, isSigner: false, isWritable: false },
   ]

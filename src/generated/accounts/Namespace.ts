@@ -8,13 +8,13 @@ export interface NamespaceFields {
   tokenMint: PublicKey
   deployer: PublicKey
   securityCouncil: PublicKey
+  reviewCouncil: PublicKey
   debugTsOffset: BN
   lockupDefaultTargetRewardsBp: number
   lockupDefaultTargetVotingBp: number
   lockupMinDuration: BN
   lockupMinAmount: BN
   lockupMaxSaturation: BN
-  proposalMinVotingPowerForCreation: BN
   proposalMinVotingPowerForQuorum: BN
   proposalMinPassBp: number
   lockupAmount: BN
@@ -26,13 +26,13 @@ export interface NamespaceJSON {
   tokenMint: string
   deployer: string
   securityCouncil: string
+  reviewCouncil: string
   debugTsOffset: string
   lockupDefaultTargetRewardsBp: number
   lockupDefaultTargetVotingBp: number
   lockupMinDuration: string
   lockupMinAmount: string
   lockupMaxSaturation: string
-  proposalMinVotingPowerForCreation: string
   proposalMinVotingPowerForQuorum: string
   proposalMinPassBp: number
   lockupAmount: string
@@ -44,13 +44,13 @@ export class Namespace {
   readonly tokenMint: PublicKey
   readonly deployer: PublicKey
   readonly securityCouncil: PublicKey
+  readonly reviewCouncil: PublicKey
   readonly debugTsOffset: BN
   readonly lockupDefaultTargetRewardsBp: number
   readonly lockupDefaultTargetVotingBp: number
   readonly lockupMinDuration: BN
   readonly lockupMinAmount: BN
   readonly lockupMaxSaturation: BN
-  readonly proposalMinVotingPowerForCreation: BN
   readonly proposalMinVotingPowerForQuorum: BN
   readonly proposalMinPassBp: number
   readonly lockupAmount: BN
@@ -65,13 +65,13 @@ export class Namespace {
     borsh.publicKey("tokenMint"),
     borsh.publicKey("deployer"),
     borsh.publicKey("securityCouncil"),
+    borsh.publicKey("reviewCouncil"),
     borsh.i64("debugTsOffset"),
     borsh.u16("lockupDefaultTargetRewardsBp"),
     borsh.u16("lockupDefaultTargetVotingBp"),
     borsh.i64("lockupMinDuration"),
     borsh.u64("lockupMinAmount"),
     borsh.u64("lockupMaxSaturation"),
-    borsh.u64("proposalMinVotingPowerForCreation"),
     borsh.u64("proposalMinVotingPowerForQuorum"),
     borsh.u16("proposalMinPassBp"),
     borsh.u64("lockupAmount"),
@@ -83,14 +83,13 @@ export class Namespace {
     this.tokenMint = fields.tokenMint
     this.deployer = fields.deployer
     this.securityCouncil = fields.securityCouncil
+    this.reviewCouncil = fields.reviewCouncil
     this.debugTsOffset = fields.debugTsOffset
     this.lockupDefaultTargetRewardsBp = fields.lockupDefaultTargetRewardsBp
     this.lockupDefaultTargetVotingBp = fields.lockupDefaultTargetVotingBp
     this.lockupMinDuration = fields.lockupMinDuration
     this.lockupMinAmount = fields.lockupMinAmount
     this.lockupMaxSaturation = fields.lockupMaxSaturation
-    this.proposalMinVotingPowerForCreation =
-      fields.proposalMinVotingPowerForCreation
     this.proposalMinVotingPowerForQuorum =
       fields.proposalMinVotingPowerForQuorum
     this.proposalMinPassBp = fields.proposalMinPassBp
@@ -146,13 +145,13 @@ export class Namespace {
       tokenMint: dec.tokenMint,
       deployer: dec.deployer,
       securityCouncil: dec.securityCouncil,
+      reviewCouncil: dec.reviewCouncil,
       debugTsOffset: dec.debugTsOffset,
       lockupDefaultTargetRewardsBp: dec.lockupDefaultTargetRewardsBp,
       lockupDefaultTargetVotingBp: dec.lockupDefaultTargetVotingBp,
       lockupMinDuration: dec.lockupMinDuration,
       lockupMinAmount: dec.lockupMinAmount,
       lockupMaxSaturation: dec.lockupMaxSaturation,
-      proposalMinVotingPowerForCreation: dec.proposalMinVotingPowerForCreation,
       proposalMinVotingPowerForQuorum: dec.proposalMinVotingPowerForQuorum,
       proposalMinPassBp: dec.proposalMinPassBp,
       lockupAmount: dec.lockupAmount,
@@ -166,14 +165,13 @@ export class Namespace {
       tokenMint: this.tokenMint.toString(),
       deployer: this.deployer.toString(),
       securityCouncil: this.securityCouncil.toString(),
+      reviewCouncil: this.reviewCouncil.toString(),
       debugTsOffset: this.debugTsOffset.toString(),
       lockupDefaultTargetRewardsBp: this.lockupDefaultTargetRewardsBp,
       lockupDefaultTargetVotingBp: this.lockupDefaultTargetVotingBp,
       lockupMinDuration: this.lockupMinDuration.toString(),
       lockupMinAmount: this.lockupMinAmount.toString(),
       lockupMaxSaturation: this.lockupMaxSaturation.toString(),
-      proposalMinVotingPowerForCreation:
-        this.proposalMinVotingPowerForCreation.toString(),
       proposalMinVotingPowerForQuorum:
         this.proposalMinVotingPowerForQuorum.toString(),
       proposalMinPassBp: this.proposalMinPassBp,
@@ -188,15 +186,13 @@ export class Namespace {
       tokenMint: new PublicKey(obj.tokenMint),
       deployer: new PublicKey(obj.deployer),
       securityCouncil: new PublicKey(obj.securityCouncil),
+      reviewCouncil: new PublicKey(obj.reviewCouncil),
       debugTsOffset: new BN(obj.debugTsOffset),
       lockupDefaultTargetRewardsBp: obj.lockupDefaultTargetRewardsBp,
       lockupDefaultTargetVotingBp: obj.lockupDefaultTargetVotingBp,
       lockupMinDuration: new BN(obj.lockupMinDuration),
       lockupMinAmount: new BN(obj.lockupMinAmount),
       lockupMaxSaturation: new BN(obj.lockupMaxSaturation),
-      proposalMinVotingPowerForCreation: new BN(
-        obj.proposalMinVotingPowerForCreation
-      ),
       proposalMinVotingPowerForQuorum: new BN(
         obj.proposalMinVotingPowerForQuorum
       ),

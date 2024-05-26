@@ -11,13 +11,13 @@ pub struct Namespace {
 
     // Config
     pub security_council: Pubkey,
+    pub review_council: Pubkey,
     pub debug_ts_offset: i64,
     pub lockup_default_target_rewards_bp: u16,
     pub lockup_default_target_voting_bp: u16,
     pub lockup_min_duration: i64,
     pub lockup_min_amount: u64,
     pub lockup_max_saturation: u64,
-    pub proposal_min_voting_power_for_creation: u64,
     pub proposal_min_voting_power_for_quorum: u64,
     pub proposal_min_pass_bp: u16,
 
@@ -197,10 +197,6 @@ impl Proposal {
             || self.num_choice_3 > pass_threshold
             || self.num_choice_4 > pass_threshold
             || self.num_choice_5 > pass_threshold
-    }
-
-    pub fn has_votes(&self) -> bool {
-        self.total_votes() > 0
     }
 }
 

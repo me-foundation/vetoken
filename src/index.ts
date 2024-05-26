@@ -27,17 +27,20 @@ const ASSOCIATED_TOKEN_PROGRAM_ID = new PublicKey(
 export class VeTokenSDK {
   private deployer: PublicKey;
   private securityCouncil: PublicKey;
+  private reviewCouncil: PublicKey;
   private tokenMint: PublicKey;
   private tokenProgram: PublicKey;
 
   constructor(
     deployer: PublicKey,
     securityCouncil: PublicKey,
+    reviewCouncil: PublicKey,
     tokenMint: PublicKey,
     tokenProgram: PublicKey
   ) {
     this.deployer = deployer;
     this.securityCouncil = securityCouncil;
+    this.reviewCouncil = reviewCouncil;
     this.tokenMint = tokenMint;
     this.tokenProgram = tokenProgram;
   }
@@ -115,6 +118,7 @@ export class VeTokenSDK {
     const ix = initNamespace({
       deployer: this.deployer,
       securityCouncil: this.securityCouncil,
+      reviewCouncil: this.reviewCouncil,
       ns: this.pdaNamespace(),
       systemProgram: SystemProgram.programId,
       tokenMint: this.tokenMint,
@@ -124,6 +128,7 @@ export class VeTokenSDK {
 
   txUpdateNamespace(
     securityCouncil: PublicKey | null,
+    reviewCouncil: PublicKey | null,
     debugTsOffset: BN | null,
     lockupDefaultTargetRewardsBp: number | null,
     lockupDefaultTargetVotingBp: number | null,
@@ -138,13 +143,13 @@ export class VeTokenSDK {
       {
         args: {
           securityCouncil,
+          reviewCouncil,
           debugTsOffset,
           lockupDefaultTargetRewardsBp,
           lockupDefaultTargetVotingBp,
           lockupMinDuration,
           lockupMinAmount,
           lockupMaxSaturation,
-          proposalMinVotingPowerForCreation,
           proposalMinVotingPowerForQuorum,
           proposalMinPassBp,
         },
@@ -215,7 +220,7 @@ export class VeTokenSDK {
   }
 
   txInitProposal(
-    owner: PublicKey,
+    reviewCouncil: PublicKey,
     proposal_nonce: number,
     uri: string,
     startTs: BN,
@@ -230,8 +235,7 @@ export class VeTokenSDK {
         },
       },
       {
-        owner,
-        lockup: this.pdaLockup(owner),
+        reviewCouncil,
         ns: this.pdaNamespace(),
         proposal: this.pdaProposal(proposal_nonce),
         systemProgram: SystemProgram.programId,
@@ -241,7 +245,7 @@ export class VeTokenSDK {
   }
 
   txUpdateProposal(
-    payer: PublicKey,
+    reviewCouncil: PublicKey,
     proposal: PublicKey,
     uri: string,
     startTs: BN,
@@ -258,7 +262,7 @@ export class VeTokenSDK {
       {
         ns: this.pdaNamespace(),
         proposal,
-        payer,
+        reviewCouncil,
       }
     );
     return this.newTx().add(ix);

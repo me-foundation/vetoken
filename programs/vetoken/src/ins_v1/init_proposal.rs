@@ -1,6 +1,6 @@
 use crate::{
     errors::CustomError,
-    states::{Lockup, Namespace, Proposal},
+    states::{Namespace, Proposal},
 };
 use anchor_lang::prelude::*;
 
@@ -15,28 +15,22 @@ pub struct InitProposalArgs {
 #[instruction(args:InitProposalArgs)]
 pub struct InitProposal<'info> {
     #[account(mut)]
-    owner: Signer<'info>,
+    review_council: Signer<'info>,
 
     #[account(
       init,
       seeds=[b"proposal", ns.key().as_ref(), ns.proposal_nonce.to_le_bytes().as_ref()],
-      payer=owner,
+      payer=review_council,
       space=8+Proposal::INIT_SPACE,
-      constraint = lockup.voting_power(&ns) >= ns.proposal_min_voting_power_for_creation @ CustomError::InvalidVotingPower,
       constraint = args.end_ts >= args.start_ts @ CustomError::InvalidTimestamp,
       bump,
     )]
     proposal: Box<Account<'info, Proposal>>,
 
     #[account(
-      seeds=[b"lockup", ns.key().as_ref(), owner.key().as_ref()],
-      has_one=owner,
-      has_one=ns,
-      bump,
+      mut,
+      has_one=review_council,
     )]
-    lockup: Box<Account<'info, Lockup>>,
-
-    #[account(mut)]
     ns: Box<Account<'info, Namespace>>,
 
     system_program: Program<'info, System>,
@@ -54,7 +48,7 @@ pub fn handle<'info>(
     proposal.start_ts = args.start_ts;
     proposal.end_ts = args.end_ts;
     proposal.status = Proposal::STATUS_CREATED;
-    proposal.owner = ctx.accounts.owner.key();
+    proposal.owner = ctx.accounts.review_council.key();
     proposal.nonce = ns.proposal_nonce;
 
     ns.proposal_nonce += 1;

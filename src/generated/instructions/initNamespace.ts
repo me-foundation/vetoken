@@ -7,6 +7,7 @@ import { PROGRAM_ID } from "../programId"
 export interface InitNamespaceAccounts {
   deployer: PublicKey
   securityCouncil: PublicKey
+  reviewCouncil: PublicKey
   tokenMint: PublicKey
   ns: PublicKey
   systemProgram: PublicKey
@@ -19,6 +20,7 @@ export function initNamespace(
   const keys: Array<AccountMeta> = [
     { pubkey: accounts.deployer, isSigner: true, isWritable: true },
     { pubkey: accounts.securityCouncil, isSigner: false, isWritable: false },
+    { pubkey: accounts.reviewCouncil, isSigner: false, isWritable: false },
     { pubkey: accounts.tokenMint, isSigner: false, isWritable: false },
     { pubkey: accounts.ns, isSigner: false, isWritable: true },
     { pubkey: accounts.systemProgram, isSigner: false, isWritable: false },

@@ -4,6 +4,7 @@ use anchor_lang::prelude::*;
 #[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct UpdateNamespaceArgs {
     security_council: Option<Pubkey>,
+    review_council: Option<Pubkey>,
     debug_ts_offset: Option<i64>,
 
     lockup_default_target_rewards_bp: Option<u16>,
@@ -11,7 +12,6 @@ pub struct UpdateNamespaceArgs {
     lockup_min_duration: Option<i64>,
     lockup_min_amount: Option<u64>,
     lockup_max_saturation: Option<u64>,
-    proposal_min_voting_power_for_creation: Option<u64>,
     proposal_min_voting_power_for_quorum: Option<u64>,
     proposal_min_pass_bp: Option<u16>,
 }
@@ -43,6 +43,10 @@ pub fn handle<'info>(
         ns.security_council = security_council;
     }
 
+    if let Some(review_council) = args.review_council {
+        ns.review_council = review_council;
+    }
+
     if let Some(lockup_default_target_rewards_bp) = args.lockup_default_target_rewards_bp {
         ns.lockup_default_target_rewards_bp = lockup_default_target_rewards_bp;
     }
@@ -57,11 +61,6 @@ pub fn handle<'info>(
     }
     if let Some(lockup_max_saturation) = args.lockup_max_saturation {
         ns.lockup_max_saturation = lockup_max_saturation;
-    }
-    if let Some(proposal_min_voting_power_for_creation) =
-        args.proposal_min_voting_power_for_creation
-    {
-        ns.proposal_min_voting_power_for_creation = proposal_min_voting_power_for_creation;
     }
     if let Some(proposal_min_voting_power_for_quorum) = args.proposal_min_voting_power_for_quorum {
         ns.proposal_min_voting_power_for_quorum = proposal_min_voting_power_for_quorum;
