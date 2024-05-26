@@ -5,6 +5,7 @@ import * as types from "../types" // eslint-disable-line @typescript-eslint/no-u
 import { PROGRAM_ID } from "../programId"
 
 export interface LockupFields {
+  ns: PublicKey
   owner: PublicKey
   amount: BN
   startTs: BN
@@ -15,6 +16,7 @@ export interface LockupFields {
 }
 
 export interface LockupJSON {
+  ns: string
   owner: string
   amount: string
   startTs: string
@@ -25,6 +27,7 @@ export interface LockupJSON {
 }
 
 export class Lockup {
+  readonly ns: PublicKey
   readonly owner: PublicKey
   readonly amount: BN
   readonly startTs: BN
@@ -36,6 +39,7 @@ export class Lockup {
   static readonly discriminator = Buffer.from([1, 45, 32, 32, 57, 81, 88, 67])
 
   static readonly layout = borsh.struct([
+    borsh.publicKey("ns"),
     borsh.publicKey("owner"),
     borsh.u64("amount"),
     borsh.i64("startTs"),
@@ -46,6 +50,7 @@ export class Lockup {
   ])
 
   constructor(fields: LockupFields) {
+    this.ns = fields.ns
     this.owner = fields.owner
     this.amount = fields.amount
     this.startTs = fields.startTs
@@ -99,6 +104,7 @@ export class Lockup {
     const dec = Lockup.layout.decode(data.slice(8))
 
     return new Lockup({
+      ns: dec.ns,
       owner: dec.owner,
       amount: dec.amount,
       startTs: dec.startTs,
@@ -111,6 +117,7 @@ export class Lockup {
 
   toJSON(): LockupJSON {
     return {
+      ns: this.ns.toString(),
       owner: this.owner.toString(),
       amount: this.amount.toString(),
       startTs: this.startTs.toString(),
@@ -123,6 +130,7 @@ export class Lockup {
 
   static fromJSON(obj: LockupJSON): Lockup {
     return new Lockup({
+      ns: new PublicKey(obj.ns),
       owner: new PublicKey(obj.owner),
       amount: new BN(obj.amount),
       startTs: new BN(obj.startTs),

@@ -4,24 +4,28 @@ import * as borsh from "@coral-xyz/borsh" // eslint-disable-line @typescript-esl
 import * as types from "../types" // eslint-disable-line @typescript-eslint/no-unused-vars
 import { PROGRAM_ID } from "../programId"
 
-export interface InitGlobalAccounts {
-  authority: PublicKey
+export interface InitNamespaceAccounts {
+  deployer: PublicKey
   securityCouncil: PublicKey
-  global: PublicKey
+  reviewCouncil: PublicKey
+  tokenMint: PublicKey
+  ns: PublicKey
   systemProgram: PublicKey
 }
 
-export function initGlobal(
-  accounts: InitGlobalAccounts,
+export function initNamespace(
+  accounts: InitNamespaceAccounts,
   programId: PublicKey = PROGRAM_ID
 ) {
   const keys: Array<AccountMeta> = [
-    { pubkey: accounts.authority, isSigner: true, isWritable: true },
+    { pubkey: accounts.deployer, isSigner: true, isWritable: true },
     { pubkey: accounts.securityCouncil, isSigner: false, isWritable: false },
-    { pubkey: accounts.global, isSigner: false, isWritable: true },
+    { pubkey: accounts.reviewCouncil, isSigner: false, isWritable: false },
+    { pubkey: accounts.tokenMint, isSigner: false, isWritable: false },
+    { pubkey: accounts.ns, isSigner: false, isWritable: true },
     { pubkey: accounts.systemProgram, isSigner: false, isWritable: false },
   ]
-  const identifier = Buffer.from([44, 238, 77, 253, 76, 182, 192, 162])
+  const identifier = Buffer.from([92, 48, 33, 234, 12, 198, 94, 189])
   const data = identifier
   const ix = new TransactionInstruction({ keys, programId, data })
   return ix

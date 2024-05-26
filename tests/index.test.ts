@@ -15,12 +15,12 @@ import {
 } from "@solana/web3.js";
 import { Clock, ProgramTestContext, startAnchor } from "solana-bankrun";
 import { assert, describe, expect, test } from "vitest";
-import { VeTokenSDK, Global, Lockup, VoteRecord } from "../src";
+import { VeTokenSDK, Namespace, Lockup, VoteRecord } from "../src";
 import fs from "fs";
 import BN from "bn.js";
 
 const TOKEN_MINT = new PublicKey(
-  "8SMdDN9nZg2ntiBYieVKx7zeXL3DPPvFSTqV4KpsZAMH"
+  "8SMdDN9nZg2ntiBYieVKx7zeXL3DPPvFSTqV4KpsZAMH",
 );
 
 let _cloneAccounts:
@@ -39,12 +39,26 @@ async function setupCloneAccounts() {
     info: (await conn.getAccountInfo(signers.deployer.publicKey))!,
   });
   _cloneAccounts.push({
+    address: TOKEN_MINT,
+    info: (await conn.getAccountInfo(TOKEN_MINT))!,
+  });
+  _cloneAccounts.push({
     address: signers.securityCouncil.publicKey,
     info: (await conn.getAccountInfo(signers.securityCouncil.publicKey))!,
   });
   _cloneAccounts.push({
-    address: TOKEN_MINT,
-    info: (await conn.getAccountInfo(TOKEN_MINT))!,
+    address: getAssociatedTokenAddressSync(
+      TOKEN_MINT,
+      signers.securityCouncil.publicKey,
+      true,
+    ),
+    info: (await conn.getAccountInfo(
+      getAssociatedTokenAddressSync(
+        TOKEN_MINT,
+        signers.securityCouncil.publicKey,
+        true,
+      ),
+    ))!,
   });
   _cloneAccounts.push({
     address: signers.user1.publicKey,
@@ -54,10 +68,10 @@ async function setupCloneAccounts() {
     address: getAssociatedTokenAddressSync(
       TOKEN_MINT,
       signers.user1.publicKey,
-      true
+      true,
     ),
     info: (await conn.getAccountInfo(
-      getAssociatedTokenAddressSync(TOKEN_MINT, signers.user1.publicKey, true)
+      getAssociatedTokenAddressSync(TOKEN_MINT, signers.user1.publicKey, true),
     ))!,
   });
   _cloneAccounts.push({
@@ -68,10 +82,10 @@ async function setupCloneAccounts() {
     address: getAssociatedTokenAddressSync(
       TOKEN_MINT,
       signers.user2.publicKey,
-      true
+      true,
     ),
     info: (await conn.getAccountInfo(
-      getAssociatedTokenAddressSync(TOKEN_MINT, signers.user2.publicKey, true)
+      getAssociatedTokenAddressSync(TOKEN_MINT, signers.user2.publicKey, true),
     ))!,
   });
   return _cloneAccounts;
@@ -87,42 +101,43 @@ async function setupCtx() {
   return _ctx;
 }
 
-async function setupGlobal() {
+async function setupNamespace() {
   const ctx = await setupCtx();
   const signers = useSigners();
   await airdrop(ctx, signers.deployer.publicKey, 10 * LAMPORTS_PER_SOL);
 
   const deployerBalance = await ctx.banksClient.getBalance(
-    signers.deployer.publicKey
+    signers.deployer.publicKey,
   );
   assert(
     deployerBalance >= 10 * LAMPORTS_PER_SOL,
-    "deployer balance is less than 10 SOL"
+    "deployer balance is less than 10 SOL",
   );
 
   const sdk = new VeTokenSDK(
     signers.deployer.publicKey,
     signers.securityCouncil.publicKey,
+    signers.reviewCouncil.publicKey,
     TOKEN_MINT,
-    TOKEN_PROGRAM_ID
+    TOKEN_PROGRAM_ID,
   );
 
-  const globalPDA = sdk.pdaGlobal();
-  const globalAcct = await ctx.banksClient.getAccount(globalPDA);
-  if (globalAcct) {
-    return globalPDA;
+  const nsPDA = sdk.pdaNamespace();
+  const nsAcct = await ctx.banksClient.getAccount(nsPDA);
+  if (nsAcct) {
+    return nsPDA;
   }
 
-  const tx = sdk.txInitGlobal();
+  const tx = sdk.txInitNamespace();
   tx.recentBlockhash = ctx.lastBlockhash;
   tx.sign(ctx.payer, signers.deployer);
-  await ctx.banksClient.processTransaction(tx);
-  return globalPDA;
+  await ctx.banksClient.tryProcessTransaction(tx);
+  return nsPDA;
 }
 
 async function getToken(
   ctx: ProgramTestContext,
-  address: PublicKey
+  address: PublicKey,
 ): Promise<Account | null> {
   const tokenAccount = await ctx.banksClient.getAccount(address);
   if (!tokenAccount) {
@@ -139,7 +154,7 @@ async function getToken(
 async function getLockup(
   ctx: ProgramTestContext,
   sdk: VeTokenSDK,
-  owner: PublicKey
+  owner: PublicKey,
 ): Promise<Lockup | null> {
   const lockupAcct = await ctx.banksClient.getAccount(sdk.pdaLockup(owner));
   if (!lockupAcct) {
@@ -152,9 +167,11 @@ async function getVoteRecord(
   ctx: ProgramTestContext,
   sdk: VeTokenSDK,
   owner: PublicKey,
-  proposal: PublicKey
+  proposal: PublicKey,
 ): Promise<VoteRecord | null> {
-  const vr = await ctx.banksClient.getAccount(sdk.pdaVoteRecord(owner, proposal));
+  const vr = await ctx.banksClient.getAccount(
+    sdk.pdaVoteRecord(owner, proposal),
+  );
   if (!vr) {
     return null;
   }
@@ -167,6 +184,8 @@ function useSigners(): { [key: string]: Keypair } {
       "./tests/test-keys/tstCcqtDJtqnNDjqqg3UdZfUyrUmzfZ1wo1vpmXbM2S.json",
     securityCouncil:
       "./tests/test-keys/tstpKQMFhqMPsvJPu4wQdu1ZRA4a2H8EJD5TXc9KpBq.json",
+    reviewCouncil:
+      "./tests/test-keys/tstpKQMFhqMPsvJPu4wQdu1ZRA4a2H8EJD5TXc9KpBq.json",
     user1: "./tests/test-keys/tstRBjm2iwuCPSsU4DqGGG75N9rj4LDxxkGg9FTuDFn.json",
     user2: "./tests/test-keys/tstxJsqAgEZUwHHfgq4MdLVD715jDPqYjBAZiSD5cRz.json",
   };
@@ -174,7 +193,7 @@ function useSigners(): { [key: string]: Keypair } {
   const ret = {};
   for (const key in paths) {
     ret[key] = Keypair.fromSecretKey(
-      Buffer.from(JSON.parse(fs.readFileSync(paths[key], "utf-8")))
+      Buffer.from(JSON.parse(fs.readFileSync(paths[key], "utf-8"))),
     );
   }
   return ret;
@@ -183,7 +202,7 @@ function useSigners(): { [key: string]: Keypair } {
 async function airdrop(
   ctx: ProgramTestContext,
   receiver: PublicKey,
-  lamports: number
+  lamports: number,
 ) {
   const client = ctx.banksClient;
   const payer = ctx.payer;
@@ -208,11 +227,11 @@ test("token balance", async () => {
   const [user1TokenAcct, user2TokenAcct] = await Promise.all([
     getToken(
       ctx,
-      getAssociatedTokenAddressSync(TOKEN_MINT, signers.user1.publicKey, true)
+      getAssociatedTokenAddressSync(TOKEN_MINT, signers.user1.publicKey, true),
     ),
     getToken(
       ctx,
-      getAssociatedTokenAddressSync(TOKEN_MINT, signers.user2.publicKey, true)
+      getAssociatedTokenAddressSync(TOKEN_MINT, signers.user2.publicKey, true),
     ),
   ]);
   assert(user1TokenAcct);
@@ -221,21 +240,19 @@ test("token balance", async () => {
   expect(user2TokenAcct.amount).toBe(BigInt(30000 * 1e6));
 });
 
-describe("global", async () => {
-  test("init global", async () => {
+describe("ns", async () => {
+  test("init namespace", async () => {
     const ctx = await setupCtx();
-    const globalPDA = await setupGlobal();
-    const globalBytes = await ctx.banksClient.getAccount(globalPDA);
-    assert(globalPDA);
-    assert(globalBytes);
+    const nsPDA = await setupNamespace();
+    const nsBytes = await ctx.banksClient.getAccount(nsPDA);
+    assert(nsPDA);
+    assert(nsBytes);
 
-    const global = Global.decode(Buffer.from(globalBytes.data));
-    assert(global.lockupAmount.eqn(0));
-    assert(global.debugTsOffset.eqn(0));
-    assert(global.proposalNonce === 0);
-    assert(
-      global.securityCouncil.equals(useSigners().securityCouncil.publicKey)
-    );
+    const ns = Namespace.decode(Buffer.from(nsBytes.data));
+    assert(ns.lockupAmount.eqn(0));
+    assert(ns.debugTsOffset.eqn(0));
+    assert(ns.proposalNonce === 0);
+    assert(ns.securityCouncil.equals(useSigners().securityCouncil.publicKey));
   });
 });
 
@@ -247,24 +264,26 @@ describe("stake", async () => {
     const sdk = new VeTokenSDK(
       signers.deployer.publicKey,
       signers.securityCouncil.publicKey,
+      signers.reviewCouncil.publicKey,
       TOKEN_MINT,
-      TOKEN_PROGRAM_ID
+      TOKEN_PROGRAM_ID,
     );
 
     const endTs = new BN(
-      (new Date().getTime() + 1000 * 60 * 60 * 24 * 30) / 1000
+      (new Date().getTime() + 1000 * 60 * 60 * 24 * 30) / 1000,
     );
 
     test("stake first time for user1", async () => {
       const tx = sdk.txStake(signers.user1.publicKey, new BN(400 * 1e6), endTs);
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user1);
-      const confirmed = await ctx.banksClient.processTransaction(tx);
-      assert(confirmed);
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      assert(confirmed.result === null);
       const lockup = await getLockup(ctx, sdk, signers.user1.publicKey);
       assert(lockup);
       assert(lockup.amount.eq(new BN(400 * 1e6)));
       assert(lockup.endTs.eq(endTs));
+      assert(lockup.targetRewardsBp !== 0);
       assert(lockup.owner.equals(signers.user1.publicKey));
       assert(!lockup.startTs.eqn(0));
     });
@@ -273,8 +292,8 @@ describe("stake", async () => {
       const tx = sdk.txStake(signers.user1.publicKey, new BN(300 * 1e6), endTs);
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user1);
-      const confirmed = await ctx.banksClient.processTransaction(tx);
-      assert(confirmed);
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      assert(confirmed.result === null);
       const lockup = await getLockup(ctx, sdk, signers.user1.publicKey);
       assert(lockup);
       assert(lockup.amount.eq(new BN(700 * 1e6)));
@@ -291,28 +310,36 @@ describe("stake", async () => {
           currentClock.epochStartTimestamp,
           currentClock.epoch,
           currentClock.leaderScheduleEpoch,
-          currentClock.unixTimestamp + 2678400n
-        )
+          currentClock.unixTimestamp + 2678400n,
+        ),
       );
 
       const tx = sdk.txUnstake(signers.user1.publicKey);
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user1);
-      assert(await ctx.banksClient.processTransaction(tx));
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      assert(confirmed.result === null);
+      const lockup = await getLockup(ctx, sdk, signers.user1.publicKey);
+      assert(lockup === null);
       ctx.setClock(currentClock);
     });
 
-    test("stake first time for user2", async () => {
-      const tx = sdk.txStake(signers.user2.publicKey, new BN(400 * 1e6), endTs);
+    test("stakeTo first time for user2 by security council", async () => {
+      const tx = sdk.txStakeTo(
+        signers.user2.publicKey,
+        new BN(400 * 1e6),
+        endTs,
+      );
       tx.recentBlockhash = ctx.lastBlockhash;
-      tx.sign(ctx.payer, signers.user2);
-      const confirmed = await ctx.banksClient.processTransaction(tx);
-      assert(confirmed);
+      tx.sign(ctx.payer, signers.securityCouncil); // only security council can stakeTo
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      assert(confirmed.result === null);
       const lockup = await getLockup(ctx, sdk, signers.user2.publicKey);
       assert(lockup);
       assert(lockup.amount.eq(new BN(400 * 1e6)));
       assert(lockup.endTs.eq(endTs));
       assert(lockup.owner.equals(signers.user2.publicKey));
+      assert(lockup.targetRewardsBp === 0);
       assert(!lockup.startTs.eqn(0));
     });
 
@@ -320,7 +347,8 @@ describe("stake", async () => {
       const tx = sdk.txUnstake(signers.user2.publicKey);
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user2);
-      expect(ctx.banksClient.processTransaction(tx)).rejects.toThrow("0x1773");
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      expect(confirmed.result).contains("0x1773");
     });
   });
 });
@@ -332,84 +360,86 @@ describe("proposal", async () => {
   const sdk = new VeTokenSDK(
     signers.deployer.publicKey,
     signers.securityCouncil.publicKey,
+    signers.reviewCouncil.publicKey,
     TOKEN_MINT,
-    TOKEN_PROGRAM_ID
+    TOKEN_PROGRAM_ID,
   );
 
   const startTs = new BN(new Date().getTime() / 1000 - 1000);
   const endTs = new BN(
-    (new Date().getTime() + 1000 * 60 * 60 * 24 * 30) / 1000
+    (new Date().getTime() + 1000 * 60 * 60 * 24 * 30) / 1000,
   );
   describe("proposal happy path", async () => {
-    test("create proposal with nonce 0 and staked user2", async () => {
+    test("create proposal with nonce 0 by review council", async () => {
       const tx = sdk.txInitProposal(
-        signers.user2.publicKey,
+        signers.reviewCouncil.publicKey,
         0, // nonce 0
         "https://example.com/0",
         startTs,
-        endTs
+        endTs,
       );
       tx.recentBlockhash = ctx.lastBlockhash;
-      tx.sign(ctx.payer, signers.user2);
-      const confirmed = await ctx.banksClient.processTransaction(tx);
-      assert(confirmed);
+      tx.sign(ctx.payer, signers.reviewCouncil);
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      assert(confirmed.result === null);
     });
 
-    test("create proposal with nonce 1 and staked user2", async () => {
+    test("create proposal with nonce 1 by review council", async () => {
       const tx = sdk.txInitProposal(
-        signers.user2.publicKey,
-        1, // nonce 0
+        signers.reviewCouncil.publicKey,
+        1, // nonce 1
         "https://example.com/1",
         startTs,
-        endTs
+        endTs,
       );
       tx.recentBlockhash = ctx.lastBlockhash;
-      tx.sign(ctx.payer, signers.user2);
-      const confirmed = await ctx.banksClient.processTransaction(tx);
-      assert(confirmed);
+      tx.sign(ctx.payer, signers.reviewCouncil);
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      assert(confirmed.result === null);
     });
 
-    test("create proposal with nonce 0 and staked user2 should failed because it's already created", async () => {
+    test("update proposal from the reviewCouncil should be fine", async () => {
+      const tx = sdk.txUpdateProposal(
+        signers.reviewCouncil.publicKey,
+        sdk.pdaProposal(0), // nonce 0
+        "https://example.com/new_url/0",
+        startTs,
+        endTs,
+      );
+      tx.recentBlockhash = ctx.lastBlockhash;
+      tx.sign(ctx.payer, signers.reviewCouncil);
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      assert(confirmed.result === null);
+    });
+
+    test("create proposal with nonce 2 with user 2 should failed because user 1 is not review council", async () => {
       const tx = sdk.txInitProposal(
         signers.user2.publicKey,
-        0, // nonce 0
+        2, // nonce 2
         "https://example.com/00",
         startTs,
-        endTs
+        endTs,
       );
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user2);
-      expect(ctx.banksClient.processTransaction(tx)).rejects.toThrow("0x7d6");
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      expect(confirmed.result).contains("0x7d1");
     });
 
-    test("create proposal from unstaked user1 will fail", async () => {
-      const tx = sdk.txInitProposal(
-        signers.user1.publicKey,
-        1,
-        "https://example.com/1",
-        startTs,
-        endTs
-      );
-      tx.recentBlockhash = ctx.lastBlockhash;
-      tx.sign(ctx.payer, signers.user1);
-      expect(ctx.banksClient.processTransaction(tx)).rejects.toThrow("0xbc4");
-    });
-
-    test("update proposal from the staked user2 who created the proposal before voting", async () => {
+    test("update proposal from user2 should fail because user 2 is not review council", async () => {
       const tx = sdk.txUpdateProposal(
         signers.user2.publicKey,
         sdk.pdaProposal(0), // nonce 0
         "https://example.com/0",
         startTs,
-        endTs
+        endTs,
       );
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user2);
-      const confirmed = await ctx.banksClient.processTransaction(tx);
-      assert(confirmed);
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      expect(confirmed.result).contains("0x7d1");
     });
   });
-
 
   describe("proposal with voting", async () => {
     test("vote by user2", async () => {
@@ -420,9 +450,14 @@ describe("proposal", async () => {
       );
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user2);
-      const confirmed = await ctx.banksClient.processTransaction(tx);
-      assert(confirmed);
-      const vr = await getVoteRecord(ctx, sdk, signers.user2.publicKey, sdk.pdaProposal(0));
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      assert(confirmed.result === null);
+      const vr = await getVoteRecord(
+        ctx,
+        sdk,
+        signers.user2.publicKey,
+        sdk.pdaProposal(0),
+      );
       assert(vr);
       expect(vr.choice).toBe(0);
       expect(vr.votingPower.toNumber()).toBe(800000000); // TODO: this needs to be checked from the ts's voting power calculation

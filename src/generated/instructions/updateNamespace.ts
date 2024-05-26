@@ -4,31 +4,31 @@ import * as borsh from "@coral-xyz/borsh" // eslint-disable-line @typescript-esl
 import * as types from "../types" // eslint-disable-line @typescript-eslint/no-unused-vars
 import { PROGRAM_ID } from "../programId"
 
-export interface UpdateGlobalArgs {
-  args: types.UpdateGlobalArgsFields
+export interface UpdateNamespaceArgs {
+  args: types.UpdateNamespaceArgsFields
 }
 
-export interface UpdateGlobalAccounts {
+export interface UpdateNamespaceAccounts {
   securityCouncil: PublicKey
-  global: PublicKey
+  ns: PublicKey
 }
 
-export const layout = borsh.struct([types.UpdateGlobalArgs.layout("args")])
+export const layout = borsh.struct([types.UpdateNamespaceArgs.layout("args")])
 
-export function updateGlobal(
-  args: UpdateGlobalArgs,
-  accounts: UpdateGlobalAccounts,
+export function updateNamespace(
+  args: UpdateNamespaceArgs,
+  accounts: UpdateNamespaceAccounts,
   programId: PublicKey = PROGRAM_ID
 ) {
   const keys: Array<AccountMeta> = [
     { pubkey: accounts.securityCouncil, isSigner: true, isWritable: false },
-    { pubkey: accounts.global, isSigner: false, isWritable: false },
+    { pubkey: accounts.ns, isSigner: false, isWritable: true },
   ]
-  const identifier = Buffer.from([90, 152, 240, 21, 199, 38, 72, 20])
+  const identifier = Buffer.from([61, 107, 207, 79, 239, 88, 36, 255])
   const buffer = Buffer.alloc(1000)
   const len = layout.encode(
     {
-      args: types.UpdateGlobalArgs.toEncodable(args.args),
+      args: types.UpdateNamespaceArgs.toEncodable(args.args),
     },
     buffer
   )

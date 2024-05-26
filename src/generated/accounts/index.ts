@@ -1,5 +1,5 @@
-export { Global } from "./Global"
-export type { GlobalFields, GlobalJSON } from "./Global"
+export { Namespace } from "./Namespace"
+export type { NamespaceFields, NamespaceJSON } from "./Namespace"
 export { Lockup } from "./Lockup"
 export type { LockupFields, LockupJSON } from "./Lockup"
 export { Proposal } from "./Proposal"

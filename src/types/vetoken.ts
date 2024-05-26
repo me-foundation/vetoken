@@ -3,10 +3,10 @@ export type Vetoken = {
   "name": "vetoken",
   "instructions": [
     {
-      "name": "initGlobal",
+      "name": "initNamespace",
       "accounts": [
         {
-          "name": "authority",
+          "name": "deployer",
           "isMut": true,
           "isSigner": true
         },
@@ -16,7 +16,17 @@ export type Vetoken = {
           "isSigner": false
         },
         {
-          "name": "global",
+          "name": "reviewCouncil",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "ns",
           "isMut": true,
           "isSigner": false
         },
@@ -29,7 +39,7 @@ export type Vetoken = {
       "args": []
     },
     {
-      "name": "updateGlobal",
+      "name": "updateNamespace",
       "accounts": [
         {
           "name": "securityCouncil",
@@ -37,8 +47,8 @@ export type Vetoken = {
           "isSigner": true
         },
         {
-          "name": "global",
-          "isMut": false,
+          "name": "ns",
+          "isMut": true,
           "isSigner": false
         }
       ],
@@ -46,7 +56,7 @@ export type Vetoken = {
         {
           "name": "args",
           "type": {
-            "defined": "UpdateGlobalArgs"
+            "defined": "UpdateNamespaceArgs"
           }
         }
       ]
@@ -80,7 +90,7 @@ export type Vetoken = {
           "isSigner": false
         },
         {
-          "name": "global",
+          "name": "ns",
           "isMut": true,
           "isSigner": false
         },
@@ -105,6 +115,69 @@ export type Vetoken = {
           "name": "args",
           "type": {
             "defined": "StakeArgs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "stakeTo",
+      "accounts": [
+        {
+          "name": "securityCouncil",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "owner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "lockup",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "lockupTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ns",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": "StakeToArgs"
           }
         }
       ]
@@ -138,7 +211,7 @@ export type Vetoken = {
           "isSigner": false
         },
         {
-          "name": "global",
+          "name": "ns",
           "isMut": true,
           "isSigner": false
         },
@@ -154,7 +227,7 @@ export type Vetoken = {
       "name": "initProposal",
       "accounts": [
         {
-          "name": "owner",
+          "name": "reviewCouncil",
           "isMut": true,
           "isSigner": true
         },
@@ -164,12 +237,7 @@ export type Vetoken = {
           "isSigner": false
         },
         {
-          "name": "lockup",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "global",
+          "name": "ns",
           "isMut": true,
           "isSigner": false
         },
@@ -192,7 +260,7 @@ export type Vetoken = {
       "name": "updateProposal",
       "accounts": [
         {
-          "name": "payer",
+          "name": "reviewCouncil",
           "isMut": true,
           "isSigner": true
         },
@@ -202,7 +270,7 @@ export type Vetoken = {
           "isSigner": false
         },
         {
-          "name": "global",
+          "name": "ns",
           "isMut": false,
           "isSigner": false
         }
@@ -240,7 +308,7 @@ export type Vetoken = {
           "isSigner": false
         },
         {
-          "name": "global",
+          "name": "ns",
           "isMut": false,
           "isSigner": false
         },
@@ -262,10 +330,58 @@ export type Vetoken = {
   ],
   "accounts": [
     {
-      "name": "global",
+      "name": "namespace",
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "tokenMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "deployer",
+            "type": "publicKey"
+          },
+          {
+            "name": "securityCouncil",
+            "type": "publicKey"
+          },
+          {
+            "name": "reviewCouncil",
+            "type": "publicKey"
+          },
+          {
+            "name": "debugTsOffset",
+            "type": "i64"
+          },
+          {
+            "name": "lockupDefaultTargetRewardsBp",
+            "type": "u16"
+          },
+          {
+            "name": "lockupDefaultTargetVotingBp",
+            "type": "u16"
+          },
+          {
+            "name": "lockupMinDuration",
+            "type": "i64"
+          },
+          {
+            "name": "lockupMinAmount",
+            "type": "u64"
+          },
+          {
+            "name": "lockupMaxSaturation",
+            "type": "u64"
+          },
+          {
+            "name": "proposalMinVotingPowerForQuorum",
+            "type": "u64"
+          },
+          {
+            "name": "proposalMinPassBp",
+            "type": "u16"
+          },
           {
             "name": "lockupAmount",
             "type": "u64"
@@ -273,14 +389,6 @@ export type Vetoken = {
           {
             "name": "proposalNonce",
             "type": "u32"
-          },
-          {
-            "name": "securityCouncil",
-            "type": "publicKey"
-          },
-          {
-            "name": "debugTsOffset",
-            "type": "i64"
           },
           {
             "name": "padding",
@@ -299,6 +407,10 @@ export type Vetoken = {
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "ns",
+            "type": "publicKey"
+          },
           {
             "name": "owner",
             "type": "publicKey"
@@ -340,6 +452,10 @@ export type Vetoken = {
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "ns",
+            "type": "publicKey"
+          },
           {
             "name": "nonce",
             "type": "u32"
@@ -411,6 +527,10 @@ export type Vetoken = {
         "kind": "struct",
         "fields": [
           {
+            "name": "ns",
+            "type": "publicKey"
+          },
+          {
             "name": "owner",
             "type": "publicKey"
           },
@@ -470,6 +590,26 @@ export type Vetoken = {
       }
     },
     {
+      "name": "StakeToArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "endTs",
+            "type": "i64"
+          },
+          {
+            "name": "disableRewardsBp",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
       "name": "StakeArgs",
       "type": {
         "kind": "struct",
@@ -486,18 +626,68 @@ export type Vetoken = {
       }
     },
     {
-      "name": "UpdateGlobalArgs",
+      "name": "UpdateNamespaceArgs",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "newSecurityCouncil",
-            "type": "publicKey"
+            "name": "securityCouncil",
+            "type": {
+              "option": "publicKey"
+            }
+          },
+          {
+            "name": "reviewCouncil",
+            "type": {
+              "option": "publicKey"
+            }
           },
           {
             "name": "debugTsOffset",
             "type": {
               "option": "i64"
+            }
+          },
+          {
+            "name": "lockupDefaultTargetRewardsBp",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "lockupDefaultTargetVotingBp",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "lockupMinDuration",
+            "type": {
+              "option": "i64"
+            }
+          },
+          {
+            "name": "lockupMinAmount",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "lockupMaxSaturation",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "proposalMinVotingPowerForQuorum",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "proposalMinPassBp",
+            "type": {
+              "option": "u16"
             }
           }
         ]
@@ -595,10 +785,10 @@ export const IDL: Vetoken = {
   "name": "vetoken",
   "instructions": [
     {
-      "name": "initGlobal",
+      "name": "initNamespace",
       "accounts": [
         {
-          "name": "authority",
+          "name": "deployer",
           "isMut": true,
           "isSigner": true
         },
@@ -608,7 +798,17 @@ export const IDL: Vetoken = {
           "isSigner": false
         },
         {
-          "name": "global",
+          "name": "reviewCouncil",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "ns",
           "isMut": true,
           "isSigner": false
         },
@@ -621,7 +821,7 @@ export const IDL: Vetoken = {
       "args": []
     },
     {
-      "name": "updateGlobal",
+      "name": "updateNamespace",
       "accounts": [
         {
           "name": "securityCouncil",
@@ -629,8 +829,8 @@ export const IDL: Vetoken = {
           "isSigner": true
         },
         {
-          "name": "global",
-          "isMut": false,
+          "name": "ns",
+          "isMut": true,
           "isSigner": false
         }
       ],
@@ -638,7 +838,7 @@ export const IDL: Vetoken = {
         {
           "name": "args",
           "type": {
-            "defined": "UpdateGlobalArgs"
+            "defined": "UpdateNamespaceArgs"
           }
         }
       ]
@@ -672,7 +872,7 @@ export const IDL: Vetoken = {
           "isSigner": false
         },
         {
-          "name": "global",
+          "name": "ns",
           "isMut": true,
           "isSigner": false
         },
@@ -697,6 +897,69 @@ export const IDL: Vetoken = {
           "name": "args",
           "type": {
             "defined": "StakeArgs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "stakeTo",
+      "accounts": [
+        {
+          "name": "securityCouncil",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "owner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "lockup",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "lockupTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ns",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": "StakeToArgs"
           }
         }
       ]
@@ -730,7 +993,7 @@ export const IDL: Vetoken = {
           "isSigner": false
         },
         {
-          "name": "global",
+          "name": "ns",
           "isMut": true,
           "isSigner": false
         },
@@ -746,7 +1009,7 @@ export const IDL: Vetoken = {
       "name": "initProposal",
       "accounts": [
         {
-          "name": "owner",
+          "name": "reviewCouncil",
           "isMut": true,
           "isSigner": true
         },
@@ -756,12 +1019,7 @@ export const IDL: Vetoken = {
           "isSigner": false
         },
         {
-          "name": "lockup",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "global",
+          "name": "ns",
           "isMut": true,
           "isSigner": false
         },
@@ -784,7 +1042,7 @@ export const IDL: Vetoken = {
       "name": "updateProposal",
       "accounts": [
         {
-          "name": "payer",
+          "name": "reviewCouncil",
           "isMut": true,
           "isSigner": true
         },
@@ -794,7 +1052,7 @@ export const IDL: Vetoken = {
           "isSigner": false
         },
         {
-          "name": "global",
+          "name": "ns",
           "isMut": false,
           "isSigner": false
         }
@@ -832,7 +1090,7 @@ export const IDL: Vetoken = {
           "isSigner": false
         },
         {
-          "name": "global",
+          "name": "ns",
           "isMut": false,
           "isSigner": false
         },
@@ -854,10 +1112,58 @@ export const IDL: Vetoken = {
   ],
   "accounts": [
     {
-      "name": "global",
+      "name": "namespace",
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "tokenMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "deployer",
+            "type": "publicKey"
+          },
+          {
+            "name": "securityCouncil",
+            "type": "publicKey"
+          },
+          {
+            "name": "reviewCouncil",
+            "type": "publicKey"
+          },
+          {
+            "name": "debugTsOffset",
+            "type": "i64"
+          },
+          {
+            "name": "lockupDefaultTargetRewardsBp",
+            "type": "u16"
+          },
+          {
+            "name": "lockupDefaultTargetVotingBp",
+            "type": "u16"
+          },
+          {
+            "name": "lockupMinDuration",
+            "type": "i64"
+          },
+          {
+            "name": "lockupMinAmount",
+            "type": "u64"
+          },
+          {
+            "name": "lockupMaxSaturation",
+            "type": "u64"
+          },
+          {
+            "name": "proposalMinVotingPowerForQuorum",
+            "type": "u64"
+          },
+          {
+            "name": "proposalMinPassBp",
+            "type": "u16"
+          },
           {
             "name": "lockupAmount",
             "type": "u64"
@@ -865,14 +1171,6 @@ export const IDL: Vetoken = {
           {
             "name": "proposalNonce",
             "type": "u32"
-          },
-          {
-            "name": "securityCouncil",
-            "type": "publicKey"
-          },
-          {
-            "name": "debugTsOffset",
-            "type": "i64"
           },
           {
             "name": "padding",
@@ -891,6 +1189,10 @@ export const IDL: Vetoken = {
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "ns",
+            "type": "publicKey"
+          },
           {
             "name": "owner",
             "type": "publicKey"
@@ -932,6 +1234,10 @@ export const IDL: Vetoken = {
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "ns",
+            "type": "publicKey"
+          },
           {
             "name": "nonce",
             "type": "u32"
@@ -1003,6 +1309,10 @@ export const IDL: Vetoken = {
         "kind": "struct",
         "fields": [
           {
+            "name": "ns",
+            "type": "publicKey"
+          },
+          {
             "name": "owner",
             "type": "publicKey"
           },
@@ -1062,6 +1372,26 @@ export const IDL: Vetoken = {
       }
     },
     {
+      "name": "StakeToArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "endTs",
+            "type": "i64"
+          },
+          {
+            "name": "disableRewardsBp",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
       "name": "StakeArgs",
       "type": {
         "kind": "struct",
@@ -1078,18 +1408,68 @@ export const IDL: Vetoken = {
       }
     },
     {
-      "name": "UpdateGlobalArgs",
+      "name": "UpdateNamespaceArgs",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "newSecurityCouncil",
-            "type": "publicKey"
+            "name": "securityCouncil",
+            "type": {
+              "option": "publicKey"
+            }
+          },
+          {
+            "name": "reviewCouncil",
+            "type": {
+              "option": "publicKey"
+            }
           },
           {
             "name": "debugTsOffset",
             "type": {
               "option": "i64"
+            }
+          },
+          {
+            "name": "lockupDefaultTargetRewardsBp",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "lockupDefaultTargetVotingBp",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "lockupMinDuration",
+            "type": {
+              "option": "i64"
+            }
+          },
+          {
+            "name": "lockupMinAmount",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "lockupMaxSaturation",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "proposalMinVotingPowerForQuorum",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "proposalMinPassBp",
+            "type": {
+              "option": "u16"
             }
           }
         ]
