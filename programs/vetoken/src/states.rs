@@ -93,6 +93,7 @@ impl Lockup {
     }
 
     // rewards_power is the voting power that can receive rewards based on the target_rewards_bp
+    // it's not used in this program, but will be consumed by other programs
     #[allow(dead_code)]
     pub fn rewards_power(&self, ns: &Namespace) -> u64 {
         self.voting_power(ns) * (self.target_rewards_bp as u64) / 10000
