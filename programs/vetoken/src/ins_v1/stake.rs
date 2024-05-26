@@ -31,7 +31,7 @@ pub struct Stake<'info> {
     token_account: Box<InterfaceAccount<'info, TokenAccount>>,
 
     #[account(
-      init_if_needed,
+      init_if_needed, // stake means upsert this lockup account, and users can extend the end_ts or deposit more tokens
       payer=owner,
       seeds=[b"lockup", ns.key().as_ref(), owner.key.as_ref()],
       space= 8 + Lockup::INIT_SPACE,
