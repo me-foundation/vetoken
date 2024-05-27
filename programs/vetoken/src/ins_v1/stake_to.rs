@@ -1,5 +1,6 @@
 use crate::{
     errors::CustomError,
+    id,
     states::{Lockup, Namespace},
 };
 use anchor_lang::{prelude::*, AnchorDeserialize};
@@ -61,6 +62,7 @@ pub struct StakeTo<'info> {
         mut,
         has_one = token_mint,
         has_one = security_council,
+        constraint = *ns.to_account_info().owner == id(),
     )]
     ns: Box<Account<'info, Namespace>>,
 
@@ -101,7 +103,10 @@ pub fn handle<'info>(
         false => ns.lockup_default_target_rewards_bp,
     };
 
-    ns.lockup_amount += args.amount;
+    ns.lockup_amount = ns
+        .lockup_amount
+        .checked_add(args.amount)
+        .expect("should not overflow");
 
     Ok(())
 }

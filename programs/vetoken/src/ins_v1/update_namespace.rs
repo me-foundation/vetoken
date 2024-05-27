@@ -1,4 +1,4 @@
-use crate::states::Namespace;
+use crate::{id, states::Namespace};
 use anchor_lang::prelude::*;
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
@@ -25,6 +25,7 @@ pub struct UpdateNamespace<'info> {
     #[account(
       mut,
       has_one = security_council,
+      constraint = *ns.to_account_info().owner == id(),
     )]
     ns: Box<Account<'info, Namespace>>,
 }

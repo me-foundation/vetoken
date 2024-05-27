@@ -1,5 +1,6 @@
 use crate::{
     errors::CustomError,
+    id,
     states::{Lockup, Namespace},
 };
 use anchor_lang::{prelude::*, AnchorDeserialize};
@@ -54,6 +55,7 @@ pub struct Stake<'info> {
     #[account(
         mut,
         has_one = token_mint,
+        constraint = *ns.to_account_info().owner == id(),
     )]
     ns: Box<Account<'info, Namespace>>,
 
@@ -94,10 +96,16 @@ pub fn handle<'info>(ctx: Context<'_, '_, '_, 'info, Stake<'info>>, args: StakeA
     }
 
     lockup.ns = ns.key();
-    lockup.amount += args.amount;
     lockup.owner = ctx.accounts.owner.key();
 
-    ns.lockup_amount += args.amount;
+    lockup.amount = lockup
+        .amount
+        .checked_add(args.amount)
+        .expect("should not overflow");
+    ns.lockup_amount = ns
+        .lockup_amount
+        .checked_add(args.amount)
+        .expect("should not overflow");
 
     Ok(())
 }
