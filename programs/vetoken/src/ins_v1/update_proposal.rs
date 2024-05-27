@@ -1,4 +1,7 @@
-use crate::states::{Namespace, Proposal};
+use crate::{
+    id,
+    states::{Namespace, Proposal},
+};
 use anchor_lang::prelude::*;
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
@@ -22,6 +25,7 @@ pub struct UpdateProposal<'info> {
 
     #[account(
       has_one=review_council,
+      constraint = *ns.to_account_info().owner == id(),
     )]
     ns: Box<Account<'info, Namespace>>,
 }

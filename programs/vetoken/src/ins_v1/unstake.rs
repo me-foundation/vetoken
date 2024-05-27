@@ -1,6 +1,6 @@
 use crate::{
     errors::CustomError,
-    lockup_seeds,
+    id, lockup_seeds,
     states::{Lockup, Namespace},
 };
 use anchor_lang::prelude::*;
@@ -45,6 +45,7 @@ pub struct Unstake<'info> {
     #[account(
         mut,
         has_one = token_mint,
+        constraint = *ns.to_account_info().owner == id(),
     )]
     ns: Box<Account<'info, Namespace>>,
 
@@ -85,8 +86,12 @@ pub fn handle<'info>(ctx: Context<'_, '_, '_, 'info, Unstake<'info>>) -> Result<
         ))?;
     }
 
-    ns.lockup_amount -= amount;
     lockup.amount = 0;
+
+    ns.lockup_amount = ns
+        .lockup_amount
+        .checked_sub(amount)
+        .expect("underflow in reducing ns.lockup_amount");
 
     Ok(())
 }
