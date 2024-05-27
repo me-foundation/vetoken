@@ -96,7 +96,11 @@ impl Lockup {
     // it's not used in this program, but will be consumed by other programs
     #[allow(dead_code)]
     pub fn rewards_power(&self, ns: &Namespace) -> u64 {
-        self.voting_power(ns) * (self.target_rewards_bp as u64) / 10000
+        self.voting_power(ns)
+            .checked_mul(self.target_rewards_bp as u64)
+            .expect("should not overflow")
+            .checked_div(10000)
+            .expect("should not overflow")
     }
 }
 
@@ -143,12 +147,42 @@ impl Proposal {
 
     pub fn cast_vote(&mut self, choice: u8, voting_power: u64) {
         match choice {
-            0 => self.num_choice_0 += voting_power,
-            1 => self.num_choice_1 += voting_power,
-            2 => self.num_choice_2 += voting_power,
-            3 => self.num_choice_3 += voting_power,
-            4 => self.num_choice_4 += voting_power,
-            5 => self.num_choice_5 += voting_power,
+            0 => {
+                self.num_choice_0 = self
+                    .num_choice_0
+                    .checked_add(voting_power)
+                    .expect("should not overflow")
+            }
+            1 => {
+                self.num_choice_1 = self
+                    .num_choice_1
+                    .checked_add(voting_power)
+                    .expect("should not overflow")
+            }
+            2 => {
+                self.num_choice_2 = self
+                    .num_choice_2
+                    .checked_add(voting_power)
+                    .expect("should not overflow")
+            }
+            3 => {
+                self.num_choice_3 = self
+                    .num_choice_3
+                    .checked_add(voting_power)
+                    .expect("should not overflow")
+            }
+            4 => {
+                self.num_choice_4 = self
+                    .num_choice_4
+                    .checked_add(voting_power)
+                    .expect("should not overflow")
+            }
+            5 => {
+                self.num_choice_5 = self
+                    .num_choice_5
+                    .checked_add(voting_power)
+                    .expect("should not overflow")
+            }
             _ => panic!("Invalid choice"),
         }
     }
@@ -177,11 +211,16 @@ impl Proposal {
 
     pub fn total_votes(&self) -> u64 {
         self.num_choice_0
-            + self.num_choice_1
-            + self.num_choice_2
-            + self.num_choice_3
-            + self.num_choice_4
-            + self.num_choice_5
+            .checked_add(self.num_choice_1)
+            .expect("should not overflow")
+            .checked_add(self.num_choice_2)
+            .expect("should not overflow")
+            .checked_add(self.num_choice_3)
+            .expect("should not overflow")
+            .checked_add(self.num_choice_4)
+            .expect("should not overflow")
+            .checked_add(self.num_choice_5)
+            .expect("should not overflow")
     }
 
     pub fn has_quorum(&self, ns: &Namespace) -> bool {
@@ -192,7 +231,12 @@ impl Proposal {
         if !self.has_quorum(ns) {
             return false;
         }
-        let pass_threshold = self.total_votes() * (ns.proposal_min_pass_bp as u64) / 10000;
+        let pass_threshold = self
+            .total_votes()
+            .checked_mul(ns.proposal_min_pass_bp as u64)
+            .expect("should not overflow")
+            .checked_div(10000)
+            .expect("should not overflow");
         self.num_choice_0 > pass_threshold
             || self.num_choice_1 > pass_threshold
             || self.num_choice_2 > pass_threshold
