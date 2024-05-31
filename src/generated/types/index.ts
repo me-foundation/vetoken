@@ -1,3 +1,13 @@
+export { ClaimFromDistributionArgs } from "./ClaimFromDistributionArgs"
+export type {
+  ClaimFromDistributionArgsFields,
+  ClaimFromDistributionArgsJSON,
+} from "./ClaimFromDistributionArgs"
+export { InitDistributionArgs } from "./InitDistributionArgs"
+export type {
+  InitDistributionArgsFields,
+  InitDistributionArgsJSON,
+} from "./InitDistributionArgs"
 export { InitProposalArgs } from "./InitProposalArgs"
 export type {
   InitProposalArgsFields,

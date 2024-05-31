@@ -76,6 +76,23 @@ pub mod vetoken {
     pub fn vote<'info>(ctx: Context<'_, '_, '_, 'info, Vote<'info>>, args: VoteArgs) -> Result<()> {
         ins_v1::vote::handle(ctx, args)
     }
+
+    // Init a 2FA cosigner-based distribution
+    pub fn init_distribution<'info>(
+        ctx: Context<'_, '_, '_, 'info, InitDistribution<'info>>,
+        args: InitDistributionArgs,
+    ) -> Result<()> {
+        ins_v1::init_distribution::handle(ctx, args)
+    }
+
+    // Claim from distribution using a sharded delegate_token_account
+    // The cosigned_msg should be independently signed by both 2FA cosigners
+    pub fn claim_from_distribution<'info>(
+        ctx: Context<'_, '_, '_, 'info, ClaimFromDistribution<'info>>,
+        args: ClaimFromDistributionArgs,
+    ) -> Result<()> {
+        ins_v1::claim_from_distribution::handle(ctx, args)
+    }
 }
 
 #[macro_export]
@@ -85,6 +102,20 @@ macro_rules! lockup_seeds {
             b"lockup".as_ref(),
             $ns.key().as_ref(),
             $owner.key.as_ref(),
+            &[$bump],
+        ]
+    };
+}
+
+#[macro_export]
+macro_rules! distribution_seeds {
+    ( $ns:expr, $cosigner_1:expr, $cosigner_2:expr, $uuid:expr, $bump:expr ) => {
+        &[
+            b"distribution".as_ref(),
+            $ns.key().as_ref(),
+            $cosigner_1.key().as_ref(),
+            $cosigner_2.key().as_ref(),
+            $uuid.as_ref(),
             &[$bump],
         ]
     };

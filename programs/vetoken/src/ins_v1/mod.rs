@@ -16,8 +16,14 @@ pub use unstake::*;
 pub mod init_proposal;
 pub use init_proposal::*;
 
+pub mod init_distribution;
+pub use init_distribution::*;
+
 pub mod update_proposal;
 pub use update_proposal::*;
 
 pub mod vote;
 pub use vote::*;
+
+pub mod claim_from_distribution;
+pub use claim_from_distribution::*;

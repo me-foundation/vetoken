@@ -9,6 +9,8 @@ pub enum CustomError {
     #[msg("Invalid Token Amount")]
     InvalidTokenAmount,
     #[msg("Invalid Timestamp")]
+    InvalidTokenDelegate,
+    #[msg("Invalid Token Delegate")]
     InvalidTimestamp,
     #[msg("Invalid Lockup Amount")]
     InvalidLockupAmount,

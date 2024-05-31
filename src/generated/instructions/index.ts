@@ -20,3 +20,13 @@ export type {
 } from "./updateProposal"
 export { vote } from "./vote"
 export type { VoteArgs, VoteAccounts } from "./vote"
+export { initDistribution } from "./initDistribution"
+export type {
+  InitDistributionArgs,
+  InitDistributionAccounts,
+} from "./initDistribution"
+export { claimFromDistribution } from "./claimFromDistribution"
+export type {
+  ClaimFromDistributionArgs,
+  ClaimFromDistributionAccounts,
+} from "./claimFromDistribution"
