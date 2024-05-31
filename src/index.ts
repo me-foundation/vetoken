@@ -106,11 +106,13 @@ export class VeTokenSDK {
     return pda;
   }
 
-  pdaDistribution(uuid: PublicKey) {
+  pdaDistribution(cosigner1: PublicKey, cosigner2: PublicKey, uuid: PublicKey) {
     const [pda] = PublicKey.findProgramAddressSync(
       [
         Buffer.from("distribution"),
         this.pdaNamespace().toBuffer(),
+        cosigner1.toBuffer(),
+        cosigner2.toBuffer(),
         uuid.toBuffer(),
       ],
       PROGRAM_ID
@@ -333,7 +335,7 @@ export class VeTokenSDK {
       {
         ns: this.pdaNamespace(),
         payer,
-        distribution: this.pdaDistribution(uuid),
+        distribution: this.pdaDistribution(cosigner1, cosigner2, uuid),
         distributionTokenMint: this.tokenMint,
         systemProgram: SystemProgram.programId,
       }

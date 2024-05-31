@@ -109,10 +109,12 @@ macro_rules! lockup_seeds {
 
 #[macro_export]
 macro_rules! distribution_seeds {
-    ( $ns:expr, $uuid:expr, $bump:expr ) => {
+    ( $ns:expr, $cosigner_1:expr, $cosigner_2:expr, $uuid:expr, $bump:expr ) => {
         &[
             b"distribution".as_ref(),
             $ns.key().as_ref(),
+            $cosigner_1.key().as_ref(),
+            $cosigner_2.key().as_ref(),
             $uuid.as_ref(),
             &[$bump],
         ]

@@ -22,7 +22,7 @@ pub struct InitDistribution<'info> {
 
     #[account(
       init,
-      seeds=[b"distribution", ns.key().as_ref(), args.uuid.as_ref()],
+      seeds=[b"distribution", ns.key().as_ref(), args.cosigner_1.as_ref(), args.cosigner_2.as_ref(), args.uuid.as_ref()],
       payer=payer,
       space=8+Distribution::INIT_SPACE,
       bump,

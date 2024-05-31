@@ -591,7 +591,7 @@ describe("proposal", async () => {
     tx.sign(ctx.payer);
     const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
     assert(confirmed.result === null);
-    const d = await getDistribution(ctx, sdk, sdk.pdaDistribution(uuid1));
+    const d = await getDistribution(ctx, sdk, sdk.pdaDistribution(cosigner1.publicKey, cosigner2.publicKey, uuid1));
     assert(d);
     assert(d.cosigner1.equals(cosigner1.publicKey));
     assert(d.cosigner2.equals(cosigner2.publicKey));
@@ -612,7 +612,7 @@ describe("proposal", async () => {
     tx.sign(ctx.payer);
     let confirmed = await ctx.banksClient.tryProcessTransaction(tx);
     assert(confirmed.result === null);
-    const d = await getDistribution(ctx, sdk, sdk.pdaDistribution(uuid2));
+    const d = await getDistribution(ctx, sdk, sdk.pdaDistribution(cosigner1.publicKey, cosigner2.publicKey, uuid2));
     assert(d);
     assert(d.cosigner1.equals(cosigner1.publicKey));
     assert(d.cosigner2.equals(cosigner2.publicKey));
@@ -625,7 +625,7 @@ describe("proposal", async () => {
     const approvedAmount = 33_000_000;
     const claimAmount = 33_000_000;
     const cosignedMsg = "cosigned message by cosigner1 and cosigner2";
-    const distribution = sdk.pdaDistribution(uuid2);
+    const distribution = sdk.pdaDistribution(cosigner1.publicKey, cosigner2.publicKey, uuid2);
 
     await transferToken(ctx, TOKEN_MINT, signers.securityCouncil, vaultOwner1.publicKey, approvedAmount);
     await approveToken(ctx, TOKEN_MINT, vaultOwner1, distribution, approvedAmount);

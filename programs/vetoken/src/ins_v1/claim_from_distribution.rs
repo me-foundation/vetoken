@@ -42,7 +42,7 @@ pub struct ClaimFromDistribution<'info> {
     distribution_claim: Box<Account<'info, DistributionClaim>>,
 
     #[account(
-      seeds=[b"distribution", ns.key().as_ref(), distribution.uuid.as_ref()],
+      seeds=[b"distribution", ns.key().as_ref(), cosigner_1.key().as_ref(), cosigner_2.key().as_ref(), distribution.uuid.as_ref()],
       has_one = distribution_token_mint,
       has_one = cosigner_1,
       has_one = cosigner_2,
@@ -90,6 +90,8 @@ pub fn handle<'info>(
 ) -> Result<()> {
     let distribution_claim = &mut ctx.accounts.distribution_claim;
     let ns = &ctx.accounts.ns;
+    let cosigner_1 = &ctx.accounts.cosigner_1;
+    let cosigner_2 = &ctx.accounts.cosigner_2;
     let uuid = ctx.accounts.distribution.uuid;
     let bump = ctx.bumps.distribution;
 
@@ -109,7 +111,7 @@ pub fn handle<'info>(
                 to: ctx.accounts.claimant_token_account.to_account_info(),
                 authority: ctx.accounts.distribution.to_account_info(),
             },
-            &[distribution_seeds!(ns, uuid, bump)],
+            &[distribution_seeds!(ns, cosigner_1, cosigner_2, uuid, bump)],
         ),
         args.amount,
         ctx.accounts.distribution_token_mint.decimals,
