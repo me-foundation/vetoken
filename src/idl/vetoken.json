@@ -326,6 +326,122 @@
           }
         }
       ]
+    },
+    {
+      "name": "initDistribution",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "distribution",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "distributionTokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "ns",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": "InitDistributionArgs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "claimFromDistribution",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "claimant",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "cosigner1",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "cosigner2",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "distributionClaim",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "distribution",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "distributionTokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "delegatedTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "claimantTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ns",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": "ClaimFromDistributionArgs"
+          }
+        }
+      ]
     }
   ],
   "accounts": [
@@ -561,9 +677,132 @@
           }
         ]
       }
+    },
+    {
+      "name": "Distribution",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "ns",
+            "type": "publicKey"
+          },
+          {
+            "name": "uuid",
+            "type": "publicKey"
+          },
+          {
+            "name": "cosigner1",
+            "type": "publicKey"
+          },
+          {
+            "name": "cosigner2",
+            "type": "publicKey"
+          },
+          {
+            "name": "startTs",
+            "type": "i64"
+          },
+          {
+            "name": "distributionTokenMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "padding",
+            "type": {
+              "array": [
+                "u8",
+                240
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "DistributionClaim",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "ns",
+            "type": "publicKey"
+          },
+          {
+            "name": "distribution",
+            "type": "publicKey"
+          },
+          {
+            "name": "claimant",
+            "type": "publicKey"
+          },
+          {
+            "name": "distributionTokenMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "padding",
+            "type": {
+              "array": [
+                "u8",
+                240
+              ]
+            }
+          }
+        ]
+      }
     }
   ],
   "types": [
+    {
+      "name": "ClaimFromDistributionArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "cosignedMsg",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "InitDistributionArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "uuid",
+            "type": "publicKey"
+          },
+          {
+            "name": "cosigner1",
+            "type": "publicKey"
+          },
+          {
+            "name": "cosigner2",
+            "type": "publicKey"
+          },
+          {
+            "name": "startTs",
+            "type": "i64"
+          }
+        ]
+      }
+    },
     {
       "name": "InitProposalArgs",
       "type": {
@@ -749,31 +988,36 @@
     },
     {
       "code": 6003,
-      "name": "InvalidTimestamp",
+      "name": "InvalidTokenDelegate",
       "msg": "Invalid Timestamp"
     },
     {
       "code": 6004,
+      "name": "InvalidTimestamp",
+      "msg": "Invalid Token Delegate"
+    },
+    {
+      "code": 6005,
       "name": "InvalidLockupAmount",
       "msg": "Invalid Lockup Amount"
     },
     {
-      "code": 6005,
+      "code": 6006,
       "name": "InvalidVotingPower",
       "msg": "Invalid Voting Power"
     },
     {
-      "code": 6006,
+      "code": 6007,
       "name": "InvalidPayer",
       "msg": "Invalid Payer"
     },
     {
-      "code": 6007,
+      "code": 6008,
       "name": "InvalidProposalState",
       "msg": "Invalid Proposal State"
     },
     {
-      "code": 6008,
+      "code": 6009,
       "name": "Overflow",
       "msg": "Overflow"
     }

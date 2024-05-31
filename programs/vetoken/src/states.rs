@@ -260,3 +260,30 @@ pub struct VoteRecord {
 
     pub _padding: [u8; 240],
 }
+
+#[account]
+#[derive(Copy, InitSpace)]
+pub struct Distribution {
+    // Seeds: [b"distribution", ns.key().as_ref(), uuid.key().as_ref()]
+    pub ns: Pubkey,
+    pub uuid: Pubkey,
+    pub cosigner_1: Pubkey,
+    pub cosigner_2: Pubkey,
+    pub start_ts: i64,
+    pub distribution_token_mint: Pubkey,
+
+    pub _padding: [u8; 240],
+}
+
+#[account]
+#[derive(Copy, InitSpace)]
+pub struct DistributionClaim {
+    // Seeds: [b"distribution_claim", ns.key().as_ref(), uuid.key().as_ref()]
+    pub ns: Pubkey,
+    pub distribution: Pubkey,
+    pub claimant: Pubkey,
+    pub distribution_token_mint: Pubkey,
+    pub amount: u64,
+
+    pub _padding: [u8; 240],
+}

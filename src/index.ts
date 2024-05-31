@@ -14,8 +14,12 @@ import {
   updateProposal,
   vote,
   stakeTo,
+  initDistribution,
+  claimFromDistribution,
 } from "./generated/instructions";
 import BN from "bn.js";
+import { getAssociatedTokenAddressSync } from "@solana/spl-token";
+import { createHash } from "crypto";
 
 export * from "./generated/instructions";
 export * from "./generated/accounts";
@@ -96,6 +100,31 @@ export class VeTokenSDK {
         Buffer.from("proposal"),
         this.pdaNamespace().toBuffer(),
         new BN(proposal_nonce).toArrayLike(Buffer, "le", 4),
+      ],
+      PROGRAM_ID
+    );
+    return pda;
+  }
+
+  pdaDistribution(uuid: PublicKey) {
+    const [pda] = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("distribution"),
+        this.pdaNamespace().toBuffer(),
+        uuid.toBuffer(),
+      ],
+      PROGRAM_ID
+    );
+    return pda;
+  }
+
+  pdaDistributionClaim(distribution: PublicKey, cosignedMsg: string) {
+    const [pda] = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("distribution_claim"),
+        this.pdaNamespace().toBuffer(),
+        distribution.toBuffer(),
+        createHash('sha256').update(cosignedMsg).digest(),
       ],
       PROGRAM_ID
     );
@@ -280,6 +309,73 @@ export class VeTokenSDK {
         lockup: this.pdaLockup(owner),
         voteRecord: this.pdaVoteRecord(owner, proposal),
         systemProgram: SystemProgram.programId,
+      }
+    );
+    return this.newTx().add(ix);
+  }
+
+  txInitDistribution(
+    payer: PublicKey,
+    uuid: PublicKey,
+    cosigner1: PublicKey,
+    cosigner2: PublicKey,
+    startTs: BN
+  ) {
+    const ix = initDistribution(
+      {
+        args: {
+          uuid,
+          cosigner1,
+          cosigner2,
+          startTs,
+        },
+      },
+      {
+        ns: this.pdaNamespace(),
+        payer,
+        distribution: this.pdaDistribution(uuid),
+        distributionTokenMint: this.tokenMint,
+        systemProgram: SystemProgram.programId,
+      }
+    );
+    return this.newTx().add(ix);
+  }
+
+  txClaimFromDistribution(
+    payer: PublicKey,
+    distribution: PublicKey,
+    delegatedTokenAccount: PublicKey,
+    cosigner1: PublicKey,
+    cosigner2: PublicKey,
+    claimant: PublicKey,
+    amount: BN,
+    cosignedMsg: string
+  ) {
+    const ix = claimFromDistribution(
+      {
+        args: {
+          amount,
+          cosignedMsg: Array.from(createHash('sha256').update(cosignedMsg).digest()),
+        },
+      },
+      {
+        ns: this.pdaNamespace(),
+        payer,
+        distribution,
+        distributionTokenMint: this.tokenMint,
+        systemProgram: SystemProgram.programId,
+        claimant,
+        cosigner1,
+        cosigner2,
+        distributionClaim: this.pdaDistributionClaim(distribution, cosignedMsg),
+        delegatedTokenAccount,
+        claimantTokenAccount: getAssociatedTokenAddressSync(
+          this.tokenMint,
+          claimant,
+          true
+        ),
+        tokenProgram: this.tokenProgram,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
       }
     );
     return this.newTx().add(ix);
