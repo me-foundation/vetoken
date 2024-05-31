@@ -278,7 +278,7 @@ pub struct Distribution {
 #[account]
 #[derive(Copy, InitSpace)]
 pub struct DistributionClaim {
-    // Seeds: [b"distribution_claim", ns.key().as_ref(), distribution.key().as_ref(), args.cosigned_msg.as_ref()]
+    // Seeds: [b"distribution_claim", ns.key().as_ref(), distribution.key().as_ref(), claimant.key().as_ref(), args.cosigned_msg.as_ref()]
     pub ns: Pubkey,
     pub distribution: Pubkey,
     pub claimant: Pubkey,

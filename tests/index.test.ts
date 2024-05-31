@@ -645,7 +645,7 @@ describe("proposal", async () => {
     confirmed = await ctx.banksClient.tryProcessTransaction(tx);
     console.log(confirmed.meta?.logMessages);
     assert(confirmed.result === null);
-    const dc = await getDistributionClaim(ctx, sdk, sdk.pdaDistributionClaim(distribution, cosignedMsg));
+    const dc = await getDistributionClaim(ctx, sdk, sdk.pdaDistributionClaim(distribution, claimant.publicKey, cosignedMsg));
     assert(dc);
     assert(dc.claimant.equals(claimant.publicKey));
     const claimantTokenAccount = await getToken(ctx, getAssociatedTokenAddressSync(TOKEN_MINT, claimant.publicKey, true));
