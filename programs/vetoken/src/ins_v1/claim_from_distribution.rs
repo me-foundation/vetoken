@@ -34,7 +34,7 @@ pub struct ClaimFromDistribution<'info> {
 
     #[account(
       init,
-      seeds=[b"distribution_claim", ns.key().as_ref(), distribution.key().as_ref(), args.cosigned_msg.as_ref()],
+      seeds=[b"distribution_claim", ns.key().as_ref(), distribution.key().as_ref(), claimant.key().as_ref(), args.cosigned_msg.as_ref()],
       payer=payer,
       space=8+DistributionClaim::INIT_SPACE,
       bump,

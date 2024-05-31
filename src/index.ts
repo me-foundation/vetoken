@@ -120,12 +120,13 @@ export class VeTokenSDK {
     return pda;
   }
 
-  pdaDistributionClaim(distribution: PublicKey, cosignedMsg: string) {
+  pdaDistributionClaim(distribution: PublicKey, claimant: PublicKey, cosignedMsg: string) {
     const [pda] = PublicKey.findProgramAddressSync(
       [
         Buffer.from("distribution_claim"),
         this.pdaNamespace().toBuffer(),
         distribution.toBuffer(),
+        claimant.toBuffer(),
         createHash('sha256').update(cosignedMsg).digest(),
       ],
       PROGRAM_ID
@@ -369,7 +370,7 @@ export class VeTokenSDK {
         claimant,
         cosigner1,
         cosigner2,
-        distributionClaim: this.pdaDistributionClaim(distribution, cosignedMsg),
+        distributionClaim: this.pdaDistributionClaim(distribution, claimant, cosignedMsg),
         delegatedTokenAccount,
         claimantTokenAccount: getAssociatedTokenAddressSync(
           this.tokenMint,

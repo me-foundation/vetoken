@@ -27,7 +27,7 @@ The endpoints' detailed explanation can be found at [lib.rs](./programs/vetoken/
 ```bash
 # Test build and running the bankrun tests
 npm i
-anchor build -- --features anchor-test && npm run test -- run
+anchor build && npm run test -- run
 
 # Production build
 anchor build
