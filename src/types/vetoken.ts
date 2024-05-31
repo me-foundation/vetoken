@@ -745,6 +745,15 @@ export type Vetoken = {
             "type": "u64"
           },
           {
+            "name": "cosignedMsg",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
             "name": "padding",
             "type": {
               "array": [
@@ -1769,6 +1778,15 @@ export const IDL: Vetoken = {
           {
             "name": "amount",
             "type": "u64"
+          },
+          {
+            "name": "cosignedMsg",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
           },
           {
             "name": "padding",

@@ -278,12 +278,13 @@ pub struct Distribution {
 #[account]
 #[derive(Copy, InitSpace)]
 pub struct DistributionClaim {
-    // Seeds: [b"distribution_claim", ns.key().as_ref(), uuid.key().as_ref()]
+    // Seeds: [b"distribution_claim", ns.key().as_ref(), distribution.key().as_ref(), args.cosigned_msg.as_ref()]
     pub ns: Pubkey,
     pub distribution: Pubkey,
     pub claimant: Pubkey,
     pub distribution_token_mint: Pubkey,
     pub amount: u64,
+    pub cosigned_msg: [u8; 32], // sha256 hash of the cosigned message
 
     pub _padding: [u8; 240],
 }

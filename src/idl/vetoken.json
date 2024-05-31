@@ -745,6 +745,15 @@
             "type": "u64"
           },
           {
+            "name": "cosignedMsg",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
             "name": "padding",
             "type": {
               "array": [

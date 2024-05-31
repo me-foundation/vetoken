@@ -10,6 +10,7 @@ export interface DistributionClaimFields {
   claimant: PublicKey
   distributionTokenMint: PublicKey
   amount: BN
+  cosignedMsg: Array<number>
   padding: Array<number>
 }
 
@@ -19,6 +20,7 @@ export interface DistributionClaimJSON {
   claimant: string
   distributionTokenMint: string
   amount: string
+  cosignedMsg: Array<number>
   padding: Array<number>
 }
 
@@ -28,6 +30,7 @@ export class DistributionClaim {
   readonly claimant: PublicKey
   readonly distributionTokenMint: PublicKey
   readonly amount: BN
+  readonly cosignedMsg: Array<number>
   readonly padding: Array<number>
 
   static readonly discriminator = Buffer.from([
@@ -40,6 +43,7 @@ export class DistributionClaim {
     borsh.publicKey("claimant"),
     borsh.publicKey("distributionTokenMint"),
     borsh.u64("amount"),
+    borsh.array(borsh.u8(), 32, "cosignedMsg"),
     borsh.array(borsh.u8(), 240, "padding"),
   ])
 
@@ -49,6 +53,7 @@ export class DistributionClaim {
     this.claimant = fields.claimant
     this.distributionTokenMint = fields.distributionTokenMint
     this.amount = fields.amount
+    this.cosignedMsg = fields.cosignedMsg
     this.padding = fields.padding
   }
 
@@ -101,6 +106,7 @@ export class DistributionClaim {
       claimant: dec.claimant,
       distributionTokenMint: dec.distributionTokenMint,
       amount: dec.amount,
+      cosignedMsg: dec.cosignedMsg,
       padding: dec.padding,
     })
   }
@@ -112,6 +118,7 @@ export class DistributionClaim {
       claimant: this.claimant.toString(),
       distributionTokenMint: this.distributionTokenMint.toString(),
       amount: this.amount.toString(),
+      cosignedMsg: this.cosignedMsg,
       padding: this.padding,
     }
   }
@@ -123,6 +130,7 @@ export class DistributionClaim {
       claimant: new PublicKey(obj.claimant),
       distributionTokenMint: new PublicKey(obj.distributionTokenMint),
       amount: new BN(obj.amount),
+      cosignedMsg: obj.cosignedMsg,
       padding: obj.padding,
     })
   }

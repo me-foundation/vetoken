@@ -98,6 +98,7 @@ pub fn handle<'info>(
     distribution_claim.distribution = ctx.accounts.distribution.key();
     distribution_claim.amount = args.amount;
     distribution_claim.distribution_token_mint = ctx.accounts.distribution_token_mint.key();
+    distribution_claim.cosigned_msg = args.cosigned_msg;
 
     anchor_spl::token_interface::transfer_checked(
         CpiContext::new_with_signer(
