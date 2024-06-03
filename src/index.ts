@@ -167,9 +167,9 @@ export class VeTokenSDK {
     lockupMinDuration: BN | null,
     lockupMinAmount: BN | null,
     lockupMaxSaturation: BN | null,
-    proposalMinVotingPowerForCreation: BN | null,
     proposalMinVotingPowerForQuorum: BN | null,
-    proposalMinPassBp: number | null
+    proposalMinPassBp: number | null,
+    proposalCanUpdateAfterVotes: boolean | null
   ) {
     const ix = updateNamespace(
       {
@@ -184,6 +184,7 @@ export class VeTokenSDK {
           lockupMaxSaturation,
           proposalMinVotingPowerForQuorum,
           proposalMinPassBp,
+          proposalCanUpdateAfterVotes,
         },
       },
       {

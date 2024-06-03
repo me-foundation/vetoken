@@ -499,6 +499,10 @@
             "type": "u16"
           },
           {
+            "name": "proposalCanUpdateAfterVotes",
+            "type": "bool"
+          },
+          {
             "name": "lockupAmount",
             "type": "u64"
           },
@@ -937,6 +941,12 @@
             "type": {
               "option": "u16"
             }
+          },
+          {
+            "name": "proposalCanUpdateAfterVotes",
+            "type": {
+              "option": "bool"
+            }
           }
         ]
       }
@@ -1029,6 +1039,11 @@
       "code": 6009,
       "name": "Overflow",
       "msg": "Overflow"
+    },
+    {
+      "code": 6010,
+      "name": "CannotUpdateProposal",
+      "msg": "Cannot Update Proposal"
     }
   ]
 }

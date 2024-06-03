@@ -20,6 +20,7 @@ pub struct Namespace {
     pub lockup_max_saturation: u64,
     pub proposal_min_voting_power_for_quorum: u64,
     pub proposal_min_pass_bp: u16,
+    pub proposal_can_update_after_votes: bool,
 
     // Realtime Stats
     pub lockup_amount: u64,
@@ -143,6 +144,13 @@ impl Proposal {
         if self.status == Proposal::STATUS_ACTIVATED && self.has_passed(ns) {
             self.status = Proposal::STATUS_PASSED;
         }
+    }
+
+    pub fn can_update(&self, ns: &Namespace) -> bool {
+        if self.total_votes() > 0 && !ns.proposal_can_update_after_votes {
+            return false;
+        }
+        true
     }
 
     pub fn cast_vote(&mut self, choice: u8, voting_power: u64) {

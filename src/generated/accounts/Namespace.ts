@@ -17,6 +17,7 @@ export interface NamespaceFields {
   lockupMaxSaturation: BN
   proposalMinVotingPowerForQuorum: BN
   proposalMinPassBp: number
+  proposalCanUpdateAfterVotes: boolean
   lockupAmount: BN
   proposalNonce: number
   padding: Array<number>
@@ -35,6 +36,7 @@ export interface NamespaceJSON {
   lockupMaxSaturation: string
   proposalMinVotingPowerForQuorum: string
   proposalMinPassBp: number
+  proposalCanUpdateAfterVotes: boolean
   lockupAmount: string
   proposalNonce: number
   padding: Array<number>
@@ -53,6 +55,7 @@ export class Namespace {
   readonly lockupMaxSaturation: BN
   readonly proposalMinVotingPowerForQuorum: BN
   readonly proposalMinPassBp: number
+  readonly proposalCanUpdateAfterVotes: boolean
   readonly lockupAmount: BN
   readonly proposalNonce: number
   readonly padding: Array<number>
@@ -74,6 +77,7 @@ export class Namespace {
     borsh.u64("lockupMaxSaturation"),
     borsh.u64("proposalMinVotingPowerForQuorum"),
     borsh.u16("proposalMinPassBp"),
+    borsh.bool("proposalCanUpdateAfterVotes"),
     borsh.u64("lockupAmount"),
     borsh.u32("proposalNonce"),
     borsh.array(borsh.u8(), 240, "padding"),
@@ -93,6 +97,7 @@ export class Namespace {
     this.proposalMinVotingPowerForQuorum =
       fields.proposalMinVotingPowerForQuorum
     this.proposalMinPassBp = fields.proposalMinPassBp
+    this.proposalCanUpdateAfterVotes = fields.proposalCanUpdateAfterVotes
     this.lockupAmount = fields.lockupAmount
     this.proposalNonce = fields.proposalNonce
     this.padding = fields.padding
@@ -154,6 +159,7 @@ export class Namespace {
       lockupMaxSaturation: dec.lockupMaxSaturation,
       proposalMinVotingPowerForQuorum: dec.proposalMinVotingPowerForQuorum,
       proposalMinPassBp: dec.proposalMinPassBp,
+      proposalCanUpdateAfterVotes: dec.proposalCanUpdateAfterVotes,
       lockupAmount: dec.lockupAmount,
       proposalNonce: dec.proposalNonce,
       padding: dec.padding,
@@ -175,6 +181,7 @@ export class Namespace {
       proposalMinVotingPowerForQuorum:
         this.proposalMinVotingPowerForQuorum.toString(),
       proposalMinPassBp: this.proposalMinPassBp,
+      proposalCanUpdateAfterVotes: this.proposalCanUpdateAfterVotes,
       lockupAmount: this.lockupAmount.toString(),
       proposalNonce: this.proposalNonce,
       padding: this.padding,
@@ -197,6 +204,7 @@ export class Namespace {
         obj.proposalMinVotingPowerForQuorum
       ),
       proposalMinPassBp: obj.proposalMinPassBp,
+      proposalCanUpdateAfterVotes: obj.proposalCanUpdateAfterVotes,
       lockupAmount: new BN(obj.lockupAmount),
       proposalNonce: obj.proposalNonce,
       padding: obj.padding,

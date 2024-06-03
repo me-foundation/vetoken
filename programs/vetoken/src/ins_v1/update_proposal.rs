@@ -1,4 +1,5 @@
 use crate::{
+    errors::CustomError,
     id,
     states::{Namespace, Proposal},
 };
@@ -20,6 +21,7 @@ pub struct UpdateProposal<'info> {
     #[account(
       mut,
       has_one=ns,
+      constraint = proposal.can_update(&ns) @ CustomError::CannotUpdateProposal,
     )]
     proposal: Box<Account<'info, Proposal>>,
 

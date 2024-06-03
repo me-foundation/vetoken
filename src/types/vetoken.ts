@@ -499,6 +499,10 @@ export type Vetoken = {
             "type": "u16"
           },
           {
+            "name": "proposalCanUpdateAfterVotes",
+            "type": "bool"
+          },
+          {
             "name": "lockupAmount",
             "type": "u64"
           },
@@ -937,6 +941,12 @@ export type Vetoken = {
             "type": {
               "option": "u16"
             }
+          },
+          {
+            "name": "proposalCanUpdateAfterVotes",
+            "type": {
+              "option": "bool"
+            }
           }
         ]
       }
@@ -1029,6 +1039,11 @@ export type Vetoken = {
       "code": 6009,
       "name": "Overflow",
       "msg": "Overflow"
+    },
+    {
+      "code": 6010,
+      "name": "CannotUpdateProposal",
+      "msg": "Cannot Update Proposal"
     }
   ]
 };
@@ -1534,6 +1549,10 @@ export const IDL: Vetoken = {
             "type": "u16"
           },
           {
+            "name": "proposalCanUpdateAfterVotes",
+            "type": "bool"
+          },
+          {
             "name": "lockupAmount",
             "type": "u64"
           },
@@ -1972,6 +1991,12 @@ export const IDL: Vetoken = {
             "type": {
               "option": "u16"
             }
+          },
+          {
+            "name": "proposalCanUpdateAfterVotes",
+            "type": {
+              "option": "bool"
+            }
           }
         ]
       }
@@ -2064,6 +2089,11 @@ export const IDL: Vetoken = {
       "code": 6009,
       "name": "Overflow",
       "msg": "Overflow"
+    },
+    {
+      "code": 6010,
+      "name": "CannotUpdateProposal",
+      "msg": "Cannot Update Proposal"
     }
   ]
 };

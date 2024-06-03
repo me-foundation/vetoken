@@ -22,4 +22,6 @@ pub enum CustomError {
     InvalidProposalState,
     #[msg("Overflow")]
     Overflow,
+    #[msg("Cannot Update Proposal")]
+    CannotUpdateProposal,
 }

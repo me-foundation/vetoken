@@ -14,6 +14,7 @@ export interface UpdateNamespaceArgsFields {
   lockupMaxSaturation: BN | null
   proposalMinVotingPowerForQuorum: BN | null
   proposalMinPassBp: number | null
+  proposalCanUpdateAfterVotes: boolean | null
 }
 
 export interface UpdateNamespaceArgsJSON {
@@ -27,6 +28,7 @@ export interface UpdateNamespaceArgsJSON {
   lockupMaxSaturation: string | null
   proposalMinVotingPowerForQuorum: string | null
   proposalMinPassBp: number | null
+  proposalCanUpdateAfterVotes: boolean | null
 }
 
 export class UpdateNamespaceArgs {
@@ -40,6 +42,7 @@ export class UpdateNamespaceArgs {
   readonly lockupMaxSaturation: BN | null
   readonly proposalMinVotingPowerForQuorum: BN | null
   readonly proposalMinPassBp: number | null
+  readonly proposalCanUpdateAfterVotes: boolean | null
 
   constructor(fields: UpdateNamespaceArgsFields) {
     this.securityCouncil = fields.securityCouncil
@@ -53,6 +56,7 @@ export class UpdateNamespaceArgs {
     this.proposalMinVotingPowerForQuorum =
       fields.proposalMinVotingPowerForQuorum
     this.proposalMinPassBp = fields.proposalMinPassBp
+    this.proposalCanUpdateAfterVotes = fields.proposalCanUpdateAfterVotes
   }
 
   static layout(property?: string) {
@@ -68,6 +72,7 @@ export class UpdateNamespaceArgs {
         borsh.option(borsh.u64(), "lockupMaxSaturation"),
         borsh.option(borsh.u64(), "proposalMinVotingPowerForQuorum"),
         borsh.option(borsh.u16(), "proposalMinPassBp"),
+        borsh.option(borsh.bool(), "proposalCanUpdateAfterVotes"),
       ],
       property
     )
@@ -86,6 +91,7 @@ export class UpdateNamespaceArgs {
       lockupMaxSaturation: obj.lockupMaxSaturation,
       proposalMinVotingPowerForQuorum: obj.proposalMinVotingPowerForQuorum,
       proposalMinPassBp: obj.proposalMinPassBp,
+      proposalCanUpdateAfterVotes: obj.proposalCanUpdateAfterVotes,
     })
   }
 
@@ -101,6 +107,7 @@ export class UpdateNamespaceArgs {
       lockupMaxSaturation: fields.lockupMaxSaturation,
       proposalMinVotingPowerForQuorum: fields.proposalMinVotingPowerForQuorum,
       proposalMinPassBp: fields.proposalMinPassBp,
+      proposalCanUpdateAfterVotes: fields.proposalCanUpdateAfterVotes,
     }
   }
 
@@ -126,6 +133,7 @@ export class UpdateNamespaceArgs {
           this.proposalMinVotingPowerForQuorum.toString()) ||
         null,
       proposalMinPassBp: this.proposalMinPassBp,
+      proposalCanUpdateAfterVotes: this.proposalCanUpdateAfterVotes,
     }
   }
 
@@ -149,6 +157,7 @@ export class UpdateNamespaceArgs {
           new BN(obj.proposalMinVotingPowerForQuorum)) ||
         null,
       proposalMinPassBp: obj.proposalMinPassBp,
+      proposalCanUpdateAfterVotes: obj.proposalCanUpdateAfterVotes,
     })
   }
 
