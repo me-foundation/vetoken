@@ -187,28 +187,6 @@ impl Proposal {
         }
     }
 
-    #[allow(dead_code)]
-    pub fn winning_choice(&self) -> usize {
-        let choices = [
-            self.num_choice_0,
-            self.num_choice_1,
-            self.num_choice_2,
-            self.num_choice_3,
-            self.num_choice_4,
-            self.num_choice_5,
-        ];
-
-        let mut max_choice = 0;
-        let mut max_choice_idx = 0;
-        for (idx, choice) in choices.iter().enumerate() {
-            if *choice > max_choice {
-                max_choice = *choice;
-                max_choice_idx = idx;
-            }
-        }
-        max_choice_idx
-    }
-
     pub fn total_votes(&self) -> u64 {
         self.num_choice_0
             .checked_add(self.num_choice_1)
@@ -278,7 +256,7 @@ pub struct Distribution {
 #[account]
 #[derive(Copy, InitSpace)]
 pub struct DistributionClaim {
-    // Seeds: [b"distribution_claim", ns.key().as_ref(), distribution.key().as_ref(), claimant.key().as_ref(), args.cosigned_msg.as_ref()]
+    // Seeds: [b"distribution_claim", ns.key().as_ref(), claimant.key().as_ref(), args.cosigned_msg.as_ref()]
     pub ns: Pubkey,
     pub distribution: Pubkey,
     pub claimant: Pubkey,
