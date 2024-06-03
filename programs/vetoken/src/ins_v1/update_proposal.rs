@@ -1,5 +1,7 @@
 use crate::{
-    errors::CustomError, id, states::{Namespace, Proposal}
+    errors::CustomError,
+    id,
+    states::{Namespace, Proposal},
 };
 use anchor_lang::prelude::*;
 
