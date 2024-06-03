@@ -13,7 +13,7 @@ use anchor_spl::{
 #[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct ClaimFromDistributionArgs {
     amount: u64,
-    cosigned_msg: [u8; 32],
+    cosigned_msg: [u8; 32], // cosigned_msg is a sha256 hash of the message that was cosigned, it's per ns per claimant per message digest
 }
 
 #[derive(Accounts)]
@@ -34,7 +34,7 @@ pub struct ClaimFromDistribution<'info> {
 
     #[account(
       init,
-      seeds=[b"distribution_claim", ns.key().as_ref(), distribution.key().as_ref(), claimant.key().as_ref(), args.cosigned_msg.as_ref()],
+      seeds=[b"distribution_claim", ns.key().as_ref(), claimant.key().as_ref(), args.cosigned_msg.as_ref()],
       payer=payer,
       space=8+DistributionClaim::INIT_SPACE,
       bump,

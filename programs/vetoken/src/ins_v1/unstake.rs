@@ -26,6 +26,7 @@ pub struct Unstake<'info> {
       mut,
       seeds=[b"lockup", ns.key().as_ref(), owner.key().as_ref()],
       has_one=ns,
+      has_one=owner,
       constraint = lockup.end_ts <= ns.now() @ CustomError::InvalidTimestamp,
       constraint = ns.lockup_amount >= lockup.amount @ CustomError::Overflow,
       bump,
