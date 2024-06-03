@@ -14,6 +14,7 @@ pub struct UpdateNamespaceArgs {
     lockup_max_saturation: Option<u64>,
     proposal_min_voting_power_for_quorum: Option<u64>,
     proposal_min_pass_bp: Option<u16>,
+    proposal_can_update_after_votes: Option<bool>,
 }
 
 #[derive(Accounts)]
@@ -68,6 +69,9 @@ pub fn handle<'info>(
     }
     if let Some(proposal_min_pass_bp) = args.proposal_min_pass_bp {
         ns.proposal_min_pass_bp = proposal_min_pass_bp;
+    }
+    if let Some(proposal_can_update_after_votes) = args.proposal_can_update_after_votes{
+        ns.proposal_can_update_after_votes = proposal_can_update_after_votes;
     }
 
     Ok(())

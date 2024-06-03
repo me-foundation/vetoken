@@ -9,6 +9,7 @@ export type CustomError =
   | InvalidPayer
   | InvalidProposalState
   | Overflow
+  | CannotUpdateProposal
 
 export class InvalidOwner extends Error {
   static readonly code = 6000
@@ -120,6 +121,17 @@ export class Overflow extends Error {
   }
 }
 
+export class CannotUpdateProposal extends Error {
+  static readonly code = 6010
+  readonly code = 6010
+  readonly name = "CannotUpdateProposal"
+  readonly msg = "Cannot Update Proposal"
+
+  constructor(readonly logs?: string[]) {
+    super("6010: Cannot Update Proposal")
+  }
+}
+
 export function fromCode(code: number, logs?: string[]): CustomError | null {
   switch (code) {
     case 6000:
@@ -142,6 +154,8 @@ export function fromCode(code: number, logs?: string[]): CustomError | null {
       return new InvalidProposalState(logs)
     case 6009:
       return new Overflow(logs)
+    case 6010:
+      return new CannotUpdateProposal(logs)
   }
 
   return null

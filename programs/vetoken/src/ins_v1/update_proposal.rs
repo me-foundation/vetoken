@@ -1,6 +1,5 @@
 use crate::{
-    id,
-    states::{Namespace, Proposal},
+    errors::CustomError, id, states::{Namespace, Proposal}
 };
 use anchor_lang::prelude::*;
 
@@ -20,6 +19,7 @@ pub struct UpdateProposal<'info> {
     #[account(
       mut,
       has_one=ns,
+      constraint= proposal.can_update(&ns) @ CustomError::CannotUpdateProposal,
     )]
     proposal: Box<Account<'info, Proposal>>,
 
