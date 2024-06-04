@@ -45,6 +45,6 @@ pub fn handle<'info>(ctx: Context<'_, '_, '_, 'info, InitNamespace<'info>>) -> R
     ns.lockup_max_saturation = 86400 * 365 * 4; // 4 years in seconds
     ns.proposal_min_voting_power_for_quorum = 10 * 1_000_000; // minimum participation voting power
     ns.proposal_min_pass_bp = 6000; // 60%, the population is total_votes
-    ns.proposal_can_update_after_votes = true;
+    ns.proposal_can_update_after_votes = false;
     Ok(())
 }
