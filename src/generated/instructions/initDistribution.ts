@@ -10,6 +10,7 @@ export interface InitDistributionArgs {
 
 export interface InitDistributionAccounts {
   payer: PublicKey
+  uuid: PublicKey
   distribution: PublicKey
   distributionTokenMint: PublicKey
   ns: PublicKey
@@ -25,6 +26,7 @@ export function initDistribution(
 ) {
   const keys: Array<AccountMeta> = [
     { pubkey: accounts.payer, isSigner: true, isWritable: true },
+    { pubkey: accounts.uuid, isSigner: true, isWritable: false },
     { pubkey: accounts.distribution, isSigner: false, isWritable: true },
     {
       pubkey: accounts.distributionTokenMint,

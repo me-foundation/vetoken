@@ -1,11 +1,11 @@
-use crate::{id, states::Namespace};
+use crate::states::Namespace;
 use anchor_lang::prelude::*;
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct UpdateNamespaceArgs {
     security_council: Option<Pubkey>,
     review_council: Option<Pubkey>,
-    debug_ts_offset: Option<i64>,
+    override_now: Option<i64>,
 
     lockup_default_target_rewards_bp: Option<u16>,
     lockup_default_target_voting_bp: Option<u16>,
@@ -26,7 +26,6 @@ pub struct UpdateNamespace<'info> {
     #[account(
       mut,
       has_one = security_council,
-      constraint = *ns.to_account_info().owner == id(),
     )]
     ns: Box<Account<'info, Namespace>>,
 }
@@ -38,7 +37,7 @@ pub fn handle<'info>(
     let ns = &mut ctx.accounts.ns;
 
     if cfg!(feature = "anchor-test") {
-        ns.debug_ts_offset = args.debug_ts_offset.unwrap_or(0);
+        ns.override_now = args.override_now.unwrap_or(0);
     }
 
     if let Some(security_council) = args.security_council {

@@ -9,7 +9,7 @@ export interface NamespaceFields {
   deployer: PublicKey
   securityCouncil: PublicKey
   reviewCouncil: PublicKey
-  debugTsOffset: BN
+  overrideNow: BN
   lockupDefaultTargetRewardsBp: number
   lockupDefaultTargetVotingBp: number
   lockupMinDuration: BN
@@ -28,7 +28,7 @@ export interface NamespaceJSON {
   deployer: string
   securityCouncil: string
   reviewCouncil: string
-  debugTsOffset: string
+  overrideNow: string
   lockupDefaultTargetRewardsBp: number
   lockupDefaultTargetVotingBp: number
   lockupMinDuration: string
@@ -47,7 +47,7 @@ export class Namespace {
   readonly deployer: PublicKey
   readonly securityCouncil: PublicKey
   readonly reviewCouncil: PublicKey
-  readonly debugTsOffset: BN
+  readonly overrideNow: BN
   readonly lockupDefaultTargetRewardsBp: number
   readonly lockupDefaultTargetVotingBp: number
   readonly lockupMinDuration: BN
@@ -69,7 +69,7 @@ export class Namespace {
     borsh.publicKey("deployer"),
     borsh.publicKey("securityCouncil"),
     borsh.publicKey("reviewCouncil"),
-    borsh.i64("debugTsOffset"),
+    borsh.i64("overrideNow"),
     borsh.u16("lockupDefaultTargetRewardsBp"),
     borsh.u16("lockupDefaultTargetVotingBp"),
     borsh.i64("lockupMinDuration"),
@@ -88,7 +88,7 @@ export class Namespace {
     this.deployer = fields.deployer
     this.securityCouncil = fields.securityCouncil
     this.reviewCouncil = fields.reviewCouncil
-    this.debugTsOffset = fields.debugTsOffset
+    this.overrideNow = fields.overrideNow
     this.lockupDefaultTargetRewardsBp = fields.lockupDefaultTargetRewardsBp
     this.lockupDefaultTargetVotingBp = fields.lockupDefaultTargetVotingBp
     this.lockupMinDuration = fields.lockupMinDuration
@@ -151,7 +151,7 @@ export class Namespace {
       deployer: dec.deployer,
       securityCouncil: dec.securityCouncil,
       reviewCouncil: dec.reviewCouncil,
-      debugTsOffset: dec.debugTsOffset,
+      overrideNow: dec.overrideNow,
       lockupDefaultTargetRewardsBp: dec.lockupDefaultTargetRewardsBp,
       lockupDefaultTargetVotingBp: dec.lockupDefaultTargetVotingBp,
       lockupMinDuration: dec.lockupMinDuration,
@@ -172,7 +172,7 @@ export class Namespace {
       deployer: this.deployer.toString(),
       securityCouncil: this.securityCouncil.toString(),
       reviewCouncil: this.reviewCouncil.toString(),
-      debugTsOffset: this.debugTsOffset.toString(),
+      overrideNow: this.overrideNow.toString(),
       lockupDefaultTargetRewardsBp: this.lockupDefaultTargetRewardsBp,
       lockupDefaultTargetVotingBp: this.lockupDefaultTargetVotingBp,
       lockupMinDuration: this.lockupMinDuration.toString(),
@@ -194,7 +194,7 @@ export class Namespace {
       deployer: new PublicKey(obj.deployer),
       securityCouncil: new PublicKey(obj.securityCouncil),
       reviewCouncil: new PublicKey(obj.reviewCouncil),
-      debugTsOffset: new BN(obj.debugTsOffset),
+      overrideNow: new BN(obj.overrideNow),
       lockupDefaultTargetRewardsBp: obj.lockupDefaultTargetRewardsBp,
       lockupDefaultTargetVotingBp: obj.lockupDefaultTargetVotingBp,
       lockupMinDuration: new BN(obj.lockupMinDuration),

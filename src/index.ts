@@ -123,9 +123,8 @@ export class VeTokenSDK {
   pdaDistributionClaim(claimant: PublicKey, cosignedMsg: string) {
     const [pda] = PublicKey.findProgramAddressSync(
       [
-        Buffer.from("distribution_claim"),
+        Buffer.from("claim"),
         this.pdaNamespace().toBuffer(),
-        claimant.toBuffer(),
         createHash('sha256').update(cosignedMsg).digest(),
       ],
       PROGRAM_ID
@@ -160,7 +159,7 @@ export class VeTokenSDK {
   txUpdateNamespace(
     securityCouncil: PublicKey | null,
     reviewCouncil: PublicKey | null,
-    debugTsOffset: BN | null,
+    overrideNow: BN | null,
     lockupDefaultTargetRewardsBp: number | null,
     lockupDefaultTargetVotingBp: number | null,
     lockupMinDuration: BN | null,
@@ -175,7 +174,7 @@ export class VeTokenSDK {
         args: {
           securityCouncil,
           reviewCouncil,
-          debugTsOffset,
+          overrideNow,
           lockupDefaultTargetRewardsBp,
           lockupDefaultTargetVotingBp,
           lockupMinDuration,
@@ -327,7 +326,6 @@ export class VeTokenSDK {
     const ix = initDistribution(
       {
         args: {
-          uuid,
           cosigner1,
           cosigner2,
           startTs,
@@ -339,6 +337,7 @@ export class VeTokenSDK {
         distribution: this.pdaDistribution(cosigner1, cosigner2, uuid),
         distributionTokenMint: this.tokenMint,
         systemProgram: SystemProgram.programId,
+        uuid,
       }
     );
     return this.newTx().add(ix);

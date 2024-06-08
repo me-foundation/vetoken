@@ -336,6 +336,11 @@ export type Vetoken = {
           "isSigner": true
         },
         {
+          "name": "uuid",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
           "name": "distribution",
           "isMut": true,
           "isSigner": false
@@ -467,7 +472,7 @@ export type Vetoken = {
             "type": "publicKey"
           },
           {
-            "name": "debugTsOffset",
+            "name": "overrideNow",
             "type": "i64"
           },
           {
@@ -798,10 +803,6 @@ export type Vetoken = {
         "kind": "struct",
         "fields": [
           {
-            "name": "uuid",
-            "type": "publicKey"
-          },
-          {
             "name": "cosigner1",
             "type": "publicKey"
           },
@@ -895,7 +896,7 @@ export type Vetoken = {
             }
           },
           {
-            "name": "debugTsOffset",
+            "name": "overrideNow",
             "type": {
               "option": "i64"
             }
@@ -1386,6 +1387,11 @@ export const IDL: Vetoken = {
           "isSigner": true
         },
         {
+          "name": "uuid",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
           "name": "distribution",
           "isMut": true,
           "isSigner": false
@@ -1517,7 +1523,7 @@ export const IDL: Vetoken = {
             "type": "publicKey"
           },
           {
-            "name": "debugTsOffset",
+            "name": "overrideNow",
             "type": "i64"
           },
           {
@@ -1848,10 +1854,6 @@ export const IDL: Vetoken = {
         "kind": "struct",
         "fields": [
           {
-            "name": "uuid",
-            "type": "publicKey"
-          },
-          {
             "name": "cosigner1",
             "type": "publicKey"
           },
@@ -1945,7 +1947,7 @@ export const IDL: Vetoken = {
             }
           },
           {
-            "name": "debugTsOffset",
+            "name": "overrideNow",
             "type": {
               "option": "i64"
             }
