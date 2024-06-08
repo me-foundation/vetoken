@@ -1,6 +1,6 @@
 use crate::{
-    lockup_seeds,
     errors::CustomError,
+    lockup_seeds,
     states::{Lockup, Namespace},
 };
 use anchor_lang::prelude::*;
