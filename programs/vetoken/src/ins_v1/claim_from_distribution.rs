@@ -1,7 +1,6 @@
 use crate::{
     distribution_seeds,
     errors::CustomError,
-    id,
     states::{Distribution, DistributionClaim, Namespace},
 };
 use anchor_lang::prelude::*;
@@ -34,7 +33,7 @@ pub struct ClaimFromDistribution<'info> {
 
     #[account(
       init,
-      seeds=[b"distribution_claim", ns.key().as_ref(), claimant.key().as_ref(), args.cosigned_msg.as_ref()],
+      seeds=[b"claim", ns.key().as_ref(), args.cosigned_msg.as_ref()],
       payer=payer,
       space=8+DistributionClaim::INIT_SPACE,
       bump,
@@ -74,9 +73,7 @@ pub struct ClaimFromDistribution<'info> {
     )]
     claimant_token_account: Box<InterfaceAccount<'info, TokenAccount>>,
 
-    #[account(
-      constraint = *ns.to_account_info().owner == id(),
-    )]
+    #[account()]
     ns: Box<Account<'info, Namespace>>,
 
     token_program: Interface<'info, TokenInterface>,

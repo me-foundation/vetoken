@@ -20,4 +20,5 @@ jobs:
           node-version: '20.9.0'
           features: 'anchor-test'
       - run: cargo fmt -- --check && cargo clippy
+      - run: cargo test
       - run: anchor build && npm ci && npm run test -- run

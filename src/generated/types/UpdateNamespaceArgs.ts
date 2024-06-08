@@ -6,7 +6,7 @@ import * as borsh from "@coral-xyz/borsh"
 export interface UpdateNamespaceArgsFields {
   securityCouncil: PublicKey | null
   reviewCouncil: PublicKey | null
-  debugTsOffset: BN | null
+  overrideNow: BN | null
   lockupDefaultTargetRewardsBp: number | null
   lockupDefaultTargetVotingBp: number | null
   lockupMinDuration: BN | null
@@ -20,7 +20,7 @@ export interface UpdateNamespaceArgsFields {
 export interface UpdateNamespaceArgsJSON {
   securityCouncil: string | null
   reviewCouncil: string | null
-  debugTsOffset: string | null
+  overrideNow: string | null
   lockupDefaultTargetRewardsBp: number | null
   lockupDefaultTargetVotingBp: number | null
   lockupMinDuration: string | null
@@ -34,7 +34,7 @@ export interface UpdateNamespaceArgsJSON {
 export class UpdateNamespaceArgs {
   readonly securityCouncil: PublicKey | null
   readonly reviewCouncil: PublicKey | null
-  readonly debugTsOffset: BN | null
+  readonly overrideNow: BN | null
   readonly lockupDefaultTargetRewardsBp: number | null
   readonly lockupDefaultTargetVotingBp: number | null
   readonly lockupMinDuration: BN | null
@@ -47,7 +47,7 @@ export class UpdateNamespaceArgs {
   constructor(fields: UpdateNamespaceArgsFields) {
     this.securityCouncil = fields.securityCouncil
     this.reviewCouncil = fields.reviewCouncil
-    this.debugTsOffset = fields.debugTsOffset
+    this.overrideNow = fields.overrideNow
     this.lockupDefaultTargetRewardsBp = fields.lockupDefaultTargetRewardsBp
     this.lockupDefaultTargetVotingBp = fields.lockupDefaultTargetVotingBp
     this.lockupMinDuration = fields.lockupMinDuration
@@ -64,7 +64,7 @@ export class UpdateNamespaceArgs {
       [
         borsh.option(borsh.publicKey(), "securityCouncil"),
         borsh.option(borsh.publicKey(), "reviewCouncil"),
-        borsh.option(borsh.i64(), "debugTsOffset"),
+        borsh.option(borsh.i64(), "overrideNow"),
         borsh.option(borsh.u16(), "lockupDefaultTargetRewardsBp"),
         borsh.option(borsh.u16(), "lockupDefaultTargetVotingBp"),
         borsh.option(borsh.i64(), "lockupMinDuration"),
@@ -83,7 +83,7 @@ export class UpdateNamespaceArgs {
     return new UpdateNamespaceArgs({
       securityCouncil: obj.securityCouncil,
       reviewCouncil: obj.reviewCouncil,
-      debugTsOffset: obj.debugTsOffset,
+      overrideNow: obj.overrideNow,
       lockupDefaultTargetRewardsBp: obj.lockupDefaultTargetRewardsBp,
       lockupDefaultTargetVotingBp: obj.lockupDefaultTargetVotingBp,
       lockupMinDuration: obj.lockupMinDuration,
@@ -99,7 +99,7 @@ export class UpdateNamespaceArgs {
     return {
       securityCouncil: fields.securityCouncil,
       reviewCouncil: fields.reviewCouncil,
-      debugTsOffset: fields.debugTsOffset,
+      overrideNow: fields.overrideNow,
       lockupDefaultTargetRewardsBp: fields.lockupDefaultTargetRewardsBp,
       lockupDefaultTargetVotingBp: fields.lockupDefaultTargetVotingBp,
       lockupMinDuration: fields.lockupMinDuration,
@@ -117,8 +117,7 @@ export class UpdateNamespaceArgs {
         (this.securityCouncil && this.securityCouncil.toString()) || null,
       reviewCouncil:
         (this.reviewCouncil && this.reviewCouncil.toString()) || null,
-      debugTsOffset:
-        (this.debugTsOffset && this.debugTsOffset.toString()) || null,
+      overrideNow: (this.overrideNow && this.overrideNow.toString()) || null,
       lockupDefaultTargetRewardsBp: this.lockupDefaultTargetRewardsBp,
       lockupDefaultTargetVotingBp: this.lockupDefaultTargetVotingBp,
       lockupMinDuration:
@@ -143,7 +142,7 @@ export class UpdateNamespaceArgs {
         (obj.securityCouncil && new PublicKey(obj.securityCouncil)) || null,
       reviewCouncil:
         (obj.reviewCouncil && new PublicKey(obj.reviewCouncil)) || null,
-      debugTsOffset: (obj.debugTsOffset && new BN(obj.debugTsOffset)) || null,
+      overrideNow: (obj.overrideNow && new BN(obj.overrideNow)) || null,
       lockupDefaultTargetRewardsBp: obj.lockupDefaultTargetRewardsBp,
       lockupDefaultTargetVotingBp: obj.lockupDefaultTargetVotingBp,
       lockupMinDuration:

@@ -336,6 +336,11 @@
           "isSigner": true
         },
         {
+          "name": "uuid",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
           "name": "distribution",
           "isMut": true,
           "isSigner": false
@@ -467,7 +472,7 @@
             "type": "publicKey"
           },
           {
-            "name": "debugTsOffset",
+            "name": "overrideNow",
             "type": "i64"
           },
           {
@@ -798,10 +803,6 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "uuid",
-            "type": "publicKey"
-          },
-          {
             "name": "cosigner1",
             "type": "publicKey"
           },
@@ -895,7 +896,7 @@
             }
           },
           {
-            "name": "debugTsOffset",
+            "name": "overrideNow",
             "type": {
               "option": "i64"
             }

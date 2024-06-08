@@ -1,6 +1,5 @@
 use crate::{
     errors::CustomError,
-    id,
     states::{Namespace, Proposal},
 };
 use anchor_lang::prelude::*;
@@ -27,7 +26,6 @@ pub struct UpdateProposal<'info> {
 
     #[account(
       has_one=review_council,
-      constraint = *ns.to_account_info().owner == id(),
     )]
     ns: Box<Account<'info, Namespace>>,
 }

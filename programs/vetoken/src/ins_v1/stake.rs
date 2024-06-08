@@ -1,6 +1,5 @@
 use crate::{
     errors::CustomError,
-    id,
     states::{Lockup, Namespace},
 };
 use anchor_lang::{prelude::*, AnchorDeserialize};
@@ -55,7 +54,6 @@ pub struct Stake<'info> {
     #[account(
         mut,
         has_one = token_mint,
-        constraint = *ns.to_account_info().owner == id(),
     )]
     ns: Box<Account<'info, Namespace>>,
 

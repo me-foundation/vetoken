@@ -1,6 +1,5 @@
 use crate::{
     errors::CustomError,
-    id,
     states::{Lockup, Namespace},
 };
 use anchor_lang::{prelude::*, AnchorDeserialize};
@@ -42,7 +41,7 @@ pub struct StakeTo<'info> {
       payer=security_council,
       seeds=[b"lockup", ns.key().as_ref(), owner.key().as_ref()],
       space= 8 + Lockup::INIT_SPACE,
-      constraint = args.amount > ns.lockup_min_amount @ CustomError::InvalidLockupAmount,
+      constraint = args.amount >= ns.lockup_min_amount @ CustomError::InvalidLockupAmount,
       constraint = args.end_ts >= lockup.min_end_ts(&ns) @ CustomError::InvalidTimestamp,
       bump
     )]
@@ -62,7 +61,6 @@ pub struct StakeTo<'info> {
         mut,
         has_one = token_mint,
         has_one = security_council,
-        constraint = *ns.to_account_info().owner == id(),
     )]
     ns: Box<Account<'info, Namespace>>,
 
