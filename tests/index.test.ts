@@ -444,7 +444,6 @@ describe("stake", async () => {
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user2);
       const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
-      console.log(confirmed.result);
       expect(confirmed.result).contains("0x1774");
     });
   });
@@ -464,7 +463,7 @@ describe("proposal", async () => {
 
   const startTs = new BN(new Date().getTime() / 1000 - 1000);
   const endTs = new BN(
-    (new Date().getTime() + 1000 * 60 * 60 * 24 * 30) / 1000
+    (new Date().getTime() + 1000 * 60 * 60 * 24 * 3) / 1000 // 3 days of proposal duration
   );
   describe("proposal happy path", async () => {
     test("create proposal with nonce 0 by review council", async () => {
@@ -643,7 +642,6 @@ describe("proposal", async () => {
     tx.recentBlockhash = ctx.lastBlockhash;
     tx.sign(ctx.payer, cosigner1, cosigner2);
     confirmed = await ctx.banksClient.tryProcessTransaction(tx);
-    console.log(confirmed.meta?.logMessages);
     assert(confirmed.result === null);
     const dc = await getDistributionClaim(ctx, sdk, sdk.pdaDistributionClaim(claimant.publicKey, cosignedMsg));
     assert(dc);
