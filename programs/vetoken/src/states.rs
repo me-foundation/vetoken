@@ -1,3 +1,5 @@
+use std::convert::TryInto;
+
 use anchor_lang::{prelude::*, AnchorDeserialize};
 
 #[account]
@@ -93,7 +95,9 @@ impl Lockup {
             (self.end_ts - now) as u128,
         );
 
-        (max_voting_power * remaining_time / ns.lockup_max_saturation as u128) as u64
+        (max_voting_power * remaining_time / ns.lockup_max_saturation as u128)
+            .try_into()
+            .expect("should not overflow")
     }
 
     // rewards_power is the voting power that can receive rewards based on the target_rewards_bp
@@ -120,13 +124,7 @@ pub struct Proposal {
     pub start_ts: i64,
     pub end_ts: i64,
     pub status: u8,
-
-    pub num_choice_0: u64,
-    pub num_choice_1: u64,
-    pub num_choice_2: u64,
-    pub num_choice_3: u64,
-    pub num_choice_4: u64,
-    pub num_choice_5: u64,
+    pub num_choices: [u64; 6],
 
     pub _padding: [u8; 240],
 }
@@ -158,39 +156,8 @@ impl Proposal {
 
     pub fn cast_vote(&mut self, choice: u8, voting_power: u64) {
         match choice {
-            0 => {
-                self.num_choice_0 = self
-                    .num_choice_0
-                    .checked_add(voting_power)
-                    .expect("should not overflow")
-            }
-            1 => {
-                self.num_choice_1 = self
-                    .num_choice_1
-                    .checked_add(voting_power)
-                    .expect("should not overflow")
-            }
-            2 => {
-                self.num_choice_2 = self
-                    .num_choice_2
-                    .checked_add(voting_power)
-                    .expect("should not overflow")
-            }
-            3 => {
-                self.num_choice_3 = self
-                    .num_choice_3
-                    .checked_add(voting_power)
-                    .expect("should not overflow")
-            }
-            4 => {
-                self.num_choice_4 = self
-                    .num_choice_4
-                    .checked_add(voting_power)
-                    .expect("should not overflow")
-            }
-            5 => {
-                self.num_choice_5 = self
-                    .num_choice_5
+            0..=5 => {
+                self.num_choices[choice as usize] = self.num_choices[choice as usize]
                     .checked_add(voting_power)
                     .expect("should not overflow")
             }
@@ -199,17 +166,7 @@ impl Proposal {
     }
 
     pub fn total_votes(&self) -> u64 {
-        self.num_choice_0
-            .checked_add(self.num_choice_1)
-            .expect("should not overflow")
-            .checked_add(self.num_choice_2)
-            .expect("should not overflow")
-            .checked_add(self.num_choice_3)
-            .expect("should not overflow")
-            .checked_add(self.num_choice_4)
-            .expect("should not overflow")
-            .checked_add(self.num_choice_5)
-            .expect("should not overflow")
+        self.num_choices.iter().sum()
     }
 
     pub fn has_quorum(&self, ns: &Namespace) -> bool {
@@ -217,7 +174,12 @@ impl Proposal {
     }
 
     pub fn has_passed(&self, ns: &Namespace) -> bool {
+        // Check if the proposal has quorum
         if !self.has_quorum(ns) {
+            return false;
+        }
+        // Check if the proposal has ended
+        if ns.now() < self.end_ts {
             return false;
         }
         let pass_threshold = self
@@ -226,12 +188,9 @@ impl Proposal {
             .expect("should not overflow")
             .checked_div(10000)
             .expect("should not overflow");
-        self.num_choice_0 > pass_threshold
-            || self.num_choice_1 > pass_threshold
-            || self.num_choice_2 > pass_threshold
-            || self.num_choice_3 > pass_threshold
-            || self.num_choice_4 > pass_threshold
-            || self.num_choice_5 > pass_threshold
+        self.num_choices
+            .iter()
+            .any(|&choice| choice > pass_threshold)
     }
 }
 
@@ -484,5 +443,110 @@ mod tests {
             let voting_power = lockup.voting_power(&ns);
             assert_eq!(voting_power, expected_voting_power, "{}", name);
         }
+    }
+
+    #[test]
+    fn test_set_status_created() {
+        let ns = Namespace {
+            token_mint: Pubkey::new_from_array([0; 32]),
+            deployer: Pubkey::new_from_array([0; 32]),
+            security_council: Pubkey::new_from_array([0; 32]),
+            review_council: Pubkey::new_from_array([0; 32]),
+            override_now: 1,
+            lockup_default_target_rewards_bp: 1000,
+            lockup_default_target_voting_bp: 5000,
+            lockup_min_duration: 86400,
+            lockup_min_amount: 1000,
+            lockup_max_saturation: 86400,
+            proposal_min_voting_power_for_quorum: 100000,
+            proposal_min_pass_bp: 6000,
+            proposal_can_update_after_votes: true,
+            lockup_amount: 10000,
+            proposal_nonce: 0,
+            _padding: [0; 240],
+        };
+        let mut proposal = Proposal {
+            ns: Pubkey::new_from_array([0; 32]),
+            nonce: 0,
+            owner: Pubkey::new_from_array([0; 32]),
+            uri: [0; 256],
+            start_ts: 0,
+            end_ts: 100,
+            status: 0,
+            num_choices: [10000, 0, 0, 0, 0, 0],
+            _padding: [0; 240],
+        };
+        proposal.set_status(&ns, None);
+        assert_eq!(proposal.status, Proposal::STATUS_CREATED);
+    }
+
+    #[test]
+    fn test_set_status_activated() {
+        let ns = Namespace {
+            token_mint: Pubkey::new_from_array([0; 32]),
+            deployer: Pubkey::new_from_array([0; 32]),
+            security_council: Pubkey::new_from_array([0; 32]),
+            review_council: Pubkey::new_from_array([0; 32]),
+            override_now: 90, // now() < proposal.end_ts
+            lockup_default_target_rewards_bp: 1000,
+            lockup_default_target_voting_bp: 5000,
+            lockup_min_duration: 86400,
+            lockup_min_amount: 1000,
+            lockup_max_saturation: 86400,
+            proposal_min_voting_power_for_quorum: 100,
+            proposal_min_pass_bp: 6000,
+            proposal_can_update_after_votes: true,
+            lockup_amount: 10000,
+            proposal_nonce: 0,
+            _padding: [0; 240],
+        };
+        let mut proposal = Proposal {
+            ns: Pubkey::new_from_array([0; 32]),
+            nonce: 0,
+            owner: Pubkey::new_from_array([0; 32]),
+            uri: [0; 256],
+            start_ts: 0,
+            end_ts: 100,
+            status: 0,
+            num_choices: [100, 100, 0, 0, 0, 0],
+            _padding: [0; 240],
+        };
+        proposal.set_status(&ns, None);
+        assert_eq!(proposal.status, Proposal::STATUS_ACTIVATED);
+    }
+
+    #[test]
+    fn test_set_status_passed() {
+        let ns = Namespace {
+            token_mint: Pubkey::new_from_array([0; 32]),
+            deployer: Pubkey::new_from_array([0; 32]),
+            security_council: Pubkey::new_from_array([0; 32]),
+            review_council: Pubkey::new_from_array([0; 32]),
+            override_now: 101,
+            lockup_default_target_rewards_bp: 1000,
+            lockup_default_target_voting_bp: 5000,
+            lockup_min_duration: 86400,
+            lockup_min_amount: 1000,
+            lockup_max_saturation: 86400,
+            proposal_min_voting_power_for_quorum: 100,
+            proposal_min_pass_bp: 6000,
+            proposal_can_update_after_votes: true,
+            lockup_amount: 10000,
+            proposal_nonce: 0,
+            _padding: [0; 240],
+        };
+        let mut proposal = Proposal {
+            ns: Pubkey::new_from_array([0; 32]),
+            nonce: 0,
+            owner: Pubkey::new_from_array([0; 32]),
+            uri: [0; 256],
+            start_ts: 0,
+            end_ts: 100,
+            status: 0,
+            num_choices: [10000, 0, 0, 0, 0, 0],
+            _padding: [0; 240],
+        };
+        proposal.set_status(&ns, None);
+        assert_eq!(proposal.status, Proposal::STATUS_PASSED);
     }
 }
