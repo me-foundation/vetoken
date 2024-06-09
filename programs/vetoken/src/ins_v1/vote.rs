@@ -27,6 +27,7 @@ pub struct Vote<'info> {
       has_one=owner,
       has_one=ns,
       constraint = lockup.voting_power(&ns) > 0 @ CustomError::InvalidVotingPower,
+      constraint = lockup.end_ts > proposal.end_ts @ CustomError::InvalidTimestamp,
       bump,
     )]
     lockup: Box<Account<'info, Lockup>>,
