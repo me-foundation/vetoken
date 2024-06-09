@@ -124,7 +124,7 @@ pub struct Proposal {
     pub start_ts: i64,
     pub end_ts: i64,
     pub status: u8,
-    pub num_choices: [u64; 6],
+    pub voting_power_choices: [u64; 6], // cumulative voting power for each choice, we use max of 6 choices
 
     pub _padding: [u8; 240],
 }
@@ -148,7 +148,7 @@ impl Proposal {
     }
 
     pub fn can_update(&self, ns: &Namespace) -> bool {
-        if self.total_votes() > 0 && !ns.proposal_can_update_after_votes {
+        if self.total_voting_power() > 0 && !ns.proposal_can_update_after_votes {
             return false;
         }
         true
@@ -157,7 +157,8 @@ impl Proposal {
     pub fn cast_vote(&mut self, choice: u8, voting_power: u64) {
         match choice {
             0..=5 => {
-                self.num_choices[choice as usize] = self.num_choices[choice as usize]
+                self.voting_power_choices[choice as usize] = self.voting_power_choices
+                    [choice as usize]
                     .checked_add(voting_power)
                     .expect("should not overflow")
             }
@@ -165,12 +166,12 @@ impl Proposal {
         }
     }
 
-    pub fn total_votes(&self) -> u64 {
-        self.num_choices.iter().sum()
+    pub fn total_voting_power(&self) -> u64 {
+        self.voting_power_choices.iter().sum()
     }
 
     pub fn has_quorum(&self, ns: &Namespace) -> bool {
-        self.total_votes() > ns.proposal_min_voting_power_for_quorum
+        self.total_voting_power() > ns.proposal_min_voting_power_for_quorum
     }
 
     pub fn has_passed(&self, ns: &Namespace) -> bool {
@@ -183,12 +184,12 @@ impl Proposal {
             return false;
         }
         let pass_threshold = self
-            .total_votes()
+            .total_voting_power()
             .checked_mul(ns.proposal_min_pass_bp as u64)
             .expect("should not overflow")
             .checked_div(10000)
             .expect("should not overflow");
-        self.num_choices
+        self.voting_power_choices
             .iter()
             .any(|&choice| choice > pass_threshold)
     }
@@ -473,7 +474,7 @@ mod tests {
             start_ts: 0,
             end_ts: 100,
             status: 0,
-            num_choices: [10000, 0, 0, 0, 0, 0],
+            voting_power_choices: [10000, 0, 0, 0, 0, 0],
             _padding: [0; 240],
         };
         proposal.set_status(&ns, None);
@@ -508,7 +509,7 @@ mod tests {
             start_ts: 0,
             end_ts: 100,
             status: 0,
-            num_choices: [100, 100, 0, 0, 0, 0],
+            voting_power_choices: [100, 100, 0, 0, 0, 0],
             _padding: [0; 240],
         };
         proposal.set_status(&ns, None);
@@ -543,7 +544,7 @@ mod tests {
             start_ts: 0,
             end_ts: 100,
             status: 0,
-            num_choices: [10000, 0, 0, 0, 0, 0],
+            voting_power_choices: [10000, 0, 0, 0, 0, 0],
             _padding: [0; 240],
         };
         proposal.set_status(&ns, None);
