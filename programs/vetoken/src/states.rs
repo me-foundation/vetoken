@@ -1,6 +1,5 @@
-use std::convert::TryInto;
-
 use anchor_lang::{prelude::*, AnchorDeserialize};
+use std::convert::TryInto;
 
 #[account]
 #[derive(Copy, InitSpace)]
@@ -167,7 +166,9 @@ impl Proposal {
     }
 
     pub fn total_voting_power(&self) -> u64 {
-        self.voting_power_choices.iter().sum()
+        self.voting_power_choices.iter().fold(0, |acc, &choice| {
+            acc.checked_add(choice).expect("should not overflow")
+        })
     }
 
     pub fn has_quorum(&self, ns: &Namespace) -> bool {
