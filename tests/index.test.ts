@@ -547,7 +547,6 @@ describe("proposal", async () => {
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user2);
       const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
-      console.log(confirmed.meta?.logMessages);
       assert(confirmed.result === null);
       const vr = await getVoteRecord(
         ctx,
