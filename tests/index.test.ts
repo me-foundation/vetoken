@@ -336,6 +336,19 @@ test("token balance", async () => {
   expect(user2TokenAcct.amount).toBe(BigInt(30000 * 1e6));
 });
 
+describe("pda", async () => {
+  test("pda of ns", async () => {
+    const sdk = new VeTokenSDK(
+      new PublicKey('FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX'),
+      new PublicKey('FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX'),
+      new PublicKey('34gyo978BuGj1H51fTkpbtBiZVfWy8MwdgmUUHw9tdFG'),
+      new PublicKey('BvnxPU3QutA7j3BjvaD8mikNGZPHg9jUbq1kA5mQa7Fb'),
+      TOKEN_PROGRAM_ID
+    );
+    expect(sdk.pdaNamespace().toBase58()).toBe('6YgabcWPL8MNYKhxcLrPhKAXwD8ZZgPFVLmUPh9aTJWs');
+  });
+});
+
 describe("ns", async () => {
   test("init namespace", async () => {
     const ctx = await setupCtx();
