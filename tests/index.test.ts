@@ -394,6 +394,21 @@ describe("pda", async () => {
         .toBase58()
     ).toBe("SGjimYAi9NKpEDjrbhvRm6i3Gk9RGW1r2i9JdgSQrxR");
   });
+
+  test("pda of proposal", async () => {
+    const sdk = new VeTokenSDK(
+      new PublicKey("FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX"),
+      new PublicKey("FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX"),
+      new PublicKey("34gyo978BuGj1H51fTkpbtBiZVfWy8MwdgmUUHw9tdFG"),
+      new PublicKey("BvnxPU3QutA7j3BjvaD8mikNGZPHg9jUbq1kA5mQa7Fb"),
+      TOKEN_PROGRAM_ID
+    );
+    expect(
+      sdk
+        .pdaProposal(0)
+        .toBase58()
+    ).toBe("CeVTUFMdpo6fGWw2USY3Amsm8NZYkpqwxiiX4bWVDdKu");
+  });
 });
 
 describe("ns", async () => {

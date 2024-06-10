@@ -6,9 +6,9 @@ use anchor_lang::prelude::*;
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct UpdateProposalArgs {
-    uri: [u8; 256],
     start_ts: i64,
     end_ts: i64,
+    uri: String,
 }
 
 #[derive(Accounts)]

@@ -258,9 +258,9 @@ export class VeTokenSDK {
     const ix = initProposal(
       {
         args: {
-          uri: Buffer.from(uri).toJSON().data,
           startTs,
           endTs,
+          uri,
         },
       },
       {
@@ -283,9 +283,9 @@ export class VeTokenSDK {
     const ix = updateProposal(
       {
         args: {
-          uri: Buffer.from(uri).toJSON().data,
           startTs,
           endTs,
+          uri,
         },
       },
       {

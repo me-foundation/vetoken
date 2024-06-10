@@ -112,18 +112,20 @@ impl Lockup {
 }
 
 #[account]
-#[derive(Copy, InitSpace)]
+#[derive(InitSpace)]
 pub struct Proposal {
     // Seeds: [b"proposal", ns.key().as_ref(), ns.proposal_nonce.to_le_bytes().as_ref()]
     pub ns: Pubkey,
     pub nonce: u32,
     pub owner: Pubkey,
 
-    pub uri: [u8; 256],
     pub start_ts: i64,
     pub end_ts: i64,
     pub status: u8,
     pub voting_power_choices: [u64; 6], // cumulative voting power for each choice, we use max of 6 choices
+
+    #[max_len(256)]
+    pub uri: String,
 
     pub _padding: [u8; 240],
 }
@@ -471,7 +473,7 @@ mod tests {
             ns: Pubkey::new_from_array([0; 32]),
             nonce: 0,
             owner: Pubkey::new_from_array([0; 32]),
-            uri: [0; 256],
+            uri: "https://123".to_owned(),
             start_ts: 0,
             end_ts: 100,
             status: 0,
@@ -506,7 +508,7 @@ mod tests {
             ns: Pubkey::new_from_array([0; 32]),
             nonce: 0,
             owner: Pubkey::new_from_array([0; 32]),
-            uri: [0; 256],
+            uri: "https://123".to_owned(),
             start_ts: 0,
             end_ts: 100,
             status: 0,
@@ -541,7 +543,7 @@ mod tests {
             ns: Pubkey::new_from_array([0; 32]),
             nonce: 0,
             owner: Pubkey::new_from_array([0; 32]),
-            uri: [0; 256],
+            uri: "https://123".to_owned(),
             start_ts: 0,
             end_ts: 100,
             status: 0,

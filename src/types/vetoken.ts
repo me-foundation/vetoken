@@ -590,15 +590,6 @@ export type Vetoken = {
             "type": "publicKey"
           },
           {
-            "name": "uri",
-            "type": {
-              "array": [
-                "u8",
-                256
-              ]
-            }
-          },
-          {
             "name": "startTs",
             "type": "i64"
           },
@@ -618,6 +609,10 @@ export type Vetoken = {
                 6
               ]
             }
+          },
+          {
+            "name": "uri",
+            "type": "string"
           },
           {
             "name": "padding",
@@ -808,21 +803,16 @@ export type Vetoken = {
         "kind": "struct",
         "fields": [
           {
-            "name": "uri",
-            "type": {
-              "array": [
-                "u8",
-                256
-              ]
-            }
-          },
-          {
             "name": "startTs",
             "type": "i64"
           },
           {
             "name": "endTs",
             "type": "i64"
+          },
+          {
+            "name": "uri",
+            "type": "string"
           }
         ]
       }
@@ -917,21 +907,16 @@ export type Vetoken = {
         "kind": "struct",
         "fields": [
           {
-            "name": "uri",
-            "type": {
-              "array": [
-                "u8",
-                256
-              ]
-            }
-          },
-          {
             "name": "startTs",
             "type": "i64"
           },
           {
             "name": "endTs",
             "type": "i64"
+          },
+          {
+            "name": "uri",
+            "type": "string"
           }
         ]
       }
@@ -1600,15 +1585,6 @@ export const IDL: Vetoken = {
             "type": "publicKey"
           },
           {
-            "name": "uri",
-            "type": {
-              "array": [
-                "u8",
-                256
-              ]
-            }
-          },
-          {
             "name": "startTs",
             "type": "i64"
           },
@@ -1628,6 +1604,10 @@ export const IDL: Vetoken = {
                 6
               ]
             }
+          },
+          {
+            "name": "uri",
+            "type": "string"
           },
           {
             "name": "padding",
@@ -1818,21 +1798,16 @@ export const IDL: Vetoken = {
         "kind": "struct",
         "fields": [
           {
-            "name": "uri",
-            "type": {
-              "array": [
-                "u8",
-                256
-              ]
-            }
-          },
-          {
             "name": "startTs",
             "type": "i64"
           },
           {
             "name": "endTs",
             "type": "i64"
+          },
+          {
+            "name": "uri",
+            "type": "string"
           }
         ]
       }
@@ -1927,21 +1902,16 @@ export const IDL: Vetoken = {
         "kind": "struct",
         "fields": [
           {
-            "name": "uri",
-            "type": {
-              "array": [
-                "u8",
-                256
-              ]
-            }
-          },
-          {
             "name": "startTs",
             "type": "i64"
           },
           {
             "name": "endTs",
             "type": "i64"
+          },
+          {
+            "name": "uri",
+            "type": "string"
           }
         ]
       }
