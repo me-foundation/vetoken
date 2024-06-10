@@ -611,28 +611,13 @@ export type Vetoken = {
             "type": "u8"
           },
           {
-            "name": "numChoice0",
-            "type": "u64"
-          },
-          {
-            "name": "numChoice1",
-            "type": "u64"
-          },
-          {
-            "name": "numChoice2",
-            "type": "u64"
-          },
-          {
-            "name": "numChoice3",
-            "type": "u64"
-          },
-          {
-            "name": "numChoice4",
-            "type": "u64"
-          },
-          {
-            "name": "numChoice5",
-            "type": "u64"
+            "name": "votingPowerChoices",
+            "type": {
+              "array": [
+                "u64",
+                6
+              ]
+            }
           },
           {
             "name": "padding",
@@ -885,69 +870,43 @@ export type Vetoken = {
         "fields": [
           {
             "name": "securityCouncil",
-            "type": {
-              "option": "publicKey"
-            }
+            "type": "publicKey"
           },
           {
             "name": "reviewCouncil",
-            "type": {
-              "option": "publicKey"
-            }
-          },
-          {
-            "name": "overrideNow",
-            "type": {
-              "option": "i64"
-            }
+            "type": "publicKey"
           },
           {
             "name": "lockupDefaultTargetRewardsBp",
-            "type": {
-              "option": "u16"
-            }
+            "type": "u16"
           },
           {
             "name": "lockupDefaultTargetVotingBp",
-            "type": {
-              "option": "u16"
-            }
+            "type": "u16"
           },
           {
             "name": "lockupMinDuration",
-            "type": {
-              "option": "i64"
-            }
+            "type": "i64"
           },
           {
             "name": "lockupMinAmount",
-            "type": {
-              "option": "u64"
-            }
+            "type": "u64"
           },
           {
             "name": "lockupMaxSaturation",
-            "type": {
-              "option": "u64"
-            }
+            "type": "u64"
           },
           {
             "name": "proposalMinVotingPowerForQuorum",
-            "type": {
-              "option": "u64"
-            }
+            "type": "u64"
           },
           {
             "name": "proposalMinPassBp",
-            "type": {
-              "option": "u16"
-            }
+            "type": "u16"
           },
           {
             "name": "proposalCanUpdateAfterVotes",
-            "type": {
-              "option": "bool"
-            }
+            "type": "bool"
           }
         ]
       }
@@ -1662,28 +1621,13 @@ export const IDL: Vetoken = {
             "type": "u8"
           },
           {
-            "name": "numChoice0",
-            "type": "u64"
-          },
-          {
-            "name": "numChoice1",
-            "type": "u64"
-          },
-          {
-            "name": "numChoice2",
-            "type": "u64"
-          },
-          {
-            "name": "numChoice3",
-            "type": "u64"
-          },
-          {
-            "name": "numChoice4",
-            "type": "u64"
-          },
-          {
-            "name": "numChoice5",
-            "type": "u64"
+            "name": "votingPowerChoices",
+            "type": {
+              "array": [
+                "u64",
+                6
+              ]
+            }
           },
           {
             "name": "padding",
@@ -1936,69 +1880,43 @@ export const IDL: Vetoken = {
         "fields": [
           {
             "name": "securityCouncil",
-            "type": {
-              "option": "publicKey"
-            }
+            "type": "publicKey"
           },
           {
             "name": "reviewCouncil",
-            "type": {
-              "option": "publicKey"
-            }
-          },
-          {
-            "name": "overrideNow",
-            "type": {
-              "option": "i64"
-            }
+            "type": "publicKey"
           },
           {
             "name": "lockupDefaultTargetRewardsBp",
-            "type": {
-              "option": "u16"
-            }
+            "type": "u16"
           },
           {
             "name": "lockupDefaultTargetVotingBp",
-            "type": {
-              "option": "u16"
-            }
+            "type": "u16"
           },
           {
             "name": "lockupMinDuration",
-            "type": {
-              "option": "i64"
-            }
+            "type": "i64"
           },
           {
             "name": "lockupMinAmount",
-            "type": {
-              "option": "u64"
-            }
+            "type": "u64"
           },
           {
             "name": "lockupMaxSaturation",
-            "type": {
-              "option": "u64"
-            }
+            "type": "u64"
           },
           {
             "name": "proposalMinVotingPowerForQuorum",
-            "type": {
-              "option": "u64"
-            }
+            "type": "u64"
           },
           {
             "name": "proposalMinPassBp",
-            "type": {
-              "option": "u16"
-            }
+            "type": "u16"
           },
           {
             "name": "proposalCanUpdateAfterVotes",
-            "type": {
-              "option": "bool"
-            }
+            "type": "bool"
           }
         ]
       }

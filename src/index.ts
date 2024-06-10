@@ -157,24 +157,22 @@ export class VeTokenSDK {
   }
 
   txUpdateNamespace(
-    securityCouncil: PublicKey | null,
-    reviewCouncil: PublicKey | null,
-    overrideNow: BN | null,
-    lockupDefaultTargetRewardsBp: number | null,
-    lockupDefaultTargetVotingBp: number | null,
-    lockupMinDuration: BN | null,
-    lockupMinAmount: BN | null,
-    lockupMaxSaturation: BN | null,
-    proposalMinVotingPowerForQuorum: BN | null,
-    proposalMinPassBp: number | null,
-    proposalCanUpdateAfterVotes: boolean | null
+    securityCouncil: PublicKey,
+    reviewCouncil: PublicKey,
+    lockupDefaultTargetRewardsBp: number,
+    lockupDefaultTargetVotingBp: number,
+    lockupMinDuration: BN,
+    lockupMinAmount: BN,
+    lockupMaxSaturation: BN,
+    proposalMinVotingPowerForQuorum: BN,
+    proposalMinPassBp: number,
+    proposalCanUpdateAfterVotes: boolean
   ) {
     const ix = updateNamespace(
       {
         args: {
           securityCouncil,
           reviewCouncil,
-          overrideNow,
           lockupDefaultTargetRewardsBp,
           lockupDefaultTargetVotingBp,
           lockupMinDuration,

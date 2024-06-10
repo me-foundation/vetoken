@@ -295,7 +295,7 @@ async function approveToken(
   mint: PublicKey,
   sourceOwner: Signer,
   delegate: PublicKey,
-  amount: number,
+  amount: number
 ) {
   const client = ctx.banksClient;
   const payer = ctx.payer;
@@ -339,13 +339,60 @@ test("token balance", async () => {
 describe("pda", async () => {
   test("pda of ns", async () => {
     const sdk = new VeTokenSDK(
-      new PublicKey('FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX'),
-      new PublicKey('FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX'),
-      new PublicKey('34gyo978BuGj1H51fTkpbtBiZVfWy8MwdgmUUHw9tdFG'),
-      new PublicKey('BvnxPU3QutA7j3BjvaD8mikNGZPHg9jUbq1kA5mQa7Fb'),
+      new PublicKey("FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX"),
+      new PublicKey("FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX"),
+      new PublicKey("34gyo978BuGj1H51fTkpbtBiZVfWy8MwdgmUUHw9tdFG"),
+      new PublicKey("BvnxPU3QutA7j3BjvaD8mikNGZPHg9jUbq1kA5mQa7Fb"),
       TOKEN_PROGRAM_ID
     );
-    expect(sdk.pdaNamespace().toBase58()).toBe('6YgabcWPL8MNYKhxcLrPhKAXwD8ZZgPFVLmUPh9aTJWs');
+    expect(sdk.pdaNamespace().toBase58()).toBe(
+      "6YgabcWPL8MNYKhxcLrPhKAXwD8ZZgPFVLmUPh9aTJWs"
+    );
+  });
+
+  test("pda of ata", async () => {
+    const sdk = new VeTokenSDK(
+      new PublicKey("FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX"),
+      new PublicKey("FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX"),
+      new PublicKey("34gyo978BuGj1H51fTkpbtBiZVfWy8MwdgmUUHw9tdFG"),
+      new PublicKey("BvnxPU3QutA7j3BjvaD8mikNGZPHg9jUbq1kA5mQa7Fb"),
+      TOKEN_PROGRAM_ID
+    );
+
+    expect(
+      sdk
+        .ata(new PublicKey("4wejSnr97csngztZ5SU7A6iZRXJD7B3Y1R1koCQ5NjmD"))
+        .toBase58()
+    ).toBe("GDrVVSQ9hjRTunE6T9A2AUREcRiyUDtJZ37C63EXCUSk");
+
+    expect(
+      sdk
+        .ata(new PublicKey("FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX"))
+        .toBase58()
+    ).toBe("GXVFqM64a7vtJ6ftjgDPqnwKKicuUnd2fcjMXgEsRC1");
+
+    expect(
+      sdk
+        .ata(new PublicKey("SGjimYAi9NKpEDjrbhvRm6i3Gk9RGW1r2i9JdgSQrxR"))
+        .toBase58()
+    ).toBe("A1AQ313NCUjLFZNvqgu9ZMWwWCDATUT2fhWkiKNsjWPW");
+  });
+
+  test("pda of lockup", async () => {
+    const sdk = new VeTokenSDK(
+      new PublicKey("FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX"),
+      new PublicKey("FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX"),
+      new PublicKey("34gyo978BuGj1H51fTkpbtBiZVfWy8MwdgmUUHw9tdFG"),
+      new PublicKey("BvnxPU3QutA7j3BjvaD8mikNGZPHg9jUbq1kA5mQa7Fb"),
+      TOKEN_PROGRAM_ID
+    );
+    expect(
+      sdk
+        .pdaLockup(
+          new PublicKey("4wejSnr97csngztZ5SU7A6iZRXJD7B3Y1R1koCQ5NjmD")
+        )
+        .toBase58()
+    ).toBe("SGjimYAi9NKpEDjrbhvRm6i3Gk9RGW1r2i9JdgSQrxR");
   });
 });
 
@@ -603,7 +650,15 @@ describe("proposal", async () => {
     tx.sign(ctx.payer, uuid1);
     const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
     assert(confirmed.result === null);
-    const d = await getDistribution(ctx, sdk, sdk.pdaDistribution(cosigner1.publicKey, cosigner2.publicKey, uuid1.publicKey));
+    const d = await getDistribution(
+      ctx,
+      sdk,
+      sdk.pdaDistribution(
+        cosigner1.publicKey,
+        cosigner2.publicKey,
+        uuid1.publicKey
+      )
+    );
     assert(d);
     assert(d.cosigner1.equals(cosigner1.publicKey));
     assert(d.cosigner2.equals(cosigner2.publicKey));
@@ -624,23 +679,46 @@ describe("proposal", async () => {
     tx.sign(ctx.payer, uuid2);
     let confirmed = await ctx.banksClient.tryProcessTransaction(tx);
     assert(confirmed.result === null);
-    const d = await getDistribution(ctx, sdk, sdk.pdaDistribution(cosigner1.publicKey, cosigner2.publicKey, uuid2.publicKey));
+    const d = await getDistribution(
+      ctx,
+      sdk,
+      sdk.pdaDistribution(
+        cosigner1.publicKey,
+        cosigner2.publicKey,
+        uuid2.publicKey
+      )
+    );
     assert(d);
     assert(d.cosigner1.equals(cosigner1.publicKey));
     assert(d.cosigner2.equals(cosigner2.publicKey));
     assert(d.distributionTokenMint.equals(TOKEN_MINT));
     assert(d.startTs.eq(startTs));
 
-
     const claimant = Keypair.generate();
     const vaultOwner1 = Keypair.generate();
     const approvedAmount = 33_000_000;
     const claimAmount = 33_000_000;
     const cosignedMsg = "cosigned message by cosigner1 and cosigner2";
-    const distribution = sdk.pdaDistribution(cosigner1.publicKey, cosigner2.publicKey, uuid2.publicKey);
+    const distribution = sdk.pdaDistribution(
+      cosigner1.publicKey,
+      cosigner2.publicKey,
+      uuid2.publicKey
+    );
 
-    await transferToken(ctx, TOKEN_MINT, signers.securityCouncil, vaultOwner1.publicKey, approvedAmount);
-    await approveToken(ctx, TOKEN_MINT, vaultOwner1, distribution, approvedAmount);
+    await transferToken(
+      ctx,
+      TOKEN_MINT,
+      signers.securityCouncil,
+      vaultOwner1.publicKey,
+      approvedAmount
+    );
+    await approveToken(
+      ctx,
+      TOKEN_MINT,
+      vaultOwner1,
+      distribution,
+      approvedAmount
+    );
 
     tx = sdk.txClaimFromDistribution(
       ctx.payer.publicKey,
@@ -650,16 +728,23 @@ describe("proposal", async () => {
       cosigner2.publicKey,
       claimant.publicKey,
       new BN(claimAmount),
-      cosignedMsg,
+      cosignedMsg
     );
     tx.recentBlockhash = ctx.lastBlockhash;
     tx.sign(ctx.payer, cosigner1, cosigner2);
     confirmed = await ctx.banksClient.tryProcessTransaction(tx);
     assert(confirmed.result === null);
-    const dc = await getDistributionClaim(ctx, sdk, sdk.pdaDistributionClaim(claimant.publicKey, cosignedMsg));
+    const dc = await getDistributionClaim(
+      ctx,
+      sdk,
+      sdk.pdaDistributionClaim(claimant.publicKey, cosignedMsg)
+    );
     assert(dc);
     assert(dc.claimant.equals(claimant.publicKey));
-    const claimantTokenAccount = await getToken(ctx, getAssociatedTokenAddressSync(TOKEN_MINT, claimant.publicKey, true));
+    const claimantTokenAccount = await getToken(
+      ctx,
+      getAssociatedTokenAddressSync(TOKEN_MINT, claimant.publicKey, true)
+    );
     assert(claimantTokenAccount);
     assert(claimantTokenAccount.amount === BigInt(claimAmount));
   });

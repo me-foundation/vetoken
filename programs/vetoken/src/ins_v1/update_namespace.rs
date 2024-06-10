@@ -3,18 +3,17 @@ use anchor_lang::prelude::*;
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct UpdateNamespaceArgs {
-    security_council: Option<Pubkey>,
-    review_council: Option<Pubkey>,
-    override_now: Option<i64>,
+    security_council: Pubkey,
+    review_council: Pubkey,
 
-    lockup_default_target_rewards_bp: Option<u16>,
-    lockup_default_target_voting_bp: Option<u16>,
-    lockup_min_duration: Option<i64>,
-    lockup_min_amount: Option<u64>,
-    lockup_max_saturation: Option<u64>,
-    proposal_min_voting_power_for_quorum: Option<u64>,
-    proposal_min_pass_bp: Option<u16>,
-    proposal_can_update_after_votes: Option<bool>,
+    lockup_default_target_rewards_bp: u16,
+    lockup_default_target_voting_bp: u16,
+    lockup_min_duration: i64,
+    lockup_min_amount: u64,
+    lockup_max_saturation: u64,
+    proposal_min_voting_power_for_quorum: u64,
+    proposal_min_pass_bp: u16,
+    proposal_can_update_after_votes: bool,
 }
 
 #[derive(Accounts)]
@@ -36,42 +35,16 @@ pub fn handle<'info>(
 ) -> Result<()> {
     let ns = &mut ctx.accounts.ns;
 
-    if cfg!(feature = "anchor-test") {
-        ns.override_now = args.override_now.unwrap_or(0);
-    }
-
-    if let Some(security_council) = args.security_council {
-        ns.security_council = security_council;
-    }
-
-    if let Some(review_council) = args.review_council {
-        ns.review_council = review_council;
-    }
-
-    if let Some(lockup_default_target_rewards_bp) = args.lockup_default_target_rewards_bp {
-        ns.lockup_default_target_rewards_bp = lockup_default_target_rewards_bp;
-    }
-    if let Some(lockup_default_target_voting_bp) = args.lockup_default_target_voting_bp {
-        ns.lockup_default_target_voting_bp = lockup_default_target_voting_bp;
-    }
-    if let Some(lockup_min_duration) = args.lockup_min_duration {
-        ns.lockup_min_duration = lockup_min_duration;
-    }
-    if let Some(lockup_min_amount) = args.lockup_min_amount {
-        ns.lockup_min_amount = lockup_min_amount;
-    }
-    if let Some(lockup_max_saturation) = args.lockup_max_saturation {
-        ns.lockup_max_saturation = lockup_max_saturation;
-    }
-    if let Some(proposal_min_voting_power_for_quorum) = args.proposal_min_voting_power_for_quorum {
-        ns.proposal_min_voting_power_for_quorum = proposal_min_voting_power_for_quorum;
-    }
-    if let Some(proposal_min_pass_bp) = args.proposal_min_pass_bp {
-        ns.proposal_min_pass_bp = proposal_min_pass_bp;
-    }
-    if let Some(proposal_can_update_after_votes) = args.proposal_can_update_after_votes {
-        ns.proposal_can_update_after_votes = proposal_can_update_after_votes;
-    }
+    ns.security_council = args.security_council;
+    ns.review_council = args.review_council;
+    ns.lockup_default_target_rewards_bp = args.lockup_default_target_rewards_bp;
+    ns.lockup_default_target_voting_bp = args.lockup_default_target_voting_bp;
+    ns.lockup_min_duration = args.lockup_min_duration;
+    ns.lockup_min_amount = args.lockup_min_amount;
+    ns.lockup_max_saturation = args.lockup_max_saturation;
+    ns.proposal_min_voting_power_for_quorum = args.proposal_min_voting_power_for_quorum;
+    ns.proposal_min_pass_bp = args.proposal_min_pass_bp;
+    ns.proposal_can_update_after_votes = args.proposal_can_update_after_votes;
 
     Ok(())
 }
