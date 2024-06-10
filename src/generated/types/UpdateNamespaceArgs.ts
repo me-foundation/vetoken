@@ -4,50 +4,46 @@ import * as types from "../types" // eslint-disable-line @typescript-eslint/no-u
 import * as borsh from "@coral-xyz/borsh"
 
 export interface UpdateNamespaceArgsFields {
-  securityCouncil: PublicKey | null
-  reviewCouncil: PublicKey | null
-  overrideNow: BN | null
-  lockupDefaultTargetRewardsBp: number | null
-  lockupDefaultTargetVotingBp: number | null
-  lockupMinDuration: BN | null
-  lockupMinAmount: BN | null
-  lockupMaxSaturation: BN | null
-  proposalMinVotingPowerForQuorum: BN | null
-  proposalMinPassBp: number | null
-  proposalCanUpdateAfterVotes: boolean | null
+  securityCouncil: PublicKey
+  reviewCouncil: PublicKey
+  lockupDefaultTargetRewardsBp: number
+  lockupDefaultTargetVotingBp: number
+  lockupMinDuration: BN
+  lockupMinAmount: BN
+  lockupMaxSaturation: BN
+  proposalMinVotingPowerForQuorum: BN
+  proposalMinPassBp: number
+  proposalCanUpdateAfterVotes: boolean
 }
 
 export interface UpdateNamespaceArgsJSON {
-  securityCouncil: string | null
-  reviewCouncil: string | null
-  overrideNow: string | null
-  lockupDefaultTargetRewardsBp: number | null
-  lockupDefaultTargetVotingBp: number | null
-  lockupMinDuration: string | null
-  lockupMinAmount: string | null
-  lockupMaxSaturation: string | null
-  proposalMinVotingPowerForQuorum: string | null
-  proposalMinPassBp: number | null
-  proposalCanUpdateAfterVotes: boolean | null
+  securityCouncil: string
+  reviewCouncil: string
+  lockupDefaultTargetRewardsBp: number
+  lockupDefaultTargetVotingBp: number
+  lockupMinDuration: string
+  lockupMinAmount: string
+  lockupMaxSaturation: string
+  proposalMinVotingPowerForQuorum: string
+  proposalMinPassBp: number
+  proposalCanUpdateAfterVotes: boolean
 }
 
 export class UpdateNamespaceArgs {
-  readonly securityCouncil: PublicKey | null
-  readonly reviewCouncil: PublicKey | null
-  readonly overrideNow: BN | null
-  readonly lockupDefaultTargetRewardsBp: number | null
-  readonly lockupDefaultTargetVotingBp: number | null
-  readonly lockupMinDuration: BN | null
-  readonly lockupMinAmount: BN | null
-  readonly lockupMaxSaturation: BN | null
-  readonly proposalMinVotingPowerForQuorum: BN | null
-  readonly proposalMinPassBp: number | null
-  readonly proposalCanUpdateAfterVotes: boolean | null
+  readonly securityCouncil: PublicKey
+  readonly reviewCouncil: PublicKey
+  readonly lockupDefaultTargetRewardsBp: number
+  readonly lockupDefaultTargetVotingBp: number
+  readonly lockupMinDuration: BN
+  readonly lockupMinAmount: BN
+  readonly lockupMaxSaturation: BN
+  readonly proposalMinVotingPowerForQuorum: BN
+  readonly proposalMinPassBp: number
+  readonly proposalCanUpdateAfterVotes: boolean
 
   constructor(fields: UpdateNamespaceArgsFields) {
     this.securityCouncil = fields.securityCouncil
     this.reviewCouncil = fields.reviewCouncil
-    this.overrideNow = fields.overrideNow
     this.lockupDefaultTargetRewardsBp = fields.lockupDefaultTargetRewardsBp
     this.lockupDefaultTargetVotingBp = fields.lockupDefaultTargetVotingBp
     this.lockupMinDuration = fields.lockupMinDuration
@@ -62,17 +58,16 @@ export class UpdateNamespaceArgs {
   static layout(property?: string) {
     return borsh.struct(
       [
-        borsh.option(borsh.publicKey(), "securityCouncil"),
-        borsh.option(borsh.publicKey(), "reviewCouncil"),
-        borsh.option(borsh.i64(), "overrideNow"),
-        borsh.option(borsh.u16(), "lockupDefaultTargetRewardsBp"),
-        borsh.option(borsh.u16(), "lockupDefaultTargetVotingBp"),
-        borsh.option(borsh.i64(), "lockupMinDuration"),
-        borsh.option(borsh.u64(), "lockupMinAmount"),
-        borsh.option(borsh.u64(), "lockupMaxSaturation"),
-        borsh.option(borsh.u64(), "proposalMinVotingPowerForQuorum"),
-        borsh.option(borsh.u16(), "proposalMinPassBp"),
-        borsh.option(borsh.bool(), "proposalCanUpdateAfterVotes"),
+        borsh.publicKey("securityCouncil"),
+        borsh.publicKey("reviewCouncil"),
+        borsh.u16("lockupDefaultTargetRewardsBp"),
+        borsh.u16("lockupDefaultTargetVotingBp"),
+        borsh.i64("lockupMinDuration"),
+        borsh.u64("lockupMinAmount"),
+        borsh.u64("lockupMaxSaturation"),
+        borsh.u64("proposalMinVotingPowerForQuorum"),
+        borsh.u16("proposalMinPassBp"),
+        borsh.bool("proposalCanUpdateAfterVotes"),
       ],
       property
     )
@@ -83,7 +78,6 @@ export class UpdateNamespaceArgs {
     return new UpdateNamespaceArgs({
       securityCouncil: obj.securityCouncil,
       reviewCouncil: obj.reviewCouncil,
-      overrideNow: obj.overrideNow,
       lockupDefaultTargetRewardsBp: obj.lockupDefaultTargetRewardsBp,
       lockupDefaultTargetVotingBp: obj.lockupDefaultTargetVotingBp,
       lockupMinDuration: obj.lockupMinDuration,
@@ -99,7 +93,6 @@ export class UpdateNamespaceArgs {
     return {
       securityCouncil: fields.securityCouncil,
       reviewCouncil: fields.reviewCouncil,
-      overrideNow: fields.overrideNow,
       lockupDefaultTargetRewardsBp: fields.lockupDefaultTargetRewardsBp,
       lockupDefaultTargetVotingBp: fields.lockupDefaultTargetVotingBp,
       lockupMinDuration: fields.lockupMinDuration,
@@ -113,24 +106,15 @@ export class UpdateNamespaceArgs {
 
   toJSON(): UpdateNamespaceArgsJSON {
     return {
-      securityCouncil:
-        (this.securityCouncil && this.securityCouncil.toString()) || null,
-      reviewCouncil:
-        (this.reviewCouncil && this.reviewCouncil.toString()) || null,
-      overrideNow: (this.overrideNow && this.overrideNow.toString()) || null,
+      securityCouncil: this.securityCouncil.toString(),
+      reviewCouncil: this.reviewCouncil.toString(),
       lockupDefaultTargetRewardsBp: this.lockupDefaultTargetRewardsBp,
       lockupDefaultTargetVotingBp: this.lockupDefaultTargetVotingBp,
-      lockupMinDuration:
-        (this.lockupMinDuration && this.lockupMinDuration.toString()) || null,
-      lockupMinAmount:
-        (this.lockupMinAmount && this.lockupMinAmount.toString()) || null,
-      lockupMaxSaturation:
-        (this.lockupMaxSaturation && this.lockupMaxSaturation.toString()) ||
-        null,
+      lockupMinDuration: this.lockupMinDuration.toString(),
+      lockupMinAmount: this.lockupMinAmount.toString(),
+      lockupMaxSaturation: this.lockupMaxSaturation.toString(),
       proposalMinVotingPowerForQuorum:
-        (this.proposalMinVotingPowerForQuorum &&
-          this.proposalMinVotingPowerForQuorum.toString()) ||
-        null,
+        this.proposalMinVotingPowerForQuorum.toString(),
       proposalMinPassBp: this.proposalMinPassBp,
       proposalCanUpdateAfterVotes: this.proposalCanUpdateAfterVotes,
     }
@@ -138,23 +122,16 @@ export class UpdateNamespaceArgs {
 
   static fromJSON(obj: UpdateNamespaceArgsJSON): UpdateNamespaceArgs {
     return new UpdateNamespaceArgs({
-      securityCouncil:
-        (obj.securityCouncil && new PublicKey(obj.securityCouncil)) || null,
-      reviewCouncil:
-        (obj.reviewCouncil && new PublicKey(obj.reviewCouncil)) || null,
-      overrideNow: (obj.overrideNow && new BN(obj.overrideNow)) || null,
+      securityCouncil: new PublicKey(obj.securityCouncil),
+      reviewCouncil: new PublicKey(obj.reviewCouncil),
       lockupDefaultTargetRewardsBp: obj.lockupDefaultTargetRewardsBp,
       lockupDefaultTargetVotingBp: obj.lockupDefaultTargetVotingBp,
-      lockupMinDuration:
-        (obj.lockupMinDuration && new BN(obj.lockupMinDuration)) || null,
-      lockupMinAmount:
-        (obj.lockupMinAmount && new BN(obj.lockupMinAmount)) || null,
-      lockupMaxSaturation:
-        (obj.lockupMaxSaturation && new BN(obj.lockupMaxSaturation)) || null,
-      proposalMinVotingPowerForQuorum:
-        (obj.proposalMinVotingPowerForQuorum &&
-          new BN(obj.proposalMinVotingPowerForQuorum)) ||
-        null,
+      lockupMinDuration: new BN(obj.lockupMinDuration),
+      lockupMinAmount: new BN(obj.lockupMinAmount),
+      lockupMaxSaturation: new BN(obj.lockupMaxSaturation),
+      proposalMinVotingPowerForQuorum: new BN(
+        obj.proposalMinVotingPowerForQuorum
+      ),
       proposalMinPassBp: obj.proposalMinPassBp,
       proposalCanUpdateAfterVotes: obj.proposalCanUpdateAfterVotes,
     })
