@@ -8,11 +8,11 @@ export interface ProposalFields {
   ns: PublicKey
   nonce: number
   owner: PublicKey
-  uri: Array<number>
   startTs: BN
   endTs: BN
   status: number
   votingPowerChoices: Array<BN>
+  uri: string
   padding: Array<number>
 }
 
@@ -20,11 +20,11 @@ export interface ProposalJSON {
   ns: string
   nonce: number
   owner: string
-  uri: Array<number>
   startTs: string
   endTs: string
   status: number
   votingPowerChoices: Array<string>
+  uri: string
   padding: Array<number>
 }
 
@@ -32,11 +32,11 @@ export class Proposal {
   readonly ns: PublicKey
   readonly nonce: number
   readonly owner: PublicKey
-  readonly uri: Array<number>
   readonly startTs: BN
   readonly endTs: BN
   readonly status: number
   readonly votingPowerChoices: Array<BN>
+  readonly uri: string
   readonly padding: Array<number>
 
   static readonly discriminator = Buffer.from([
@@ -47,11 +47,11 @@ export class Proposal {
     borsh.publicKey("ns"),
     borsh.u32("nonce"),
     borsh.publicKey("owner"),
-    borsh.array(borsh.u8(), 256, "uri"),
     borsh.i64("startTs"),
     borsh.i64("endTs"),
     borsh.u8("status"),
     borsh.array(borsh.u64(), 6, "votingPowerChoices"),
+    borsh.str("uri"),
     borsh.array(borsh.u8(), 240, "padding"),
   ])
 
@@ -59,11 +59,11 @@ export class Proposal {
     this.ns = fields.ns
     this.nonce = fields.nonce
     this.owner = fields.owner
-    this.uri = fields.uri
     this.startTs = fields.startTs
     this.endTs = fields.endTs
     this.status = fields.status
     this.votingPowerChoices = fields.votingPowerChoices
+    this.uri = fields.uri
     this.padding = fields.padding
   }
 
@@ -114,11 +114,11 @@ export class Proposal {
       ns: dec.ns,
       nonce: dec.nonce,
       owner: dec.owner,
-      uri: dec.uri,
       startTs: dec.startTs,
       endTs: dec.endTs,
       status: dec.status,
       votingPowerChoices: dec.votingPowerChoices,
+      uri: dec.uri,
       padding: dec.padding,
     })
   }
@@ -128,13 +128,13 @@ export class Proposal {
       ns: this.ns.toString(),
       nonce: this.nonce,
       owner: this.owner.toString(),
-      uri: this.uri,
       startTs: this.startTs.toString(),
       endTs: this.endTs.toString(),
       status: this.status,
       votingPowerChoices: this.votingPowerChoices.map((item) =>
         item.toString()
       ),
+      uri: this.uri,
       padding: this.padding,
     }
   }
@@ -144,11 +144,11 @@ export class Proposal {
       ns: new PublicKey(obj.ns),
       nonce: obj.nonce,
       owner: new PublicKey(obj.owner),
-      uri: obj.uri,
       startTs: new BN(obj.startTs),
       endTs: new BN(obj.endTs),
       status: obj.status,
       votingPowerChoices: obj.votingPowerChoices.map((item) => new BN(item)),
+      uri: obj.uri,
       padding: obj.padding,
     })
   }

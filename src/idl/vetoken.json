@@ -590,15 +590,6 @@
             "type": "publicKey"
           },
           {
-            "name": "uri",
-            "type": {
-              "array": [
-                "u8",
-                256
-              ]
-            }
-          },
-          {
             "name": "startTs",
             "type": "i64"
           },
@@ -618,6 +609,10 @@
                 6
               ]
             }
+          },
+          {
+            "name": "uri",
+            "type": "string"
           },
           {
             "name": "padding",
@@ -808,21 +803,16 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "uri",
-            "type": {
-              "array": [
-                "u8",
-                256
-              ]
-            }
-          },
-          {
             "name": "startTs",
             "type": "i64"
           },
           {
             "name": "endTs",
             "type": "i64"
+          },
+          {
+            "name": "uri",
+            "type": "string"
           }
         ]
       }
@@ -917,21 +907,16 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "uri",
-            "type": {
-              "array": [
-                "u8",
-                256
-              ]
-            }
-          },
-          {
             "name": "startTs",
             "type": "i64"
           },
           {
             "name": "endTs",
             "type": "i64"
+          },
+          {
+            "name": "uri",
+            "type": "string"
           }
         ]
       }
