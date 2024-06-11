@@ -196,6 +196,10 @@ impl Proposal {
             .iter()
             .any(|&choice| choice > pass_threshold)
     }
+
+    pub fn has_valid_uri(&self) -> bool {
+        self.uri.len() <= 255
+    }
 }
 
 #[account]
