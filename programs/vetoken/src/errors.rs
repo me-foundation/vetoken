@@ -24,4 +24,6 @@ pub enum CustomError {
     Overflow,
     #[msg("Cannot Update Proposal")]
     CannotUpdateProposal,
+    #[msg("Invalid URI")]
+    InvalidURI,
 }
