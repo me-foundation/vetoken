@@ -11,6 +11,9 @@ export type CustomError =
   | Overflow
   | CannotUpdateProposal
   | InvalidURI
+  | InvalidNamespace
+  | InvalidLockup
+  | InvalidVoteRecord
 
 export class InvalidOwner extends Error {
   static readonly code = 6000
@@ -144,6 +147,39 @@ export class InvalidURI extends Error {
   }
 }
 
+export class InvalidNamespace extends Error {
+  static readonly code = 6012
+  readonly code = 6012
+  readonly name = "InvalidNamespace"
+  readonly msg = "Invalid Namespace"
+
+  constructor(readonly logs?: string[]) {
+    super("6012: Invalid Namespace")
+  }
+}
+
+export class InvalidLockup extends Error {
+  static readonly code = 6013
+  readonly code = 6013
+  readonly name = "InvalidLockup"
+  readonly msg = "Invalid Lockup"
+
+  constructor(readonly logs?: string[]) {
+    super("6013: Invalid Lockup")
+  }
+}
+
+export class InvalidVoteRecord extends Error {
+  static readonly code = 6014
+  readonly code = 6014
+  readonly name = "InvalidVoteRecord"
+  readonly msg = "Invalid Vote Record"
+
+  constructor(readonly logs?: string[]) {
+    super("6014: Invalid Vote Record")
+  }
+}
+
 export function fromCode(code: number, logs?: string[]): CustomError | null {
   switch (code) {
     case 6000:
@@ -170,6 +206,12 @@ export function fromCode(code: number, logs?: string[]): CustomError | null {
       return new CannotUpdateProposal(logs)
     case 6011:
       return new InvalidURI(logs)
+    case 6012:
+      return new InvalidNamespace(logs)
+    case 6013:
+      return new InvalidLockup(logs)
+    case 6014:
+      return new InvalidVoteRecord(logs)
   }
 
   return null

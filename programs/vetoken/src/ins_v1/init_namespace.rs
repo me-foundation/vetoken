@@ -1,4 +1,4 @@
-use crate::states::Namespace;
+use crate::{errors::CustomError, states::Namespace};
 use anchor_lang::prelude::*;
 use anchor_spl::token_interface::Mint;
 
@@ -38,13 +38,18 @@ pub fn handle<'info>(ctx: Context<'_, '_, '_, 'info, InitNamespace<'info>>) -> R
     ns.deployer = ctx.accounts.deployer.key();
 
     // Setting the default values and the security council can change
-    ns.lockup_default_target_rewards_bp = 10000;
-    ns.lockup_default_target_voting_bp = 10000; // 100%
+    ns.lockup_default_target_rewards_pct = 100; // 100% of the voting power
+    ns.lockup_default_target_voting_pct = 2000; // 2000%, i.e. 20x
     ns.lockup_min_duration = 86400 * 14; // 14 day in seconds
     ns.lockup_min_amount = 10 * 1_000_000; // ui amount is 10 assuming 6 decimals
     ns.lockup_max_saturation = 86400 * 365 * 4; // 4 years in seconds
     ns.proposal_min_voting_power_for_quorum = 10 * 1_000_000; // minimum participation voting power
-    ns.proposal_min_pass_bp = 6000; // 60%, the population is total_votes
+    ns.proposal_min_pass_pct = 60; // 60%, the population is total_votes
     ns.proposal_can_update_after_votes = false;
+
+    if !ns.valid() {
+        return Err(CustomError::InvalidNamespace.into());
+    }
+
     Ok(())
 }

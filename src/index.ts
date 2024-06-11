@@ -159,13 +159,13 @@ export class VeTokenSDK {
   txUpdateNamespace(
     securityCouncil: PublicKey,
     reviewCouncil: PublicKey,
-    lockupDefaultTargetRewardsBp: number,
-    lockupDefaultTargetVotingBp: number,
+    lockupDefaultTargetRewardsPct: number,
+    lockupDefaultTargetVotingPct: number,
     lockupMinDuration: BN,
     lockupMinAmount: BN,
     lockupMaxSaturation: BN,
     proposalMinVotingPowerForQuorum: BN,
-    proposalMinPassBp: number,
+    proposalMinPassPct: number,
     proposalCanUpdateAfterVotes: boolean
   ) {
     const ix = updateNamespace(
@@ -173,13 +173,13 @@ export class VeTokenSDK {
         args: {
           securityCouncil,
           reviewCouncil,
-          lockupDefaultTargetRewardsBp,
-          lockupDefaultTargetVotingBp,
+          lockupDefaultTargetRewardsPct,
+          lockupDefaultTargetVotingPct,
           lockupMinDuration,
           lockupMinAmount,
           lockupMaxSaturation,
           proposalMinVotingPowerForQuorum,
-          proposalMinPassBp,
+          proposalMinPassPct,
           proposalCanUpdateAfterVotes,
         },
       },
@@ -216,7 +216,7 @@ export class VeTokenSDK {
     const lockup = this.pdaLockup(owner);
     const ix = stakeTo(
       {
-        args: { amount, endTs, disableRewardsBp: true },
+        args: { amount, endTs, disableRewards: true },
       },
       {
         securityCouncil: this.securityCouncil,

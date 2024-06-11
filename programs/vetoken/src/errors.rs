@@ -26,4 +26,10 @@ pub enum CustomError {
     CannotUpdateProposal,
     #[msg("Invalid URI")]
     InvalidURI,
+    #[msg("Invalid Namespace")]
+    InvalidNamespace,
+    #[msg("Invalid Lockup")]
+    InvalidLockup,
+    #[msg("Invalid Vote Record")]
+    InvalidVoteRecord,
 }

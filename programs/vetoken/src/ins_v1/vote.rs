@@ -64,5 +64,9 @@ pub fn handle<'info>(ctx: Context<'_, '_, '_, 'info, Vote<'info>>, args: VoteArg
     vote_record.voting_power = voting_power;
     vote_record.lockup = ctx.accounts.lockup.key();
 
+    if !vote_record.valid() {
+        return Err(CustomError::InvalidVoteRecord.into());
+    }
+
     Ok(())
 }

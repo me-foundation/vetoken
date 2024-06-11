@@ -83,8 +83,8 @@ pub fn handle<'info>(ctx: Context<'_, '_, '_, 'info, Stake<'info>>, args: StakeA
     // only the first time staking can set the default values for target rewards and voting power
     // this is to prevent the staker from overriding what's set by stake_to by security council, if any
     if lockup.amount == 0 {
-        lockup.target_rewards_bp = ns.lockup_default_target_rewards_bp;
-        lockup.target_voting_bp = ns.lockup_default_target_voting_bp;
+        lockup.target_rewards_pct = ns.lockup_default_target_rewards_pct;
+        lockup.target_voting_pct = ns.lockup_default_target_voting_pct;
     }
 
     // Staker can only extend the lockup period, not reduce it.
@@ -104,6 +104,10 @@ pub fn handle<'info>(ctx: Context<'_, '_, '_, 'info, Stake<'info>>, args: StakeA
         .lockup_amount
         .checked_add(args.amount)
         .expect("should not overflow");
+
+    if !lockup.valid(ns) {
+        return Err(CustomError::InvalidLockup.into());
+    }
 
     Ok(())
 }

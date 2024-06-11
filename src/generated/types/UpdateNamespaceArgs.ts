@@ -6,52 +6,52 @@ import * as borsh from "@coral-xyz/borsh"
 export interface UpdateNamespaceArgsFields {
   securityCouncil: PublicKey
   reviewCouncil: PublicKey
-  lockupDefaultTargetRewardsBp: number
-  lockupDefaultTargetVotingBp: number
+  lockupDefaultTargetRewardsPct: number
+  lockupDefaultTargetVotingPct: number
   lockupMinDuration: BN
   lockupMinAmount: BN
   lockupMaxSaturation: BN
   proposalMinVotingPowerForQuorum: BN
-  proposalMinPassBp: number
+  proposalMinPassPct: number
   proposalCanUpdateAfterVotes: boolean
 }
 
 export interface UpdateNamespaceArgsJSON {
   securityCouncil: string
   reviewCouncil: string
-  lockupDefaultTargetRewardsBp: number
-  lockupDefaultTargetVotingBp: number
+  lockupDefaultTargetRewardsPct: number
+  lockupDefaultTargetVotingPct: number
   lockupMinDuration: string
   lockupMinAmount: string
   lockupMaxSaturation: string
   proposalMinVotingPowerForQuorum: string
-  proposalMinPassBp: number
+  proposalMinPassPct: number
   proposalCanUpdateAfterVotes: boolean
 }
 
 export class UpdateNamespaceArgs {
   readonly securityCouncil: PublicKey
   readonly reviewCouncil: PublicKey
-  readonly lockupDefaultTargetRewardsBp: number
-  readonly lockupDefaultTargetVotingBp: number
+  readonly lockupDefaultTargetRewardsPct: number
+  readonly lockupDefaultTargetVotingPct: number
   readonly lockupMinDuration: BN
   readonly lockupMinAmount: BN
   readonly lockupMaxSaturation: BN
   readonly proposalMinVotingPowerForQuorum: BN
-  readonly proposalMinPassBp: number
+  readonly proposalMinPassPct: number
   readonly proposalCanUpdateAfterVotes: boolean
 
   constructor(fields: UpdateNamespaceArgsFields) {
     this.securityCouncil = fields.securityCouncil
     this.reviewCouncil = fields.reviewCouncil
-    this.lockupDefaultTargetRewardsBp = fields.lockupDefaultTargetRewardsBp
-    this.lockupDefaultTargetVotingBp = fields.lockupDefaultTargetVotingBp
+    this.lockupDefaultTargetRewardsPct = fields.lockupDefaultTargetRewardsPct
+    this.lockupDefaultTargetVotingPct = fields.lockupDefaultTargetVotingPct
     this.lockupMinDuration = fields.lockupMinDuration
     this.lockupMinAmount = fields.lockupMinAmount
     this.lockupMaxSaturation = fields.lockupMaxSaturation
     this.proposalMinVotingPowerForQuorum =
       fields.proposalMinVotingPowerForQuorum
-    this.proposalMinPassBp = fields.proposalMinPassBp
+    this.proposalMinPassPct = fields.proposalMinPassPct
     this.proposalCanUpdateAfterVotes = fields.proposalCanUpdateAfterVotes
   }
 
@@ -60,13 +60,13 @@ export class UpdateNamespaceArgs {
       [
         borsh.publicKey("securityCouncil"),
         borsh.publicKey("reviewCouncil"),
-        borsh.u16("lockupDefaultTargetRewardsBp"),
-        borsh.u16("lockupDefaultTargetVotingBp"),
+        borsh.u16("lockupDefaultTargetRewardsPct"),
+        borsh.u16("lockupDefaultTargetVotingPct"),
         borsh.i64("lockupMinDuration"),
         borsh.u64("lockupMinAmount"),
         borsh.u64("lockupMaxSaturation"),
         borsh.u64("proposalMinVotingPowerForQuorum"),
-        borsh.u16("proposalMinPassBp"),
+        borsh.u16("proposalMinPassPct"),
         borsh.bool("proposalCanUpdateAfterVotes"),
       ],
       property
@@ -78,13 +78,13 @@ export class UpdateNamespaceArgs {
     return new UpdateNamespaceArgs({
       securityCouncil: obj.securityCouncil,
       reviewCouncil: obj.reviewCouncil,
-      lockupDefaultTargetRewardsBp: obj.lockupDefaultTargetRewardsBp,
-      lockupDefaultTargetVotingBp: obj.lockupDefaultTargetVotingBp,
+      lockupDefaultTargetRewardsPct: obj.lockupDefaultTargetRewardsPct,
+      lockupDefaultTargetVotingPct: obj.lockupDefaultTargetVotingPct,
       lockupMinDuration: obj.lockupMinDuration,
       lockupMinAmount: obj.lockupMinAmount,
       lockupMaxSaturation: obj.lockupMaxSaturation,
       proposalMinVotingPowerForQuorum: obj.proposalMinVotingPowerForQuorum,
-      proposalMinPassBp: obj.proposalMinPassBp,
+      proposalMinPassPct: obj.proposalMinPassPct,
       proposalCanUpdateAfterVotes: obj.proposalCanUpdateAfterVotes,
     })
   }
@@ -93,13 +93,13 @@ export class UpdateNamespaceArgs {
     return {
       securityCouncil: fields.securityCouncil,
       reviewCouncil: fields.reviewCouncil,
-      lockupDefaultTargetRewardsBp: fields.lockupDefaultTargetRewardsBp,
-      lockupDefaultTargetVotingBp: fields.lockupDefaultTargetVotingBp,
+      lockupDefaultTargetRewardsPct: fields.lockupDefaultTargetRewardsPct,
+      lockupDefaultTargetVotingPct: fields.lockupDefaultTargetVotingPct,
       lockupMinDuration: fields.lockupMinDuration,
       lockupMinAmount: fields.lockupMinAmount,
       lockupMaxSaturation: fields.lockupMaxSaturation,
       proposalMinVotingPowerForQuorum: fields.proposalMinVotingPowerForQuorum,
-      proposalMinPassBp: fields.proposalMinPassBp,
+      proposalMinPassPct: fields.proposalMinPassPct,
       proposalCanUpdateAfterVotes: fields.proposalCanUpdateAfterVotes,
     }
   }
@@ -108,14 +108,14 @@ export class UpdateNamespaceArgs {
     return {
       securityCouncil: this.securityCouncil.toString(),
       reviewCouncil: this.reviewCouncil.toString(),
-      lockupDefaultTargetRewardsBp: this.lockupDefaultTargetRewardsBp,
-      lockupDefaultTargetVotingBp: this.lockupDefaultTargetVotingBp,
+      lockupDefaultTargetRewardsPct: this.lockupDefaultTargetRewardsPct,
+      lockupDefaultTargetVotingPct: this.lockupDefaultTargetVotingPct,
       lockupMinDuration: this.lockupMinDuration.toString(),
       lockupMinAmount: this.lockupMinAmount.toString(),
       lockupMaxSaturation: this.lockupMaxSaturation.toString(),
       proposalMinVotingPowerForQuorum:
         this.proposalMinVotingPowerForQuorum.toString(),
-      proposalMinPassBp: this.proposalMinPassBp,
+      proposalMinPassPct: this.proposalMinPassPct,
       proposalCanUpdateAfterVotes: this.proposalCanUpdateAfterVotes,
     }
   }
@@ -124,15 +124,15 @@ export class UpdateNamespaceArgs {
     return new UpdateNamespaceArgs({
       securityCouncil: new PublicKey(obj.securityCouncil),
       reviewCouncil: new PublicKey(obj.reviewCouncil),
-      lockupDefaultTargetRewardsBp: obj.lockupDefaultTargetRewardsBp,
-      lockupDefaultTargetVotingBp: obj.lockupDefaultTargetVotingBp,
+      lockupDefaultTargetRewardsPct: obj.lockupDefaultTargetRewardsPct,
+      lockupDefaultTargetVotingPct: obj.lockupDefaultTargetVotingPct,
       lockupMinDuration: new BN(obj.lockupMinDuration),
       lockupMinAmount: new BN(obj.lockupMinAmount),
       lockupMaxSaturation: new BN(obj.lockupMaxSaturation),
       proposalMinVotingPowerForQuorum: new BN(
         obj.proposalMinVotingPowerForQuorum
       ),
-      proposalMinPassBp: obj.proposalMinPassBp,
+      proposalMinPassPct: obj.proposalMinPassPct,
       proposalCanUpdateAfterVotes: obj.proposalCanUpdateAfterVotes,
     })
   }

@@ -476,11 +476,11 @@ export type Vetoken = {
             "type": "i64"
           },
           {
-            "name": "lockupDefaultTargetRewardsBp",
+            "name": "lockupDefaultTargetRewardsPct",
             "type": "u16"
           },
           {
-            "name": "lockupDefaultTargetVotingBp",
+            "name": "lockupDefaultTargetVotingPct",
             "type": "u16"
           },
           {
@@ -500,7 +500,7 @@ export type Vetoken = {
             "type": "u64"
           },
           {
-            "name": "proposalMinPassBp",
+            "name": "proposalMinPassPct",
             "type": "u16"
           },
           {
@@ -553,11 +553,11 @@ export type Vetoken = {
             "type": "i64"
           },
           {
-            "name": "targetRewardsBp",
+            "name": "targetRewardsPct",
             "type": "u16"
           },
           {
-            "name": "targetVotingBp",
+            "name": "targetVotingPct",
             "type": "u16"
           },
           {
@@ -831,7 +831,7 @@ export type Vetoken = {
             "type": "i64"
           },
           {
-            "name": "disableRewardsBp",
+            "name": "disableRewards",
             "type": "bool"
           }
         ]
@@ -867,11 +867,11 @@ export type Vetoken = {
             "type": "publicKey"
           },
           {
-            "name": "lockupDefaultTargetRewardsBp",
+            "name": "lockupDefaultTargetRewardsPct",
             "type": "u16"
           },
           {
-            "name": "lockupDefaultTargetVotingBp",
+            "name": "lockupDefaultTargetVotingPct",
             "type": "u16"
           },
           {
@@ -891,7 +891,7 @@ export type Vetoken = {
             "type": "u64"
           },
           {
-            "name": "proposalMinPassBp",
+            "name": "proposalMinPassPct",
             "type": "u16"
           },
           {
@@ -994,6 +994,21 @@ export type Vetoken = {
       "code": 6011,
       "name": "InvalidURI",
       "msg": "Invalid URI"
+    },
+    {
+      "code": 6012,
+      "name": "InvalidNamespace",
+      "msg": "Invalid Namespace"
+    },
+    {
+      "code": 6013,
+      "name": "InvalidLockup",
+      "msg": "Invalid Lockup"
+    },
+    {
+      "code": 6014,
+      "name": "InvalidVoteRecord",
+      "msg": "Invalid Vote Record"
     }
   ]
 };
@@ -1476,11 +1491,11 @@ export const IDL: Vetoken = {
             "type": "i64"
           },
           {
-            "name": "lockupDefaultTargetRewardsBp",
+            "name": "lockupDefaultTargetRewardsPct",
             "type": "u16"
           },
           {
-            "name": "lockupDefaultTargetVotingBp",
+            "name": "lockupDefaultTargetVotingPct",
             "type": "u16"
           },
           {
@@ -1500,7 +1515,7 @@ export const IDL: Vetoken = {
             "type": "u64"
           },
           {
-            "name": "proposalMinPassBp",
+            "name": "proposalMinPassPct",
             "type": "u16"
           },
           {
@@ -1553,11 +1568,11 @@ export const IDL: Vetoken = {
             "type": "i64"
           },
           {
-            "name": "targetRewardsBp",
+            "name": "targetRewardsPct",
             "type": "u16"
           },
           {
-            "name": "targetVotingBp",
+            "name": "targetVotingPct",
             "type": "u16"
           },
           {
@@ -1831,7 +1846,7 @@ export const IDL: Vetoken = {
             "type": "i64"
           },
           {
-            "name": "disableRewardsBp",
+            "name": "disableRewards",
             "type": "bool"
           }
         ]
@@ -1867,11 +1882,11 @@ export const IDL: Vetoken = {
             "type": "publicKey"
           },
           {
-            "name": "lockupDefaultTargetRewardsBp",
+            "name": "lockupDefaultTargetRewardsPct",
             "type": "u16"
           },
           {
-            "name": "lockupDefaultTargetVotingBp",
+            "name": "lockupDefaultTargetVotingPct",
             "type": "u16"
           },
           {
@@ -1891,7 +1906,7 @@ export const IDL: Vetoken = {
             "type": "u64"
           },
           {
-            "name": "proposalMinPassBp",
+            "name": "proposalMinPassPct",
             "type": "u16"
           },
           {
@@ -1994,6 +2009,21 @@ export const IDL: Vetoken = {
       "code": 6011,
       "name": "InvalidURI",
       "msg": "Invalid URI"
+    },
+    {
+      "code": 6012,
+      "name": "InvalidNamespace",
+      "msg": "Invalid Namespace"
+    },
+    {
+      "code": 6013,
+      "name": "InvalidLockup",
+      "msg": "Invalid Lockup"
+    },
+    {
+      "code": 6014,
+      "name": "InvalidVoteRecord",
+      "msg": "Invalid Vote Record"
     }
   ]
 };
