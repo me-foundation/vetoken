@@ -72,7 +72,7 @@ pub mod vetoken {
         ins_v1::update_proposal::handle(ctx, args)
     }
 
-    // Users with voting power greater than a threshold can vote on a proposal.
+    // Users with voting power greater 0 and stake longer than the proposal duration can vote.
     pub fn vote<'info>(ctx: Context<'_, '_, '_, 'info, Vote<'info>>, args: VoteArgs) -> Result<()> {
         ins_v1::vote::handle(ctx, args)
     }
