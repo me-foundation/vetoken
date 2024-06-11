@@ -40,8 +40,9 @@ pub fn handle<'info>(
     proposal.start_ts = args.start_ts;
     proposal.end_ts = args.end_ts;
 
-    if !proposal.has_valid_uri() {
-        return Err(CustomError::InvalidURI.into());
+    if !proposal.valid() {
+        return Err(CustomError::InvalidProposalState.into());
     }
+
     Ok(())
 }

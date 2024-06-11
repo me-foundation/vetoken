@@ -10,13 +10,13 @@ export interface NamespaceFields {
   securityCouncil: PublicKey
   reviewCouncil: PublicKey
   overrideNow: BN
-  lockupDefaultTargetRewardsBp: number
-  lockupDefaultTargetVotingBp: number
+  lockupDefaultTargetRewardsPct: number
+  lockupDefaultTargetVotingPct: number
   lockupMinDuration: BN
   lockupMinAmount: BN
   lockupMaxSaturation: BN
   proposalMinVotingPowerForQuorum: BN
-  proposalMinPassBp: number
+  proposalMinPassPct: number
   proposalCanUpdateAfterVotes: boolean
   lockupAmount: BN
   proposalNonce: number
@@ -29,13 +29,13 @@ export interface NamespaceJSON {
   securityCouncil: string
   reviewCouncil: string
   overrideNow: string
-  lockupDefaultTargetRewardsBp: number
-  lockupDefaultTargetVotingBp: number
+  lockupDefaultTargetRewardsPct: number
+  lockupDefaultTargetVotingPct: number
   lockupMinDuration: string
   lockupMinAmount: string
   lockupMaxSaturation: string
   proposalMinVotingPowerForQuorum: string
-  proposalMinPassBp: number
+  proposalMinPassPct: number
   proposalCanUpdateAfterVotes: boolean
   lockupAmount: string
   proposalNonce: number
@@ -48,13 +48,13 @@ export class Namespace {
   readonly securityCouncil: PublicKey
   readonly reviewCouncil: PublicKey
   readonly overrideNow: BN
-  readonly lockupDefaultTargetRewardsBp: number
-  readonly lockupDefaultTargetVotingBp: number
+  readonly lockupDefaultTargetRewardsPct: number
+  readonly lockupDefaultTargetVotingPct: number
   readonly lockupMinDuration: BN
   readonly lockupMinAmount: BN
   readonly lockupMaxSaturation: BN
   readonly proposalMinVotingPowerForQuorum: BN
-  readonly proposalMinPassBp: number
+  readonly proposalMinPassPct: number
   readonly proposalCanUpdateAfterVotes: boolean
   readonly lockupAmount: BN
   readonly proposalNonce: number
@@ -70,13 +70,13 @@ export class Namespace {
     borsh.publicKey("securityCouncil"),
     borsh.publicKey("reviewCouncil"),
     borsh.i64("overrideNow"),
-    borsh.u16("lockupDefaultTargetRewardsBp"),
-    borsh.u16("lockupDefaultTargetVotingBp"),
+    borsh.u16("lockupDefaultTargetRewardsPct"),
+    borsh.u16("lockupDefaultTargetVotingPct"),
     borsh.i64("lockupMinDuration"),
     borsh.u64("lockupMinAmount"),
     borsh.u64("lockupMaxSaturation"),
     borsh.u64("proposalMinVotingPowerForQuorum"),
-    borsh.u16("proposalMinPassBp"),
+    borsh.u16("proposalMinPassPct"),
     borsh.bool("proposalCanUpdateAfterVotes"),
     borsh.u64("lockupAmount"),
     borsh.u32("proposalNonce"),
@@ -89,14 +89,14 @@ export class Namespace {
     this.securityCouncil = fields.securityCouncil
     this.reviewCouncil = fields.reviewCouncil
     this.overrideNow = fields.overrideNow
-    this.lockupDefaultTargetRewardsBp = fields.lockupDefaultTargetRewardsBp
-    this.lockupDefaultTargetVotingBp = fields.lockupDefaultTargetVotingBp
+    this.lockupDefaultTargetRewardsPct = fields.lockupDefaultTargetRewardsPct
+    this.lockupDefaultTargetVotingPct = fields.lockupDefaultTargetVotingPct
     this.lockupMinDuration = fields.lockupMinDuration
     this.lockupMinAmount = fields.lockupMinAmount
     this.lockupMaxSaturation = fields.lockupMaxSaturation
     this.proposalMinVotingPowerForQuorum =
       fields.proposalMinVotingPowerForQuorum
-    this.proposalMinPassBp = fields.proposalMinPassBp
+    this.proposalMinPassPct = fields.proposalMinPassPct
     this.proposalCanUpdateAfterVotes = fields.proposalCanUpdateAfterVotes
     this.lockupAmount = fields.lockupAmount
     this.proposalNonce = fields.proposalNonce
@@ -152,13 +152,13 @@ export class Namespace {
       securityCouncil: dec.securityCouncil,
       reviewCouncil: dec.reviewCouncil,
       overrideNow: dec.overrideNow,
-      lockupDefaultTargetRewardsBp: dec.lockupDefaultTargetRewardsBp,
-      lockupDefaultTargetVotingBp: dec.lockupDefaultTargetVotingBp,
+      lockupDefaultTargetRewardsPct: dec.lockupDefaultTargetRewardsPct,
+      lockupDefaultTargetVotingPct: dec.lockupDefaultTargetVotingPct,
       lockupMinDuration: dec.lockupMinDuration,
       lockupMinAmount: dec.lockupMinAmount,
       lockupMaxSaturation: dec.lockupMaxSaturation,
       proposalMinVotingPowerForQuorum: dec.proposalMinVotingPowerForQuorum,
-      proposalMinPassBp: dec.proposalMinPassBp,
+      proposalMinPassPct: dec.proposalMinPassPct,
       proposalCanUpdateAfterVotes: dec.proposalCanUpdateAfterVotes,
       lockupAmount: dec.lockupAmount,
       proposalNonce: dec.proposalNonce,
@@ -173,14 +173,14 @@ export class Namespace {
       securityCouncil: this.securityCouncil.toString(),
       reviewCouncil: this.reviewCouncil.toString(),
       overrideNow: this.overrideNow.toString(),
-      lockupDefaultTargetRewardsBp: this.lockupDefaultTargetRewardsBp,
-      lockupDefaultTargetVotingBp: this.lockupDefaultTargetVotingBp,
+      lockupDefaultTargetRewardsPct: this.lockupDefaultTargetRewardsPct,
+      lockupDefaultTargetVotingPct: this.lockupDefaultTargetVotingPct,
       lockupMinDuration: this.lockupMinDuration.toString(),
       lockupMinAmount: this.lockupMinAmount.toString(),
       lockupMaxSaturation: this.lockupMaxSaturation.toString(),
       proposalMinVotingPowerForQuorum:
         this.proposalMinVotingPowerForQuorum.toString(),
-      proposalMinPassBp: this.proposalMinPassBp,
+      proposalMinPassPct: this.proposalMinPassPct,
       proposalCanUpdateAfterVotes: this.proposalCanUpdateAfterVotes,
       lockupAmount: this.lockupAmount.toString(),
       proposalNonce: this.proposalNonce,
@@ -195,15 +195,15 @@ export class Namespace {
       securityCouncil: new PublicKey(obj.securityCouncil),
       reviewCouncil: new PublicKey(obj.reviewCouncil),
       overrideNow: new BN(obj.overrideNow),
-      lockupDefaultTargetRewardsBp: obj.lockupDefaultTargetRewardsBp,
-      lockupDefaultTargetVotingBp: obj.lockupDefaultTargetVotingBp,
+      lockupDefaultTargetRewardsPct: obj.lockupDefaultTargetRewardsPct,
+      lockupDefaultTargetVotingPct: obj.lockupDefaultTargetVotingPct,
       lockupMinDuration: new BN(obj.lockupMinDuration),
       lockupMinAmount: new BN(obj.lockupMinAmount),
       lockupMaxSaturation: new BN(obj.lockupMaxSaturation),
       proposalMinVotingPowerForQuorum: new BN(
         obj.proposalMinVotingPowerForQuorum
       ),
-      proposalMinPassBp: obj.proposalMinPassBp,
+      proposalMinPassPct: obj.proposalMinPassPct,
       proposalCanUpdateAfterVotes: obj.proposalCanUpdateAfterVotes,
       lockupAmount: new BN(obj.lockupAmount),
       proposalNonce: obj.proposalNonce,

@@ -10,7 +10,7 @@ use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface};
 pub struct StakeToArgs {
     amount: u64,
     end_ts: i64,
-    disable_rewards_bp: bool, // optionally disable target_rewards_bp for the owner
+    disable_rewards: bool, // optionally disable target_rewards_pct for the owner
 }
 
 // StakeTo means that security_council is staking tokens to the lockup account for the owner.
@@ -95,16 +95,20 @@ pub fn handle<'info>(
     lockup.end_ts = args.end_ts;
     lockup.amount = args.amount;
     lockup.owner = ctx.accounts.owner.key();
-    lockup.target_voting_bp = ns.lockup_default_target_voting_bp;
-    lockup.target_rewards_bp = match args.disable_rewards_bp {
+    lockup.target_voting_pct = ns.lockup_default_target_voting_pct;
+    lockup.target_rewards_pct = match args.disable_rewards {
         true => 0,
-        false => ns.lockup_default_target_rewards_bp,
+        false => ns.lockup_default_target_rewards_pct,
     };
 
     ns.lockup_amount = ns
         .lockup_amount
         .checked_add(args.amount)
         .expect("should not overflow");
+
+    if !lockup.valid(ns) {
+        return Err(CustomError::InvalidLockup.into());
+    }
 
     Ok(())
 }

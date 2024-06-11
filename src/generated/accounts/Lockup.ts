@@ -10,8 +10,8 @@ export interface LockupFields {
   amount: BN
   startTs: BN
   endTs: BN
-  targetRewardsBp: number
-  targetVotingBp: number
+  targetRewardsPct: number
+  targetVotingPct: number
   padding: Array<number>
 }
 
@@ -21,8 +21,8 @@ export interface LockupJSON {
   amount: string
   startTs: string
   endTs: string
-  targetRewardsBp: number
-  targetVotingBp: number
+  targetRewardsPct: number
+  targetVotingPct: number
   padding: Array<number>
 }
 
@@ -32,8 +32,8 @@ export class Lockup {
   readonly amount: BN
   readonly startTs: BN
   readonly endTs: BN
-  readonly targetRewardsBp: number
-  readonly targetVotingBp: number
+  readonly targetRewardsPct: number
+  readonly targetVotingPct: number
   readonly padding: Array<number>
 
   static readonly discriminator = Buffer.from([1, 45, 32, 32, 57, 81, 88, 67])
@@ -44,8 +44,8 @@ export class Lockup {
     borsh.u64("amount"),
     borsh.i64("startTs"),
     borsh.i64("endTs"),
-    borsh.u16("targetRewardsBp"),
-    borsh.u16("targetVotingBp"),
+    borsh.u16("targetRewardsPct"),
+    borsh.u16("targetVotingPct"),
     borsh.array(borsh.u8(), 240, "padding"),
   ])
 
@@ -55,8 +55,8 @@ export class Lockup {
     this.amount = fields.amount
     this.startTs = fields.startTs
     this.endTs = fields.endTs
-    this.targetRewardsBp = fields.targetRewardsBp
-    this.targetVotingBp = fields.targetVotingBp
+    this.targetRewardsPct = fields.targetRewardsPct
+    this.targetVotingPct = fields.targetVotingPct
     this.padding = fields.padding
   }
 
@@ -109,8 +109,8 @@ export class Lockup {
       amount: dec.amount,
       startTs: dec.startTs,
       endTs: dec.endTs,
-      targetRewardsBp: dec.targetRewardsBp,
-      targetVotingBp: dec.targetVotingBp,
+      targetRewardsPct: dec.targetRewardsPct,
+      targetVotingPct: dec.targetVotingPct,
       padding: dec.padding,
     })
   }
@@ -122,8 +122,8 @@ export class Lockup {
       amount: this.amount.toString(),
       startTs: this.startTs.toString(),
       endTs: this.endTs.toString(),
-      targetRewardsBp: this.targetRewardsBp,
-      targetVotingBp: this.targetVotingBp,
+      targetRewardsPct: this.targetRewardsPct,
+      targetVotingPct: this.targetVotingPct,
       padding: this.padding,
     }
   }
@@ -135,8 +135,8 @@ export class Lockup {
       amount: new BN(obj.amount),
       startTs: new BN(obj.startTs),
       endTs: new BN(obj.endTs),
-      targetRewardsBp: obj.targetRewardsBp,
-      targetVotingBp: obj.targetVotingBp,
+      targetRewardsPct: obj.targetRewardsPct,
+      targetVotingPct: obj.targetVotingPct,
       padding: obj.padding,
     })
   }

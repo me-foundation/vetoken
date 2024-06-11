@@ -51,13 +51,14 @@ pub fn handle<'info>(
     proposal.owner = ctx.accounts.review_council.key();
     proposal.nonce = ns.proposal_nonce;
 
-    if !proposal.has_valid_uri() {
-        return Err(CustomError::InvalidURI.into());
+    if !proposal.valid() {
+        return Err(CustomError::InvalidProposalState.into());
     }
 
     ns.proposal_nonce = ns
         .proposal_nonce
         .checked_add(1)
         .expect("should not overflow");
+
     Ok(())
 }
