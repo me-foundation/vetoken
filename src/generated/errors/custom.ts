@@ -10,6 +10,7 @@ export type CustomError =
   | InvalidProposalState
   | Overflow
   | CannotUpdateProposal
+  | InvalidURI
 
 export class InvalidOwner extends Error {
   static readonly code = 6000
@@ -132,6 +133,17 @@ export class CannotUpdateProposal extends Error {
   }
 }
 
+export class InvalidURI extends Error {
+  static readonly code = 6011
+  readonly code = 6011
+  readonly name = "InvalidURI"
+  readonly msg = "Invalid URI"
+
+  constructor(readonly logs?: string[]) {
+    super("6011: Invalid URI")
+  }
+}
+
 export function fromCode(code: number, logs?: string[]): CustomError | null {
   switch (code) {
     case 6000:
@@ -156,6 +168,8 @@ export function fromCode(code: number, logs?: string[]): CustomError | null {
       return new Overflow(logs)
     case 6010:
       return new CannotUpdateProposal(logs)
+    case 6011:
+      return new InvalidURI(logs)
   }
 
   return null

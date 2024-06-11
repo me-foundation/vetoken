@@ -989,6 +989,11 @@ export type Vetoken = {
       "code": 6010,
       "name": "CannotUpdateProposal",
       "msg": "Cannot Update Proposal"
+    },
+    {
+      "code": 6011,
+      "name": "InvalidURI",
+      "msg": "Invalid URI"
     }
   ]
 };
@@ -1984,6 +1989,11 @@ export const IDL: Vetoken = {
       "code": 6010,
       "name": "CannotUpdateProposal",
       "msg": "Cannot Update Proposal"
+    },
+    {
+      "code": 6011,
+      "name": "InvalidURI",
+      "msg": "Invalid URI"
     }
   ]
 };
