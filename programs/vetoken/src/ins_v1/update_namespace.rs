@@ -44,7 +44,7 @@ pub fn handle<'info>(
     ns.lockup_max_saturation = args.lockup_max_saturation;
     ns.proposal_min_voting_power_for_quorum = args.proposal_min_voting_power_for_quorum;
     ns.proposal_min_pass_pct = args.proposal_min_pass_pct;
-    ns.proposal_can_update_after_votes = args.proposal_can_update_after_votes;
+    ns.proposal_can_update_after_votes = false; // we don't allow this to be updated yet
 
     if !ns.valid() {
         return Err(CustomError::InvalidNamespace.into());
