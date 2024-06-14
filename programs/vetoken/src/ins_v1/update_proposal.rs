@@ -20,7 +20,7 @@ pub struct UpdateProposal<'info> {
     #[account(
       mut,
       has_one=ns,
-      constraint = proposal.can_update(&ns) @ CustomError::CannotUpdateProposal,
+      constraint = proposal.can_update() @ CustomError::CannotUpdateProposal,
     )]
     proposal: Box<Account<'info, Proposal>>,
 

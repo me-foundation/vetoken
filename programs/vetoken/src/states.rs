@@ -152,7 +152,7 @@ pub struct Proposal {
 
     pub start_ts: i64,
     pub end_ts: i64,
-    pub status: u8,
+    pub status: u8, // not used at the moment, but a placeholder for future use
     pub voting_power_choices: [u64; MAX_VOTING_CHOICES], // cumulative voting power for each choice
 
     #[max_len(256)]
@@ -162,29 +162,12 @@ pub struct Proposal {
 }
 
 impl Proposal {
-    pub const STATUS_CREATED: u8 = 0;
-    pub const STATUS_ACTIVATED: u8 = 1; // voting passed the minimum participation
-    pub const STATUS_PASSED: u8 = 2;
-
     pub fn valid(&self) -> bool {
-        self.uri.len() <= 255 && self.start_ts <= self.end_ts
+        self.uri.len() <= 255 && self.start_ts < self.end_ts
     }
 
-    pub fn set_status(&mut self, ns: &Namespace, override_status: Option<u8>) {
-        if override_status.is_some() {
-            self.status = override_status.unwrap();
-            return;
-        }
-        if self.status == Proposal::STATUS_CREATED && self.has_quorum(ns) {
-            self.status = Proposal::STATUS_ACTIVATED;
-        }
-        if self.status == Proposal::STATUS_ACTIVATED && self.has_passed(ns) {
-            self.status = Proposal::STATUS_PASSED;
-        }
-    }
-
-    pub fn can_update(&self, ns: &Namespace) -> bool {
-        if self.total_voting_power() > 0 && !ns.proposal_can_update_after_votes {
+    pub fn can_update(&self) -> bool {
+        if self.total_voting_power() > 0 {
             return false;
         }
         true
@@ -208,10 +191,12 @@ impl Proposal {
         })
     }
 
+    #[allow(dead_code)]
     pub fn has_quorum(&self, ns: &Namespace) -> bool {
         self.total_voting_power() > ns.proposal_min_voting_power_for_quorum
     }
 
+    #[allow(dead_code)]
     pub fn has_passed(&self, ns: &Namespace) -> bool {
         // Check if the proposal has quorum
         if !self.has_quorum(ns) {
@@ -491,7 +476,7 @@ mod tests {
     }
 
     #[test]
-    fn test_set_status_created() {
+    fn test_has_quorum_false() {
         let ns = Namespace {
             token_mint: Pubkey::new_from_array([0; 32]),
             deployer: Pubkey::new_from_array([0; 32]),
@@ -510,7 +495,7 @@ mod tests {
             proposal_nonce: 0,
             _padding: [0; 240],
         };
-        let mut proposal = Proposal {
+        let proposal = Proposal {
             ns: Pubkey::new_from_array([0; 32]),
             nonce: 0,
             owner: Pubkey::new_from_array([0; 32]),
@@ -521,12 +506,11 @@ mod tests {
             voting_power_choices: [10000, 0, 0, 0, 0, 0],
             _padding: [0; 240],
         };
-        proposal.set_status(&ns, None);
-        assert_eq!(proposal.status, Proposal::STATUS_CREATED);
+        assert_eq!(proposal.has_quorum(&ns), false);
     }
 
     #[test]
-    fn test_set_status_activated() {
+    fn test_has_quorum_true() {
         let ns = Namespace {
             token_mint: Pubkey::new_from_array([0; 32]),
             deployer: Pubkey::new_from_array([0; 32]),
@@ -545,7 +529,7 @@ mod tests {
             proposal_nonce: 0,
             _padding: [0; 240],
         };
-        let mut proposal = Proposal {
+        let proposal = Proposal {
             ns: Pubkey::new_from_array([0; 32]),
             nonce: 0,
             owner: Pubkey::new_from_array([0; 32]),
@@ -556,12 +540,11 @@ mod tests {
             voting_power_choices: [100, 100, 0, 0, 0, 0],
             _padding: [0; 240],
         };
-        proposal.set_status(&ns, None);
-        assert_eq!(proposal.status, Proposal::STATUS_ACTIVATED);
+        assert_eq!(proposal.has_quorum(&ns), true);
     }
 
     #[test]
-    fn test_set_status_passed() {
+    fn test_has_passed() {
         let ns = Namespace {
             token_mint: Pubkey::new_from_array([0; 32]),
             deployer: Pubkey::new_from_array([0; 32]),
@@ -580,7 +563,7 @@ mod tests {
             proposal_nonce: 0,
             _padding: [0; 240],
         };
-        let mut proposal = Proposal {
+        let proposal = Proposal {
             ns: Pubkey::new_from_array([0; 32]),
             nonce: 0,
             owner: Pubkey::new_from_array([0; 32]),
@@ -591,7 +574,6 @@ mod tests {
             voting_power_choices: [10000, 0, 0, 0, 0, 0],
             _padding: [0; 240],
         };
-        proposal.set_status(&ns, None);
-        assert_eq!(proposal.status, Proposal::STATUS_PASSED);
+        assert_eq!(proposal.has_passed(&ns), true);
     }
 }

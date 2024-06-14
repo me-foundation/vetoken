@@ -47,7 +47,6 @@ pub fn handle<'info>(
     proposal.uri = args.uri;
     proposal.start_ts = args.start_ts;
     proposal.end_ts = args.end_ts;
-    proposal.status = Proposal::STATUS_CREATED;
     proposal.owner = ctx.accounts.review_council.key();
     proposal.nonce = ns.proposal_nonce;
 
