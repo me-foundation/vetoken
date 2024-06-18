@@ -442,10 +442,10 @@ describe("stake", async () => {
 
     const endTs = new BN(
       (new Date().getTime() + 1000 * 60 * 60 * 24 * 30) / 1000
-    );
 
-    test("stake first time for user1", async () => {
-      const tx = sdk.txStake(signers.user1.publicKey, new BN(400 * 1e6), endTs);
+    );
+    test("stake first time for user1 with endTs 0", async () => {
+      const tx = sdk.txStake(signers.user1.publicKey, new BN(400 * 1e6), new BN(0));
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user1);
       const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
@@ -453,13 +453,30 @@ describe("stake", async () => {
       const lockup = await getLockup(ctx, sdk, signers.user1.publicKey);
       assert(lockup);
       assert(lockup.amount.eq(new BN(400 * 1e6)));
+      assert(lockup.endTs.eqn(0));
+      assert(lockup.targetRewardsPct !== 0);
+      assert(lockup.targetVotingPct !== 0);
+      assert(lockup.owner.equals(signers.user1.publicKey));
+      assert(lockup.startTs.eqn(0));
+    });
+
+    test("stake second time for user1 with normal endTs", async () => {
+      const tx = sdk.txStake(signers.user1.publicKey, new BN(400 * 1e6), endTs);
+      tx.recentBlockhash = ctx.lastBlockhash;
+      tx.sign(ctx.payer, signers.user1);
+      const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+      assert(confirmed.result === null);
+      const lockup = await getLockup(ctx, sdk, signers.user1.publicKey);
+      assert(lockup);
+      assert(lockup.amount.eq(new BN(800 * 1e6)));
       assert(lockup.endTs.eq(endTs));
       assert(lockup.targetRewardsPct !== 0);
+      assert(lockup.targetVotingPct !== 0);
       assert(lockup.owner.equals(signers.user1.publicKey));
       assert(!lockup.startTs.eqn(0));
     });
 
-    test("stake second time for user1", async () => {
+    test("stake third time for user1", async () => {
       const tx = sdk.txStake(signers.user1.publicKey, new BN(300 * 1e6), endTs);
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user1);
@@ -467,7 +484,7 @@ describe("stake", async () => {
       assert(confirmed.result === null);
       const lockup = await getLockup(ctx, sdk, signers.user1.publicKey);
       assert(lockup);
-      assert(lockup.amount.eq(new BN(700 * 1e6)));
+      assert(lockup.amount.eq(new BN(1100 * 1e6)));
       assert(lockup.endTs.eq(endTs));
       assert(lockup.owner.equals(signers.user1.publicKey));
       assert(!lockup.startTs.eqn(0));

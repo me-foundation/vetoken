@@ -80,8 +80,8 @@ impl Lockup {
 
     pub fn valid(&self, ns: &Namespace) -> bool {
         self.amount >= ns.lockup_min_amount
-            && self.start_ts > 0
-            && self.end_ts >= self.min_end_ts(ns)
+            && self.start_ts >= 0
+            && (self.end_ts >= self.min_end_ts(ns) || self.end_ts == 0)
             && self.end_ts >= self.start_ts
             && self.target_voting_pct >= 100
             && self.target_voting_pct <= 2500 // max 25x
