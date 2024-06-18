@@ -36,7 +36,7 @@ pub struct Stake<'info> {
       seeds=[b"lockup", ns.key().as_ref(), owner.key.as_ref()],
       space= 8 + Lockup::INIT_SPACE,
       constraint = args.amount >= ns.lockup_min_amount @ CustomError::InvalidLockupAmount,
-      constraint = args.end_ts >= lockup.min_end_ts(&ns) @ CustomError::InvalidTimestamp,
+      constraint = (args.end_ts >= lockup.min_end_ts(&ns) || args.end_ts == 0) @ CustomError::InvalidTimestamp,
       bump
     )]
     lockup: Box<Account<'info, Lockup>>,
