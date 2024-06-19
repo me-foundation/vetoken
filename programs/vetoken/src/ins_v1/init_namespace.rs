@@ -1,6 +1,12 @@
 use crate::{errors::CustomError, states::Namespace};
 use anchor_lang::prelude::*;
-use anchor_spl::token_interface::Mint;
+use anchor_spl::{
+    token_2022::{
+        spl_token_2022::extension::{BaseStateWithExtensions, ExtensionType, StateWithExtensions},
+        Token2022,
+    },
+    token_interface::Mint,
+};
 
 #[derive(Accounts)]
 pub struct InitNamespace<'info> {
@@ -30,12 +36,40 @@ pub struct InitNamespace<'info> {
     system_program: Program<'info, System>,
 }
 
+fn validate_token_mint(token_mint: &AccountInfo) -> Result<()> {
+    if token_mint.owner.ne(&Token2022::id()) {
+        return Ok(());
+    }
+
+    let data = &token_mint.data.borrow();
+    let mint_deserialized = StateWithExtensions::<
+        anchor_spl::token_interface::spl_token_2022::state::Mint,
+    >::unpack(data)?;
+    let deny_list = [
+        ExtensionType::TransferFeeConfig,
+        ExtensionType::TransferFeeAmount,
+        ExtensionType::PermanentDelegate,
+        ExtensionType::NonTransferable,
+        ExtensionType::ConfidentialTransferMint,
+    ];
+    if mint_deserialized
+        .get_extension_types()?
+        .iter()
+        .any(|x| deny_list.contains(x))
+    {
+        return Err(CustomError::InvalidTokenMint.into());
+    }
+    Ok(())
+}
+
 pub fn handle<'info>(ctx: Context<'_, '_, '_, 'info, InitNamespace<'info>>) -> Result<()> {
     let ns = &mut ctx.accounts.ns;
     ns.security_council = ctx.accounts.security_council.key();
     ns.review_council = ctx.accounts.review_council.key();
-    ns.token_mint = ctx.accounts.token_mint.key();
     ns.deployer = ctx.accounts.deployer.key();
+
+    validate_token_mint(&ctx.accounts.token_mint.to_account_info())?;
+    ns.token_mint = ctx.accounts.token_mint.key();
 
     // Setting the default values and the security council can change
     ns.lockup_default_target_rewards_pct = 100; // 100% of the voting power
