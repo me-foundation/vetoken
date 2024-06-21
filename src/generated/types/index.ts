@@ -17,6 +17,11 @@ export { StakeToArgs } from "./StakeToArgs"
 export type { StakeToArgsFields, StakeToArgsJSON } from "./StakeToArgs"
 export { StakeArgs } from "./StakeArgs"
 export type { StakeArgsFields, StakeArgsJSON } from "./StakeArgs"
+export { UpdateDistributionArgs } from "./UpdateDistributionArgs"
+export type {
+  UpdateDistributionArgsFields,
+  UpdateDistributionArgsJSON,
+} from "./UpdateDistributionArgs"
 export { UpdateNamespaceArgs } from "./UpdateNamespaceArgs"
 export type {
   UpdateNamespaceArgsFields,

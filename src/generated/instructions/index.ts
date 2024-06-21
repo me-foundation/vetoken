@@ -25,8 +25,15 @@ export type {
   InitDistributionArgs,
   InitDistributionAccounts,
 } from "./initDistribution"
+export { updateDistribution } from "./updateDistribution"
+export type {
+  UpdateDistributionArgs,
+  UpdateDistributionAccounts,
+} from "./updateDistribution"
 export { claimFromDistribution } from "./claimFromDistribution"
 export type {
   ClaimFromDistributionArgs,
   ClaimFromDistributionAccounts,
 } from "./claimFromDistribution"
+export { withdrawFromDistribution } from "./withdrawFromDistribution"
+export type { WithdrawFromDistributionAccounts } from "./withdrawFromDistribution"

@@ -117,6 +117,7 @@ async function setupNamespace() {
   const ctx = await setupCtx();
   const signers = useSigners();
   await airdrop(ctx, signers.deployer.publicKey, 10 * LAMPORTS_PER_SOL);
+  await airdrop(ctx, signers.securityCouncil.publicKey, 1 * LAMPORTS_PER_SOL);
 
   const deployerBalance = await ctx.banksClient.getBalance(
     signers.deployer.publicKey
@@ -403,11 +404,9 @@ describe("pda", async () => {
       new PublicKey("BvnxPU3QutA7j3BjvaD8mikNGZPHg9jUbq1kA5mQa7Fb"),
       TOKEN_PROGRAM_ID
     );
-    expect(
-      sdk
-        .pdaProposal(0)
-        .toBase58()
-    ).toBe("CeVTUFMdpo6fGWw2USY3Amsm8NZYkpqwxiiX4bWVDdKu");
+    expect(sdk.pdaProposal(0).toBase58()).toBe(
+      "CeVTUFMdpo6fGWw2USY3Amsm8NZYkpqwxiiX4bWVDdKu"
+    );
   });
 });
 
@@ -442,10 +441,13 @@ describe("stake", async () => {
 
     const endTs = new BN(
       (new Date().getTime() + 1000 * 60 * 60 * 24 * 30) / 1000
-
     );
     test("stake first time for user1 with endTs 0", async () => {
-      const tx = sdk.txStake(signers.user1.publicKey, new BN(400 * 1e6), new BN(0));
+      const tx = sdk.txStake(
+        signers.user1.publicKey,
+        new BN(400 * 1e6),
+        new BN(0)
+      );
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user1);
       const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
@@ -710,6 +712,7 @@ describe("proposal", async () => {
     tx.recentBlockhash = ctx.lastBlockhash;
     tx.sign(ctx.payer, uuid2);
     let confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+
     assert(confirmed.result === null);
     const d = await getDistribution(
       ctx,
@@ -727,8 +730,7 @@ describe("proposal", async () => {
     assert(d.startTs.eq(startTs));
 
     const claimant = Keypair.generate();
-    const vaultOwner1 = Keypair.generate();
-    const approvedAmount = 33_000_000;
+    const approvedAmount = 35_000_000;
     const claimAmount = 33_000_000;
     const cosignedMsg = "cosigned message by cosigner1 and cosigner2";
     const distribution = sdk.pdaDistribution(
@@ -736,18 +738,16 @@ describe("proposal", async () => {
       cosigner2.publicKey,
       uuid2.publicKey
     );
+    const distributionTokenAccount = getAssociatedTokenAddressSync(
+      TOKEN_MINT,
+      distribution,
+      true
+    );
 
     await transferToken(
       ctx,
       TOKEN_MINT,
       signers.securityCouncil,
-      vaultOwner1.publicKey,
-      approvedAmount
-    );
-    await approveToken(
-      ctx,
-      TOKEN_MINT,
-      vaultOwner1,
       distribution,
       approvedAmount
     );
@@ -755,7 +755,7 @@ describe("proposal", async () => {
     tx = sdk.txClaimFromDistribution(
       ctx.payer.publicKey,
       distribution,
-      getAssociatedTokenAddressSync(TOKEN_MINT, vaultOwner1.publicKey, true),
+      distributionTokenAccount,
       cosigner1.publicKey,
       cosigner2.publicKey,
       claimant.publicKey,
@@ -779,5 +779,46 @@ describe("proposal", async () => {
     );
     assert(claimantTokenAccount);
     assert(claimantTokenAccount.amount === BigInt(claimAmount));
+
+    // test txUpdateDistribution to be the future timestamp
+    tx = sdk.txUpdateDistribution(
+      distribution,
+      new BN(new Date().getTime() / 1000 + 1000), // some future time
+    );
+    tx.recentBlockhash = ctx.lastBlockhash;
+    tx.sign(ctx.payer, signers.securityCouncil);
+    confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+    assert(confirmed.result === null);
+
+    // test txClaimFromDistribution should fail because the distribution is not started yet
+    tx = sdk.txClaimFromDistribution(
+      ctx.payer.publicKey,
+      distribution,
+      distributionTokenAccount,
+      cosigner1.publicKey,
+      cosigner2.publicKey,
+      claimant.publicKey,
+      new BN(approvedAmount - claimAmount), // the rest of the amount
+      cosignedMsg + "another claim"
+    );
+    tx.recentBlockhash = ctx.lastBlockhash;
+    tx.sign(ctx.payer, cosigner1, cosigner2);
+    confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+    console.log(confirmed.meta?.logMessages);
+    expect(confirmed.result).contains("0x1774");
+
+    // test txWithdrawFromDistribution
+    tx = sdk.txWithdrawFromDistribution(
+      distribution,
+    );
+    tx.recentBlockhash = ctx.lastBlockhash;
+    tx.sign(ctx.payer, signers.securityCouncil);
+    confirmed = await ctx.banksClient.tryProcessTransaction(tx);
+    assert(confirmed.result === null);
+    const distributionTokenAccountAcct = await getToken(
+      ctx,
+      distributionTokenAccount
+    );
+    expect(distributionTokenAccountAcct).toBeNull();
   });
 });

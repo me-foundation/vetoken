@@ -4,42 +4,24 @@ import * as borsh from "@coral-xyz/borsh" // eslint-disable-line @typescript-esl
 import * as types from "../types" // eslint-disable-line @typescript-eslint/no-unused-vars
 import { PROGRAM_ID } from "../programId"
 
-export interface ClaimFromDistributionArgs {
-  args: types.ClaimFromDistributionArgsFields
-}
-
-export interface ClaimFromDistributionAccounts {
-  payer: PublicKey
-  claimant: PublicKey
-  cosigner1: PublicKey
-  cosigner2: PublicKey
-  distributionClaim: PublicKey
+export interface WithdrawFromDistributionAccounts {
+  securityCouncil: PublicKey
   distribution: PublicKey
   distributionTokenMint: PublicKey
-  /** Use multiple token accounts to shard the writes */
   distributionTokenAccount: PublicKey
-  claimantTokenAccount: PublicKey
+  securityCouncilTokenAccount: PublicKey
   ns: PublicKey
   tokenProgram: PublicKey
   systemProgram: PublicKey
   associatedTokenProgram: PublicKey
 }
 
-export const layout = borsh.struct([
-  types.ClaimFromDistributionArgs.layout("args"),
-])
-
-export function claimFromDistribution(
-  args: ClaimFromDistributionArgs,
-  accounts: ClaimFromDistributionAccounts,
+export function withdrawFromDistribution(
+  accounts: WithdrawFromDistributionAccounts,
   programId: PublicKey = PROGRAM_ID
 ) {
   const keys: Array<AccountMeta> = [
-    { pubkey: accounts.payer, isSigner: true, isWritable: true },
-    { pubkey: accounts.claimant, isSigner: false, isWritable: false },
-    { pubkey: accounts.cosigner1, isSigner: true, isWritable: false },
-    { pubkey: accounts.cosigner2, isSigner: true, isWritable: false },
-    { pubkey: accounts.distributionClaim, isSigner: false, isWritable: true },
+    { pubkey: accounts.securityCouncil, isSigner: true, isWritable: true },
     { pubkey: accounts.distribution, isSigner: false, isWritable: false },
     {
       pubkey: accounts.distributionTokenMint,
@@ -52,7 +34,7 @@ export function claimFromDistribution(
       isWritable: true,
     },
     {
-      pubkey: accounts.claimantTokenAccount,
+      pubkey: accounts.securityCouncilTokenAccount,
       isSigner: false,
       isWritable: true,
     },
@@ -65,15 +47,8 @@ export function claimFromDistribution(
       isWritable: false,
     },
   ]
-  const identifier = Buffer.from([4, 56, 229, 48, 170, 15, 253, 5])
-  const buffer = Buffer.alloc(1000)
-  const len = layout.encode(
-    {
-      args: types.ClaimFromDistributionArgs.toEncodable(args.args),
-    },
-    buffer
-  )
-  const data = Buffer.concat([identifier, buffer]).slice(0, 8 + len)
+  const identifier = Buffer.from([176, 19, 213, 219, 200, 84, 232, 55])
+  const data = identifier
   const ix = new TransactionInstruction({ keys, programId, data })
   return ix
 }

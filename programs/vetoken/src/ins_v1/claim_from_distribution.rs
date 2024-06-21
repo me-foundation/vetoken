@@ -45,6 +45,7 @@ pub struct ClaimFromDistribution<'info> {
       has_one = distribution_token_mint,
       has_one = cosigner_1,
       has_one = cosigner_2,
+      has_one = ns,
       constraint = distribution.start_ts <= ns.now() @ CustomError::InvalidTimestamp,
       bump,
     )]
@@ -53,15 +54,16 @@ pub struct ClaimFromDistribution<'info> {
     #[account()]
     distribution_token_mint: Box<InterfaceAccount<'info, Mint>>,
 
+    /// CHECK: distribution_token_account should be owned by distribution pda, but does't have to the ata of the distribution_token_mint
+    /// Use multiple token accounts to shard the writes
     #[account(
       mut,
       token::token_program = token_program,
       token::mint = distribution_token_mint,
-      constraint = delegated_token_account.delegate == Some(distribution.key()).into() @ CustomError::InvalidTokenDelegate,
-      constraint = delegated_token_account.amount >= args.amount @ CustomError::InvalidTokenAmount,
-      constraint = delegated_token_account.delegated_amount >= args.amount @ CustomError::InvalidTokenDelegate,
+      token::authority = distribution,
+      constraint = distribution_token_account.amount >= args.amount @ CustomError::InvalidTokenAmount,
     )]
-    delegated_token_account: Box<InterfaceAccount<'info, TokenAccount>>,
+    distribution_token_account: Box<InterfaceAccount<'info, TokenAccount>>,
 
     #[account(
       init_if_needed,
@@ -103,7 +105,7 @@ pub fn handle<'info>(
         CpiContext::new_with_signer(
             ctx.accounts.token_program.to_account_info(),
             anchor_spl::token_interface::TransferChecked {
-                from: ctx.accounts.delegated_token_account.to_account_info(),
+                from: ctx.accounts.distribution_token_account.to_account_info(),
                 mint: ctx.accounts.distribution_token_mint.to_account_info(),
                 to: ctx.accounts.claimant_token_account.to_account_info(),
                 authority: ctx.accounts.distribution.to_account_info(),

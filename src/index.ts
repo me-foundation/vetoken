@@ -16,6 +16,8 @@ import {
   stakeTo,
   initDistribution,
   claimFromDistribution,
+  updateDistribution,
+  withdrawFromDistribution,
 } from "./generated/instructions";
 import BN from "bn.js";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
@@ -341,10 +343,49 @@ export class VeTokenSDK {
     return this.newTx().add(ix);
   }
 
+  txUpdateDistribution(
+    distribution: PublicKey,
+    startTs: BN
+  ) {
+    const ix = updateDistribution(
+      {
+        args: {
+          startTs,
+        },
+      },
+      {
+        ns: this.pdaNamespace(),
+        distribution,
+        securityCouncil: this.securityCouncil,
+      }
+    );
+    return this.newTx().add(ix);
+  }
+
+  txWithdrawFromDistribution(
+    distribution: PublicKey,
+    distributionTokenAccount?: PublicKey,
+  ) {
+    const ix = withdrawFromDistribution(
+      {
+        ns: this.pdaNamespace(),
+        distribution,
+        securityCouncil: this.securityCouncil,
+        distributionTokenMint: this.tokenMint,
+        distributionTokenAccount: distributionTokenAccount ?? this.ata(distribution),
+        securityCouncilTokenAccount: this.ata(this.securityCouncil),
+        tokenProgram: this.tokenProgram,
+        systemProgram: SystemProgram.programId,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+      }
+    );
+    return this.newTx().add(ix);
+  }
+
   txClaimFromDistribution(
     payer: PublicKey,
     distribution: PublicKey,
-    delegatedTokenAccount: PublicKey,
+    distributionTokenAccount: PublicKey,
     cosigner1: PublicKey,
     cosigner2: PublicKey,
     claimant: PublicKey,
@@ -368,7 +409,7 @@ export class VeTokenSDK {
         cosigner1,
         cosigner2,
         distributionClaim: this.pdaDistributionClaim(claimant, cosignedMsg),
-        delegatedTokenAccount,
+        distributionTokenAccount,
         claimantTokenAccount: getAssociatedTokenAddressSync(
           this.tokenMint,
           claimant,

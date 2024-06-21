@@ -371,6 +371,34 @@ export type Vetoken = {
       ]
     },
     {
+      "name": "updateDistribution",
+      "accounts": [
+        {
+          "name": "securityCouncil",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "distribution",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ns",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": "UpdateDistributionArgs"
+          }
+        }
+      ]
+    },
+    {
       "name": "claimFromDistribution",
       "accounts": [
         {
@@ -409,9 +437,12 @@ export type Vetoken = {
           "isSigner": false
         },
         {
-          "name": "delegatedTokenAccount",
+          "name": "distributionTokenAccount",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": [
+            "Use multiple token accounts to shard the writes"
+          ]
         },
         {
           "name": "claimantTokenAccount",
@@ -447,6 +478,57 @@ export type Vetoken = {
           }
         }
       ]
+    },
+    {
+      "name": "withdrawFromDistribution",
+      "accounts": [
+        {
+          "name": "securityCouncil",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "distribution",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "distributionTokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "distributionTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "securityCouncilTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ns",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -848,6 +930,18 @@ export type Vetoken = {
           },
           {
             "name": "endTs",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "UpdateDistributionArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "startTs",
             "type": "i64"
           }
         ]
@@ -1386,6 +1480,34 @@ export const IDL: Vetoken = {
       ]
     },
     {
+      "name": "updateDistribution",
+      "accounts": [
+        {
+          "name": "securityCouncil",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "distribution",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ns",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": "UpdateDistributionArgs"
+          }
+        }
+      ]
+    },
+    {
       "name": "claimFromDistribution",
       "accounts": [
         {
@@ -1424,9 +1546,12 @@ export const IDL: Vetoken = {
           "isSigner": false
         },
         {
-          "name": "delegatedTokenAccount",
+          "name": "distributionTokenAccount",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": [
+            "Use multiple token accounts to shard the writes"
+          ]
         },
         {
           "name": "claimantTokenAccount",
@@ -1462,6 +1587,57 @@ export const IDL: Vetoken = {
           }
         }
       ]
+    },
+    {
+      "name": "withdrawFromDistribution",
+      "accounts": [
+        {
+          "name": "securityCouncil",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "distribution",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "distributionTokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "distributionTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "securityCouncilTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ns",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -1863,6 +2039,18 @@ export const IDL: Vetoken = {
           },
           {
             "name": "endTs",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "UpdateDistributionArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "startTs",
             "type": "i64"
           }
         ]
