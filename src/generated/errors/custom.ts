@@ -14,7 +14,6 @@ export type CustomError =
   | InvalidNamespace
   | InvalidLockup
   | InvalidVoteRecord
-  | InvalidDistributionToken
 
 export class InvalidOwner extends Error {
   static readonly code = 6000
@@ -181,17 +180,6 @@ export class InvalidVoteRecord extends Error {
   }
 }
 
-export class InvalidDistributionToken extends Error {
-  static readonly code = 6015
-  readonly code = 6015
-  readonly name = "InvalidDistributionToken"
-  readonly msg = "Invalid Distribution Token"
-
-  constructor(readonly logs?: string[]) {
-    super("6015: Invalid Distribution Token")
-  }
-}
-
 export function fromCode(code: number, logs?: string[]): CustomError | null {
   switch (code) {
     case 6000:
@@ -224,8 +212,6 @@ export function fromCode(code: number, logs?: string[]): CustomError | null {
       return new InvalidLockup(logs)
     case 6014:
       return new InvalidVoteRecord(logs)
-    case 6015:
-      return new InvalidDistributionToken(logs)
   }
 
   return null

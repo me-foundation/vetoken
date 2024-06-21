@@ -439,7 +439,10 @@ export type Vetoken = {
         {
           "name": "distributionTokenAccount",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": [
+            "Use multiple token accounts to shard the writes"
+          ]
         },
         {
           "name": "claimantTokenAccount",
@@ -1100,11 +1103,6 @@ export type Vetoken = {
       "code": 6014,
       "name": "InvalidVoteRecord",
       "msg": "Invalid Vote Record"
-    },
-    {
-      "code": 6015,
-      "name": "InvalidDistributionToken",
-      "msg": "Invalid Distribution Token"
     }
   ]
 };
@@ -1550,7 +1548,10 @@ export const IDL: Vetoken = {
         {
           "name": "distributionTokenAccount",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "docs": [
+            "Use multiple token accounts to shard the writes"
+          ]
         },
         {
           "name": "claimantTokenAccount",
@@ -2211,11 +2212,6 @@ export const IDL: Vetoken = {
       "code": 6014,
       "name": "InvalidVoteRecord",
       "msg": "Invalid Vote Record"
-    },
-    {
-      "code": 6015,
-      "name": "InvalidDistributionToken",
-      "msg": "Invalid Distribution Token"
     }
   ]
 };

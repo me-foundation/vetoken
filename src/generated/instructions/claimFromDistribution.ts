@@ -16,6 +16,7 @@ export interface ClaimFromDistributionAccounts {
   distributionClaim: PublicKey
   distribution: PublicKey
   distributionTokenMint: PublicKey
+  /** Use multiple token accounts to shard the writes */
   distributionTokenAccount: PublicKey
   claimantTokenAccount: PublicKey
   ns: PublicKey
