@@ -85,6 +85,14 @@ pub mod vetoken {
         ins_v1::init_distribution::handle(ctx, args)
     }
 
+    // Update the distribution's (e.g. start_ts), gated by the distribution's security council
+    pub fn update_distribution<'info>(
+        ctx: Context<'_, '_, '_, 'info, UpdateDistribution<'info>>,
+        args: UpdateDistributionArgs,
+    ) -> Result<()> {
+        ins_v1::update_distribution::handle(ctx, args)
+    }
+
     // Claim from distribution using a sharded delegate_token_account
     // The cosigned_msg should be independently signed by both 2FA cosigners
     pub fn claim_from_distribution<'info>(
@@ -92,6 +100,13 @@ pub mod vetoken {
         args: ClaimFromDistributionArgs,
     ) -> Result<()> {
         ins_v1::claim_from_distribution::handle(ctx, args)
+    }
+
+    // withdraw_from_distribution will let security council withdraw from the distribution_token_account
+    pub fn withdraw_from_distribution<'info>(
+        ctx: Context<'_, '_, '_, 'info, WithdrawFromDistribution<'info>>,
+    ) -> Result<()> {
+        ins_v1::withdraw_from_distribution::handle(ctx)
     }
 }
 

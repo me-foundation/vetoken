@@ -32,4 +32,6 @@ pub enum CustomError {
     InvalidLockup,
     #[msg("Invalid Vote Record")]
     InvalidVoteRecord,
+    #[msg("Invalid Distribution Token")]
+    InvalidDistributionToken,
 }

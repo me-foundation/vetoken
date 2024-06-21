@@ -344,7 +344,7 @@ export class VeTokenSDK {
   txClaimFromDistribution(
     payer: PublicKey,
     distribution: PublicKey,
-    delegatedTokenAccount: PublicKey,
+    distributionTokenAccount: PublicKey,
     cosigner1: PublicKey,
     cosigner2: PublicKey,
     claimant: PublicKey,
@@ -368,7 +368,7 @@ export class VeTokenSDK {
         cosigner1,
         cosigner2,
         distributionClaim: this.pdaDistributionClaim(claimant, cosignedMsg),
-        delegatedTokenAccount,
+        distributionTokenAccount,
         claimantTokenAccount: getAssociatedTokenAddressSync(
           this.tokenMint,
           claimant,

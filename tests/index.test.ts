@@ -727,7 +727,6 @@ describe("proposal", async () => {
     assert(d.startTs.eq(startTs));
 
     const claimant = Keypair.generate();
-    const vaultOwner1 = Keypair.generate();
     const approvedAmount = 33_000_000;
     const claimAmount = 33_000_000;
     const cosignedMsg = "cosigned message by cosigner1 and cosigner2";
@@ -736,18 +735,16 @@ describe("proposal", async () => {
       cosigner2.publicKey,
       uuid2.publicKey
     );
+    const distributionTokenAccount = getAssociatedTokenAddressSync(
+      TOKEN_MINT,
+      distribution,
+      true
+    );
 
     await transferToken(
       ctx,
       TOKEN_MINT,
       signers.securityCouncil,
-      vaultOwner1.publicKey,
-      approvedAmount
-    );
-    await approveToken(
-      ctx,
-      TOKEN_MINT,
-      vaultOwner1,
       distribution,
       approvedAmount
     );
@@ -755,7 +752,7 @@ describe("proposal", async () => {
     tx = sdk.txClaimFromDistribution(
       ctx.payer.publicKey,
       distribution,
-      getAssociatedTokenAddressSync(TOKEN_MINT, vaultOwner1.publicKey, true),
+      distributionTokenAccount,
       cosigner1.publicKey,
       cosigner2.publicKey,
       claimant.publicKey,

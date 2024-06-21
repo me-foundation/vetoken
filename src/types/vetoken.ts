@@ -371,6 +371,34 @@ export type Vetoken = {
       ]
     },
     {
+      "name": "updateDistribution",
+      "accounts": [
+        {
+          "name": "securityCouncil",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "distribution",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ns",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": "UpdateDistributionArgs"
+          }
+        }
+      ]
+    },
+    {
       "name": "claimFromDistribution",
       "accounts": [
         {
@@ -409,7 +437,7 @@ export type Vetoken = {
           "isSigner": false
         },
         {
-          "name": "delegatedTokenAccount",
+          "name": "distributionTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -447,6 +475,57 @@ export type Vetoken = {
           }
         }
       ]
+    },
+    {
+      "name": "withdrawFromDistribution",
+      "accounts": [
+        {
+          "name": "securityCouncil",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "distribution",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "distributionTokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "distributionTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "securityCouncilTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ns",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -854,6 +933,18 @@ export type Vetoken = {
       }
     },
     {
+      "name": "UpdateDistributionArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "startTs",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
       "name": "UpdateNamespaceArgs",
       "type": {
         "kind": "struct",
@@ -1009,6 +1100,11 @@ export type Vetoken = {
       "code": 6014,
       "name": "InvalidVoteRecord",
       "msg": "Invalid Vote Record"
+    },
+    {
+      "code": 6015,
+      "name": "InvalidDistributionToken",
+      "msg": "Invalid Distribution Token"
     }
   ]
 };
@@ -1386,6 +1482,34 @@ export const IDL: Vetoken = {
       ]
     },
     {
+      "name": "updateDistribution",
+      "accounts": [
+        {
+          "name": "securityCouncil",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "distribution",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ns",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": "UpdateDistributionArgs"
+          }
+        }
+      ]
+    },
+    {
       "name": "claimFromDistribution",
       "accounts": [
         {
@@ -1424,7 +1548,7 @@ export const IDL: Vetoken = {
           "isSigner": false
         },
         {
-          "name": "delegatedTokenAccount",
+          "name": "distributionTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -1462,6 +1586,57 @@ export const IDL: Vetoken = {
           }
         }
       ]
+    },
+    {
+      "name": "withdrawFromDistribution",
+      "accounts": [
+        {
+          "name": "securityCouncil",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "distribution",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "distributionTokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "distributionTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "securityCouncilTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ns",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -1869,6 +2044,18 @@ export const IDL: Vetoken = {
       }
     },
     {
+      "name": "UpdateDistributionArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "startTs",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
       "name": "UpdateNamespaceArgs",
       "type": {
         "kind": "struct",
@@ -2024,6 +2211,11 @@ export const IDL: Vetoken = {
       "code": 6014,
       "name": "InvalidVoteRecord",
       "msg": "Invalid Vote Record"
+    },
+    {
+      "code": 6015,
+      "name": "InvalidDistributionToken",
+      "msg": "Invalid Distribution Token"
     }
   ]
 };
