@@ -351,6 +351,23 @@ describe("pda", async () => {
     );
   });
 
+  test("pda of distribution", async () => {
+    const sdk = new VeTokenSDK(
+      new PublicKey("FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX"),
+      new PublicKey("FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX"),
+      new PublicKey("34gyo978BuGj1H51fTkpbtBiZVfWy8MwdgmUUHw9tdFG"),
+      new PublicKey("BvnxPU3QutA7j3BjvaD8mikNGZPHg9jUbq1kA5mQa7Fb"),
+      TOKEN_PROGRAM_ID
+    );
+
+    const pda = sdk.pdaDistribution(
+      new PublicKey("c1hit2Rk8KZAz9wZKZwGcPZuhK5MFSwysRRnRVY2aJ5"),
+      new PublicKey("c2uQW2RbAnQTFPphKmV3X5ZLAQSXgzkAxLRgtuHhvRU"),
+      new PublicKey("9Pp4GxiBdSk582SRNdyz7u9DcNzJf5R4MUZKz4upZbDw"),
+    );
+    expect(pda.toBase58()).toBe("HmWJDCgxTstYWZFJaYvEz5wd5n3QpMiHi1WermjJGaXa");
+  });
+
   test("pda of ata", async () => {
     const sdk = new VeTokenSDK(
       new PublicKey("FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX"),
