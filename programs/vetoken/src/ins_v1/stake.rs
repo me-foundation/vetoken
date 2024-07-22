@@ -35,7 +35,7 @@ pub struct Stake<'info> {
       payer=owner,
       seeds=[b"lockup", ns.key().as_ref(), owner.key.as_ref()],
       space= 8 + Lockup::INIT_SPACE,
-      constraint = args.amount >= ns.lockup_min_amount @ CustomError::InvalidLockupAmount,
+      constraint = (args.amount >= ns.lockup_min_amount || args.amount == 0) @ CustomError::InvalidLockupAmount,
       constraint = (args.end_ts >= lockup.min_end_ts(&ns) || args.end_ts == 0) @ CustomError::InvalidTimestamp,
       bump
     )]
@@ -66,19 +66,21 @@ pub fn handle<'info>(ctx: Context<'_, '_, '_, 'info, Stake<'info>>, args: StakeA
     let lockup = &mut ctx.accounts.lockup;
     let ns = &mut ctx.accounts.ns;
 
-    anchor_spl::token_interface::transfer_checked(
-        CpiContext::new(
-            ctx.accounts.token_program.to_account_info(),
-            anchor_spl::token_interface::TransferChecked {
-                from: ctx.accounts.token_account.to_account_info(),
-                mint: ctx.accounts.token_mint.to_account_info(),
-                to: ctx.accounts.lockup_token_account.to_account_info(),
-                authority: ctx.accounts.owner.to_account_info(),
-            },
-        ),
-        args.amount,
-        ctx.accounts.token_mint.decimals,
-    )?; // Transfer the staked tokens to the lockup account
+    if args.amount > 0 {
+        anchor_spl::token_interface::transfer_checked(
+            CpiContext::new(
+                ctx.accounts.token_program.to_account_info(),
+                anchor_spl::token_interface::TransferChecked {
+                    from: ctx.accounts.token_account.to_account_info(),
+                    mint: ctx.accounts.token_mint.to_account_info(),
+                    to: ctx.accounts.lockup_token_account.to_account_info(),
+                    authority: ctx.accounts.owner.to_account_info(),
+                },
+            ),
+            args.amount,
+            ctx.accounts.token_mint.decimals,
+        )?; // Transfer the staked tokens to the lockup account
+    }
 
     // only the first time staking can set the default values for target rewards and voting power
     // this is to prevent the staker from overriding what's set by stake_to by security council, if any
