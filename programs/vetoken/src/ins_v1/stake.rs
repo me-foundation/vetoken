@@ -35,8 +35,9 @@ pub struct Stake<'info> {
       payer=owner,
       seeds=[b"lockup", ns.key().as_ref(), owner.key.as_ref()],
       space= 8 + Lockup::INIT_SPACE,
-      constraint = (args.amount >= ns.lockup_min_amount || args.amount == 0) @ CustomError::InvalidLockupAmount,
+      constraint = (args.amount >= ns.lockup_min_amount || (args.amount == 0 && lockup.amount != 0)) @ CustomError::InvalidLockupAmount,
       constraint = (args.end_ts >= lockup.min_end_ts(&ns) || args.end_ts == 0) @ CustomError::InvalidTimestamp,
+      constraint = (lockup.end_ts >= ns.now() || lockup.end_ts == 0) @ CustomError::InvalidTimestamp, // can only call stake to add more tokens or extend endTs when the lockup is still active
       bump
     )]
     lockup: Box<Account<'info, Lockup>>,
@@ -87,11 +88,11 @@ pub fn handle<'info>(ctx: Context<'_, '_, '_, 'info, Stake<'info>>, args: StakeA
     if lockup.amount == 0 {
         lockup.target_rewards_pct = ns.lockup_default_target_rewards_pct;
         lockup.target_voting_pct = ns.lockup_default_target_voting_pct;
+        lockup.start_ts = ns.now();
     }
 
     // Staker can only extend the lockup period, not reduce it.
     if args.end_ts > lockup.end_ts {
-        lockup.start_ts = ns.now();
         lockup.end_ts = args.end_ts;
     }
 
