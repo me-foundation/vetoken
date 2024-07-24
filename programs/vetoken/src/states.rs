@@ -89,6 +89,12 @@ impl Lockup {
 
     /*
      * Voting power is based on the target_voting_pct
+     * Summary:
+     * 1. Check if the lockup has expired or is invalid
+     * 2. Calculate max voting power based on amount and target percentage
+     * 3. Handle minimum duration case (return 100% of amount)
+     * 4. Handle maximum saturation case (return max voting power)
+     * 5. For durations between min and max, calculate a linear increase in voting power
      *
      *                  Voting Power
      *                   ^
