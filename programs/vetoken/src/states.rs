@@ -82,17 +82,24 @@ impl Lockup {
         self.amount >= ns.lockup_min_amount
             && self.start_ts >= 0
             && (self.end_ts >= self.min_end_ts(ns) || self.end_ts == 0)
-            && self.end_ts >= self.start_ts
+            && (self.end_ts >= self.start_ts || self.end_ts == 0)
             && self.target_voting_pct >= 100
             && self.target_voting_pct <= 2500 // max 25x
     }
 
     /*
-     * Linear decay of the voting power based on the target_voting_pct
+     * Voting power is based on the target_voting_pct
+     * Summary:
+     * 1. Check if the lockup has expired or is invalid
+     * 2. Calculate max voting power based on amount and target percentage
+     * 3. Handle minimum duration case (return 100% of amount)
+     * 4. Handle maximum saturation case (return max voting power)
+     * 5. For durations between min and max, calculate a linear increase in voting power
+     *
      *                  Voting Power
      *                   ^
-     *                   |           ----
-     * Max Voting Power  |          /
+     *                   |
+     * Max Voting Power  |           ----
      *                   |         /
      *                   |        /
      *                   |       /
@@ -100,7 +107,7 @@ impl Lockup {
      *                   |     /
      *             100%  |    /
      *                   | ---
-     *                   +---------------------> Lockup Remaining Time
+     *                   +---------------------> Lockup Time (EndTs - StartTs)
      *                     MinTime   MaxTime
      */
     pub fn voting_power(&self, ns: &Namespace) -> u64 {
@@ -109,22 +116,23 @@ impl Lockup {
         if now >= self.end_ts {
             return 0;
         }
+        if self.end_ts <= self.start_ts {
+            return 0;
+        }
 
+        let duration = (self.end_ts - self.start_ts) as u128;
         let max_voting_power = (self.amount as u128 * self.target_voting_pct as u128) / 100;
-
-        let remaining_time = u128::min(
-            ns.lockup_max_saturation as u128,
-            (self.end_ts - now) as u128,
-        );
-
-        if remaining_time <= ns.lockup_min_duration as u128 {
+        if duration <= ns.lockup_min_duration as u128 {
             return self.amount; // minimal 100% of the amount
+        }
+        if duration >= ns.lockup_max_saturation as u128 {
+            return max_voting_power.try_into().expect("should not overflow");
         }
 
         let amount = self.amount as u128;
 
         let ret = amount
-            + (max_voting_power - amount) * (remaining_time - ns.lockup_min_duration as u128)
+            + (max_voting_power - amount) * (duration - ns.lockup_min_duration as u128)
                 / ((ns.lockup_max_saturation - ns.lockup_min_duration as u64) as u128);
 
         ret.try_into().expect("should not overflow")
@@ -313,7 +321,7 @@ mod tests {
                     deployer: Pubkey::new_from_array([0; 32]),
                     security_council: Pubkey::new_from_array([0; 32]),
                     review_council: Pubkey::new_from_array([0; 32]),
-                    override_now: 1,
+                    override_now: 123,
                     lockup_default_target_rewards_pct: 100,
                     lockup_default_target_voting_pct: 2000,
                     lockup_min_duration: 86400,
@@ -433,7 +441,7 @@ mod tests {
                     target_voting_pct: 2000,
                     _padding: [0; 240],
                 },
-                31811, //  should be closer to 100% + (0.5 / 4) * 2000%
+                200000, //  should be 2000%
             ),
             (
                 "Case 6",
@@ -465,7 +473,7 @@ mod tests {
                     target_voting_pct: 2000,
                     _padding: [0; 240],
                 },
-                80100, //  should be closer to 8x of the amount
+                200000, //  should be 20x of the amount
             ),
         ];
 

@@ -468,7 +468,7 @@ describe("stake", async () => {
       tx.recentBlockhash = ctx.lastBlockhash;
       tx.sign(ctx.payer, signers.user1);
       const confirmed = await ctx.banksClient.tryProcessTransaction(tx);
-      assert(confirmed.result === null);
+      expect(confirmed.result).toBe(null);
       const lockup = await getLockup(ctx, sdk, signers.user1.publicKey);
       assert(lockup);
       assert(lockup.amount.eq(new BN(400 * 1e6)));
@@ -476,7 +476,7 @@ describe("stake", async () => {
       assert(lockup.targetRewardsPct !== 0);
       assert(lockup.targetVotingPct !== 0);
       assert(lockup.owner.equals(signers.user1.publicKey));
-      assert(lockup.startTs.eqn(0));
+      expect(lockup.startTs.toNumber()).not.eq(0);
     });
 
     test("stake second time for user1 with normal endTs", async () => {
@@ -547,7 +547,7 @@ describe("stake", async () => {
       assert(lockup.endTs.eq(endTs));
       assert(lockup.owner.equals(signers.user2.publicKey));
       assert(lockup.targetRewardsPct === 0);
-      assert(!lockup.startTs.eqn(0));
+      expect(lockup.startTs.toNumber()).not.eq(0);
     });
 
     test("unstake should fail because the timestamp was not there yet for user2", async () => {
@@ -821,7 +821,6 @@ describe("proposal", async () => {
     tx.recentBlockhash = ctx.lastBlockhash;
     tx.sign(ctx.payer, cosigner1, cosigner2);
     confirmed = await ctx.banksClient.tryProcessTransaction(tx);
-    console.log(confirmed.meta?.logMessages);
     expect(confirmed.result).contains("0x1774");
 
     // test txWithdrawFromDistribution
