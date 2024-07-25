@@ -52,10 +52,10 @@ export class InvalidTokenDelegate extends Error {
   static readonly code = 6003
   readonly code = 6003
   readonly name = "InvalidTokenDelegate"
-  readonly msg = "Invalid Timestamp"
+  readonly msg = "Invalid Token Delegate"
 
   constructor(readonly logs?: string[]) {
-    super("6003: Invalid Timestamp")
+    super("6003: Invalid Token Delegate")
   }
 }
 
@@ -63,10 +63,10 @@ export class InvalidTimestamp extends Error {
   static readonly code = 6004
   readonly code = 6004
   readonly name = "InvalidTimestamp"
-  readonly msg = "Invalid Token Delegate"
+  readonly msg = "Invalid Timestamp"
 
   constructor(readonly logs?: string[]) {
-    super("6004: Invalid Token Delegate")
+    super("6004: Invalid Timestamp")
   }
 }
 
