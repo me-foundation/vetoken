@@ -246,6 +246,8 @@ export class VeTokenSDK {
       lockupTokenAccount: this.ata(lockup),
       ns: this.pdaNamespace(),
       tokenProgram: this.tokenProgram,
+      systemProgram: SystemProgram.programId,
+      associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
     });
     return this.newTx().add(ix);
   }

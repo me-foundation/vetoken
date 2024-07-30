@@ -12,6 +12,8 @@ export interface UnstakeAccounts {
   lockupTokenAccount: PublicKey
   ns: PublicKey
   tokenProgram: PublicKey
+  systemProgram: PublicKey
+  associatedTokenProgram: PublicKey
 }
 
 export function unstake(
@@ -26,6 +28,12 @@ export function unstake(
     { pubkey: accounts.lockupTokenAccount, isSigner: false, isWritable: true },
     { pubkey: accounts.ns, isSigner: false, isWritable: true },
     { pubkey: accounts.tokenProgram, isSigner: false, isWritable: false },
+    { pubkey: accounts.systemProgram, isSigner: false, isWritable: false },
+    {
+      pubkey: accounts.associatedTokenProgram,
+      isSigner: false,
+      isWritable: false,
+    },
   ]
   const identifier = Buffer.from([90, 95, 107, 42, 205, 124, 50, 225])
   const data = identifier
