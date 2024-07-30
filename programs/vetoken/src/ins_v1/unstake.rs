@@ -4,7 +4,7 @@ use crate::{
     states::{Lockup, Namespace},
 };
 use anchor_lang::prelude::*;
-use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface};
+use anchor_spl::{associated_token::AssociatedToken, token_interface::{Mint, TokenAccount, TokenInterface}};
 
 #[derive(Accounts)]
 pub struct Unstake<'info> {
@@ -15,22 +15,24 @@ pub struct Unstake<'info> {
     token_mint: Box<InterfaceAccount<'info, Mint>>,
 
     #[account(
-        mut,
+        init_if_needed,
+        token::token_program = token_program,
         associated_token::token_program = token_program,
         associated_token::mint = token_mint,
         associated_token::authority = owner,
+        payer = owner,
     )]
     token_account: Box<InterfaceAccount<'info, TokenAccount>>,
 
     #[account(
-      mut,
-      seeds=[b"lockup", ns.key().as_ref(), owner.key().as_ref()],
-      has_one=ns,
-      has_one=owner,
-      constraint = lockup.end_ts <= ns.now() @ CustomError::InvalidTimestamp,
-      constraint = ns.lockup_amount >= lockup.amount @ CustomError::Overflow,
-      bump,
-      close=owner,
+        mut,
+        seeds=[b"lockup", ns.key().as_ref(), owner.key().as_ref()],
+        has_one=ns,
+        has_one=owner,
+        constraint = lockup.end_ts <= ns.now() @ CustomError::InvalidTimestamp,
+        constraint = ns.lockup_amount >= lockup.amount @ CustomError::Overflow,
+        bump,
+        close=owner,
     )]
     lockup: Box<Account<'info, Lockup>>,
 
@@ -50,6 +52,8 @@ pub struct Unstake<'info> {
     ns: Box<Account<'info, Namespace>>,
 
     token_program: Interface<'info, TokenInterface>,
+    system_program: Program<'info, System>,
+    associated_token_program: Program<'info, AssociatedToken>,
 }
 
 pub fn handle<'info>(ctx: Context<'_, '_, '_, 'info, Unstake<'info>>) -> Result<()> {
