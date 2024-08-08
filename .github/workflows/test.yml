@@ -15,10 +15,34 @@ jobs:
       - uses: actions/checkout@v2
       - uses: metadaoproject/anchor-test@v2
         with:
-          anchor-version: '0.29.0'
-          solana-cli-version: '1.18.11'
-          node-version: '20.9.0'
-          features: 'anchor-test'
+          anchor-version: "0.29.0"
+          solana-cli-version: "1.18.11"
+          node-version: "20.9.0"
+          features: "anchor-test"
       - run: cargo fmt -- --check && cargo clippy
       - run: cargo test
       - run: anchor build && npm ci && npm run test -- run
+  analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: "recursive"
+
+      - name: Run radar
+        id: radar
+        uses: auditware/radar-action@main
+        with:
+          path: "."
+          ignore: "low"
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: output.sarif
