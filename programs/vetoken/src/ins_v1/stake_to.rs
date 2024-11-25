@@ -1,3 +1,5 @@
+use std::cmp::min;
+
 use crate::{
     errors::CustomError,
     states::{Lockup, Namespace},
@@ -92,7 +94,10 @@ pub fn handle<'info>(
 
     lockup.ns = ns.key();
     lockup.start_ts = ns.now();
-    lockup.end_ts = args.end_ts;
+    lockup.end_ts = min(
+        args.end_ts,
+        lockup.start_ts + (ns.lockup_max_saturation as i64),
+    );
     lockup.amount = args.amount;
     lockup.owner = ctx.accounts.owner.key();
     lockup.target_voting_pct = ns.lockup_default_target_voting_pct;
