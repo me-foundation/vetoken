@@ -4,7 +4,10 @@ use crate::{
     states::{Lockup, Namespace},
 };
 use anchor_lang::prelude::*;
-use anchor_spl::{associated_token::AssociatedToken, token_interface::{Mint, TokenAccount, TokenInterface}};
+use anchor_spl::{
+    associated_token::AssociatedToken,
+    token_interface::{Mint, TokenAccount, TokenInterface},
+};
 
 #[derive(Accounts)]
 pub struct Unstake<'info> {

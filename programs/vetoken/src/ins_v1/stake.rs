@@ -1,3 +1,5 @@
+use std::cmp::min;
+
 use crate::{
     errors::CustomError,
     states::{Lockup, Namespace},
@@ -93,7 +95,10 @@ pub fn handle<'info>(ctx: Context<'_, '_, '_, 'info, Stake<'info>>, args: StakeA
 
     // Staker can only extend the lockup period, not reduce it.
     if args.end_ts > lockup.end_ts {
-        lockup.end_ts = args.end_ts;
+        lockup.end_ts = min(
+            args.end_ts,
+            lockup.start_ts + (ns.lockup_max_saturation as i64),
+        );
     }
 
     lockup.ns = ns.key();
