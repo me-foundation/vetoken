@@ -343,11 +343,11 @@ describe("pda", async () => {
       new PublicKey("FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX"),
       new PublicKey("FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX"),
       new PublicKey("34gyo978BuGj1H51fTkpbtBiZVfWy8MwdgmUUHw9tdFG"),
-      new PublicKey("BvnxPU3QutA7j3BjvaD8mikNGZPHg9jUbq1kA5mQa7Fb"),
+      new PublicKey("MEFNBXixkEbait3xn9bkm8WsJzXtVsaJEn4c8Sam21u"),
       TOKEN_PROGRAM_ID
     );
     expect(sdk.pdaNamespace().toBase58()).toBe(
-      "6YgabcWPL8MNYKhxcLrPhKAXwD8ZZgPFVLmUPh9aTJWs"
+      "acAvyneD7adS3yrXUp41c1AuoYoYRhnjeAWH9stbdTf"
     );
   });
 
@@ -356,7 +356,7 @@ describe("pda", async () => {
       new PublicKey("FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX"),
       new PublicKey("FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX"),
       new PublicKey("34gyo978BuGj1H51fTkpbtBiZVfWy8MwdgmUUHw9tdFG"),
-      new PublicKey("BvnxPU3QutA7j3BjvaD8mikNGZPHg9jUbq1kA5mQa7Fb"),
+      new PublicKey("MEFNBXixkEbait3xn9bkm8WsJzXtVsaJEn4c8Sam21u"),
       TOKEN_PROGRAM_ID
     );
 
@@ -365,7 +365,7 @@ describe("pda", async () => {
       new PublicKey("c2uQW2RbAnQTFPphKmV3X5ZLAQSXgzkAxLRgtuHhvRU"),
       new PublicKey("9Pp4GxiBdSk582SRNdyz7u9DcNzJf5R4MUZKz4upZbDw"),
     );
-    expect(pda.toBase58()).toBe("HmWJDCgxTstYWZFJaYvEz5wd5n3QpMiHi1WermjJGaXa");
+    expect(pda.toBase58()).toBe("C4AZSe4B49NH6Cg3ib37yJzZ1TMjwVAmAtq95qfUcBqs");
   });
 
   test("pda of ata", async () => {
@@ -373,27 +373,27 @@ describe("pda", async () => {
       new PublicKey("FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX"),
       new PublicKey("FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX"),
       new PublicKey("34gyo978BuGj1H51fTkpbtBiZVfWy8MwdgmUUHw9tdFG"),
-      new PublicKey("BvnxPU3QutA7j3BjvaD8mikNGZPHg9jUbq1kA5mQa7Fb"),
+      new PublicKey("MEFNBXixkEbait3xn9bkm8WsJzXtVsaJEn4c8Sam21u"),
       TOKEN_PROGRAM_ID
     );
 
     expect(
       sdk
-        .ata(new PublicKey("4wejSnr97csngztZ5SU7A6iZRXJD7B3Y1R1koCQ5NjmD"))
+        .ata(new PublicKey("132m2hj64RBJ915YrhiyDCSheBNqcBHS9Dm6tkQvHADZ"))
         .toBase58()
-    ).toBe("GDrVVSQ9hjRTunE6T9A2AUREcRiyUDtJZ37C63EXCUSk");
+    ).toBe("DjVcHHQRD5Qedt8tQxwPmYKp4mQ1mdCdjtF5ChzqNv9v");
 
     expect(
       sdk
         .ata(new PublicKey("FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX"))
         .toBase58()
-    ).toBe("GXVFqM64a7vtJ6ftjgDPqnwKKicuUnd2fcjMXgEsRC1");
+    ).toBe("5hzvv5ebHbdAnHskQDgGXgZLPYsoLiCouibds8zNZ2Cv");
 
     expect(
       sdk
         .ata(new PublicKey("SGjimYAi9NKpEDjrbhvRm6i3Gk9RGW1r2i9JdgSQrxR"))
         .toBase58()
-    ).toBe("A1AQ313NCUjLFZNvqgu9ZMWwWCDATUT2fhWkiKNsjWPW");
+    ).toBe("6k85ENqeMNHto1h3vrNkuFH8tZM5LPSaZQahbrnFRmEA");
   });
 
   test("pda of lockup", async () => {
@@ -401,16 +401,16 @@ describe("pda", async () => {
       new PublicKey("FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX"),
       new PublicKey("FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX"),
       new PublicKey("34gyo978BuGj1H51fTkpbtBiZVfWy8MwdgmUUHw9tdFG"),
-      new PublicKey("BvnxPU3QutA7j3BjvaD8mikNGZPHg9jUbq1kA5mQa7Fb"),
+      new PublicKey("MEFNBXixkEbait3xn9bkm8WsJzXtVsaJEn4c8Sam21u"),
       TOKEN_PROGRAM_ID
     );
     expect(
       sdk
         .pdaLockup(
-          new PublicKey("4wejSnr97csngztZ5SU7A6iZRXJD7B3Y1R1koCQ5NjmD")
+          new PublicKey("EdcYCfaMXZkFv6z5tTJSiKbmJwhcwNNDCji7YNRKYfqT")
         )
         .toBase58()
-    ).toBe("SGjimYAi9NKpEDjrbhvRm6i3Gk9RGW1r2i9JdgSQrxR");
+    ).toBe("CXuGk4xiWWwttt8q1uTEVkURXbgUTTtRHjfzT85TWrAF");
   });
 
   test("pda of proposal", async () => {
@@ -418,11 +418,11 @@ describe("pda", async () => {
       new PublicKey("FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX"),
       new PublicKey("FcfYR3GNuvWxgto8YkXLFbMKaDX4R6z39Js2MFH7vuLX"),
       new PublicKey("34gyo978BuGj1H51fTkpbtBiZVfWy8MwdgmUUHw9tdFG"),
-      new PublicKey("BvnxPU3QutA7j3BjvaD8mikNGZPHg9jUbq1kA5mQa7Fb"),
+      new PublicKey("MEFNBXixkEbait3xn9bkm8WsJzXtVsaJEn4c8Sam21u"),
       TOKEN_PROGRAM_ID
     );
     expect(sdk.pdaProposal(0).toBase58()).toBe(
-      "CeVTUFMdpo6fGWw2USY3Amsm8NZYkpqwxiiX4bWVDdKu"
+      "6shEV5W2V1PTNfZ7makXhdvBB6xA5AHgJDGsHT17ooxU"
     );
   });
 });
