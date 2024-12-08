@@ -16,11 +16,11 @@ The endpoints' detailed explanation can be found at [lib.rs](./programs/vetoken/
 
 # Features
 
-- Simplified Lockup structure with full vote escrow and voting power decay support.
+- Simplified Lockup structure with different voting power & rewards multiplier support.
 - Proposals and Proposal votes are based on the voting power of the lockup.
-- Stake and StakeTo with different rewards settings
-- Security Council and Review Council governance model design
-- Full permissionless composability.
+- Stake and StakeTo with different rewards settings.
+- Security Council and Review Council governance model.
+- Distribution
 
 # Development
 
