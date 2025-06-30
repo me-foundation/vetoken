@@ -38,6 +38,7 @@ const TOKEN_DECIMALS = 6;
 let _cloneAccounts:
   | { address: PublicKey; info: AccountInfo<Buffer> }[]
   | undefined;
+
 async function setupCloneAccounts() {
   const conn = new Connection("https://api.devnet.solana.com");
   if (_cloneAccounts !== undefined) {
@@ -45,61 +46,38 @@ async function setupCloneAccounts() {
   }
   const signers = useSigners();
 
-  _cloneAccounts = [];
-  _cloneAccounts.push({
-    address: signers.deployer.publicKey,
-    info: (await conn.getAccountInfo(signers.deployer.publicKey))!,
-  });
-  _cloneAccounts.push({
-    address: TOKEN_MINT,
-    info: (await conn.getAccountInfo(TOKEN_MINT))!,
-  });
-  _cloneAccounts.push({
-    address: signers.securityCouncil.publicKey,
-    info: (await conn.getAccountInfo(signers.securityCouncil.publicKey))!,
-  });
-  _cloneAccounts.push({
-    address: getAssociatedTokenAddressSync(
+  const accountsToFetch = [
+    signers.deployer.publicKey,
+    TOKEN_MINT,
+    signers.securityCouncil.publicKey,
+    getAssociatedTokenAddressSync(
       TOKEN_MINT,
       signers.securityCouncil.publicKey,
       true
     ),
-    info: (await conn.getAccountInfo(
-      getAssociatedTokenAddressSync(
-        TOKEN_MINT,
-        signers.securityCouncil.publicKey,
-        true
-      )
-    ))!,
-  });
-  _cloneAccounts.push({
-    address: signers.user1.publicKey,
-    info: (await conn.getAccountInfo(signers.user1.publicKey))!,
-  });
-  _cloneAccounts.push({
-    address: getAssociatedTokenAddressSync(
-      TOKEN_MINT,
-      signers.user1.publicKey,
-      true
-    ),
-    info: (await conn.getAccountInfo(
-      getAssociatedTokenAddressSync(TOKEN_MINT, signers.user1.publicKey, true)
-    ))!,
-  });
-  _cloneAccounts.push({
-    address: signers.user2.publicKey,
-    info: (await conn.getAccountInfo(signers.user2.publicKey))!,
-  });
-  _cloneAccounts.push({
-    address: getAssociatedTokenAddressSync(
-      TOKEN_MINT,
-      signers.user2.publicKey,
-      true
-    ),
-    info: (await conn.getAccountInfo(
-      getAssociatedTokenAddressSync(TOKEN_MINT, signers.user2.publicKey, true)
-    ))!,
-  });
+    signers.user1.publicKey,
+    getAssociatedTokenAddressSync(TOKEN_MINT, signers.user1.publicKey, true),
+    signers.user2.publicKey,
+    getAssociatedTokenAddressSync(TOKEN_MINT, signers.user2.publicKey, true),
+  ];
+
+  const accountInfos = await Promise.all(
+    accountsToFetch.map(async (address) => {
+      const accountInfo = await conn.getAccountInfo(address);
+      if (!accountInfo) {
+        throw new Error(
+          `Account ${address.toBase58()} not found - you may need to manually airdrop devnet SOL to the account first`
+        );
+      }
+      return accountInfo;
+    })
+  );
+
+  _cloneAccounts = accountsToFetch.map((address, index) => ({
+    address,
+    info: accountInfos[index]!,
+  }));
+
   return _cloneAccounts;
 }
 
@@ -363,7 +341,7 @@ describe("pda", async () => {
     const pda = sdk.pdaDistribution(
       new PublicKey("c1hit2Rk8KZAz9wZKZwGcPZuhK5MFSwysRRnRVY2aJ5"),
       new PublicKey("c2uQW2RbAnQTFPphKmV3X5ZLAQSXgzkAxLRgtuHhvRU"),
-      new PublicKey("9Pp4GxiBdSk582SRNdyz7u9DcNzJf5R4MUZKz4upZbDw"),
+      new PublicKey("9Pp4GxiBdSk582SRNdyz7u9DcNzJf5R4MUZKz4upZbDw")
     );
     expect(pda.toBase58()).toBe("C4AZSe4B49NH6Cg3ib37yJzZ1TMjwVAmAtq95qfUcBqs");
   });
@@ -800,7 +778,7 @@ describe("proposal", async () => {
     // test txUpdateDistribution to be the future timestamp
     tx = sdk.txUpdateDistribution(
       distribution,
-      new BN(new Date().getTime() / 1000 + 1000), // some future time
+      new BN(new Date().getTime() / 1000 + 1000) // some future time
     );
     tx.recentBlockhash = ctx.lastBlockhash;
     tx.sign(ctx.payer, signers.securityCouncil);
@@ -824,9 +802,7 @@ describe("proposal", async () => {
     expect(confirmed.result).contains("0x1774");
 
     // test txWithdrawFromDistribution
-    tx = sdk.txWithdrawFromDistribution(
-      distribution,
-    );
+    tx = sdk.txWithdrawFromDistribution(distribution);
     tx.recentBlockhash = ctx.lastBlockhash;
     tx.sign(ctx.payer, signers.securityCouncil);
     confirmed = await ctx.banksClient.tryProcessTransaction(tx);

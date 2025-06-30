@@ -2,11 +2,10 @@
 
 VeToken is an open source vote escrow based simplified solana staking program for any Tokenk or Token22.
 
-| Network | Program Address |
-| ----------- | ----------- |
+| Network | Program Address                             |
+| ------- | ------------------------------------------- |
 | Devnet  | veTbq5fF2HWYpgmkwjGKTYLVpY6miWYYmakML7R7LRf |
 | Mainnet | veTbq5fF2HWYpgmkwjGKTYLVpY6miWYYmakML7R7LRf |
-
 
 # Architecture
 
@@ -24,7 +23,14 @@ The endpoints' detailed explanation can be found at [lib.rs](./programs/vetoken/
 
 # Development
 
-```bash
+**Inside the tests, there is a setupCloneAccounts function, however solana devnet will re-claim rent (and hence delete) from inactive accounts. You may need to manually airdrop devnet SOL to the accounts first so that cloning is successful**
+
+```zsh
+
+# Make sure you have the correct anchor and solana version installed, e.g:
+avm install 0.29.0
+sh -c "$(curl -sSfL https://release.anza.xyz/v1.18.11/install)"
+
 # Test build and running the bankrun tests
 npm i
 anchor build && npm run test -- run
@@ -37,8 +43,10 @@ anchor run update_idl
 ```
 
 # IDL
+
 - [IDL - vetoken.json](./src/idl/vetoken.json)
 - [Types - vetoken.ts](./src/types/vetoken.ts)
 
 # License
+
 Apache 2.0
