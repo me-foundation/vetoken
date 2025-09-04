@@ -219,6 +219,16 @@
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
         }
       ],
       "args": []
@@ -742,7 +752,7 @@
             "type": {
               "array": [
                 "u8",
-                240
+                32
               ]
             }
           }
@@ -1047,12 +1057,12 @@
     {
       "code": 6003,
       "name": "InvalidTokenDelegate",
-      "msg": "Invalid Timestamp"
+      "msg": "Invalid Token Delegate"
     },
     {
       "code": 6004,
       "name": "InvalidTimestamp",
-      "msg": "Invalid Token Delegate"
+      "msg": "Invalid Timestamp"
     },
     {
       "code": 6005,

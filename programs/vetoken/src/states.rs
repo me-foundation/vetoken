@@ -238,7 +238,7 @@ pub struct VoteRecord {
     pub choice: u8,
     pub voting_power: u64,
 
-    pub _padding: [u8; 240],
+    pub _padding: [u8; 32],
 }
 
 impl VoteRecord {
