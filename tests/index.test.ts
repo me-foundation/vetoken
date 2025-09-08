@@ -814,3 +814,82 @@ describe("proposal", async () => {
     expect(distributionTokenAccountAcct).toBeNull();
   });
 });
+
+describe("VoteRecord", async () => {
+  // Test function that simulates getVoteRecord behavior
+  const testGetVoteRecord = (dataBuffer: Buffer) => {
+    try {
+      const voteRecord = VoteRecord.decode(dataBuffer);
+      return {
+        choice: voteRecord.choice,
+        votingPower: voteRecord.votingPower.toString(),
+        paddingLength: voteRecord.padding.length,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  };
+
+  test("test getVoteRecord function compatibility with both old and new data", async () => {
+    const currentVoteRecordData = {
+      ns: new PublicKey("11111111111111111111111111111112"),
+      owner: new PublicKey("11111111111111111111111111111113"),
+      proposal: new PublicKey("11111111111111111111111111111114"),
+      lockup: new PublicKey("11111111111111111111111111111115"),
+      choice: 2,
+      votingPower: new BN(5000),
+      padding: new Array(240).fill(0), // Old 240-byte padding
+    };
+
+    const newVoteRecordData = {
+      ns: new PublicKey("11111111111111111111111111111112"),
+      owner: new PublicKey("11111111111111111111111111111113"),
+      proposal: new PublicKey("11111111111111111111111111111114"),
+      lockup: new PublicKey("11111111111111111111111111111115"),
+      choice: 3,
+      votingPower: new BN(7500),
+      padding: new Array(32).fill(0), // New 32-byte padding
+    };
+
+    // Create buffers for both old and new data
+    const simulateOldDataBuffer = () => {
+      const buffer = Buffer.alloc(8 + 4 * 32 + 1 + 8 + 240); // discriminator + 4 pubkeys + u8 + u64 + 240 padding
+      VoteRecord.discriminator.copy(buffer, 0);
+      currentVoteRecordData.ns.toBuffer().copy(buffer, 8);
+      currentVoteRecordData.owner.toBuffer().copy(buffer, 40);
+      currentVoteRecordData.proposal.toBuffer().copy(buffer, 72);
+      currentVoteRecordData.lockup.toBuffer().copy(buffer, 104);
+      buffer.writeUInt8(currentVoteRecordData.choice, 136);
+      currentVoteRecordData.votingPower.toArrayLike(Buffer, "le", 8).copy(buffer, 137);
+      buffer.fill(0, 145, 145 + 240);
+      return buffer;
+    };
+
+    const simulateNewDataBuffer = () => {
+      const buffer = Buffer.alloc(8 + 4 * 32 + 1 + 8 + 32); // discriminator + 4 pubkeys + u8 + u64 + 32 padding
+      VoteRecord.discriminator.copy(buffer, 0);
+      newVoteRecordData.ns.toBuffer().copy(buffer, 8);
+      newVoteRecordData.owner.toBuffer().copy(buffer, 40);
+      newVoteRecordData.proposal.toBuffer().copy(buffer, 72);
+      newVoteRecordData.lockup.toBuffer().copy(buffer, 104);
+      buffer.writeUInt8(newVoteRecordData.choice, 136);
+      newVoteRecordData.votingPower.toArrayLike(Buffer, "le", 8).copy(buffer, 137);
+      buffer.fill(0, 145, 145 + 32);
+      return buffer;
+    };
+
+    const oldDataBuffer = simulateOldDataBuffer();
+    const newDataBuffer = simulateNewDataBuffer();
+
+    const oldDataResult = testGetVoteRecord(oldDataBuffer);
+    const newDataResult = testGetVoteRecord(newDataBuffer);
+
+    expect(oldDataResult.choice).toBe(2);
+    expect(newDataResult.choice).toBe(3);
+    expect(oldDataResult.paddingLength).toBe(32); // Truncated
+    expect(newDataResult.paddingLength).toBe(32); // Original
+  });
+});
