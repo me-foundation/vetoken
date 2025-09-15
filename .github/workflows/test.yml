@@ -13,11 +13,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Solana CLI installation
+        run: |
+          wget -O solana-install-init https://github.com/solana-labs/solana/releases/download/v1.18.11/solana-install-init-x86_64-unknown-linux-gnu
+          chmod +x solana-install-init
+          ./solana-install-init v1.18.11
+          echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
       - uses: metadaoproject/anchor-test@v2
         with:
           anchor-version: '0.29.0'
           solana-cli-version: '1.18.11'
-          node-version: '22'
+          node-version: '20.18.0'
           features: 'anchor-test'
       - run: cargo fmt -- --check && cargo clippy
       - run: cargo test
