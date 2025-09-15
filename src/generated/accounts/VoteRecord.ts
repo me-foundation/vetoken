@@ -44,7 +44,7 @@ export class VoteRecord {
     borsh.publicKey("lockup"),
     borsh.u8("choice"),
     borsh.u64("votingPower"),
-    borsh.array(borsh.u8(), 240, "padding"),
+    borsh.array(borsh.u8(), 32, "padding"),
   ])
 
   constructor(fields: VoteRecordFields) {

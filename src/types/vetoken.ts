@@ -219,6 +219,16 @@ export type Vetoken = {
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
         }
       ],
       "args": []
@@ -742,7 +752,7 @@ export type Vetoken = {
             "type": {
               "array": [
                 "u8",
-                240
+                32
               ]
             }
           }
@@ -1047,12 +1057,12 @@ export type Vetoken = {
     {
       "code": 6003,
       "name": "InvalidTokenDelegate",
-      "msg": "Invalid Timestamp"
+      "msg": "Invalid Token Delegate"
     },
     {
       "code": 6004,
       "name": "InvalidTimestamp",
-      "msg": "Invalid Token Delegate"
+      "msg": "Invalid Timestamp"
     },
     {
       "code": 6005,
@@ -1328,6 +1338,16 @@ export const IDL: Vetoken = {
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
         }
       ],
       "args": []
@@ -1851,7 +1871,7 @@ export const IDL: Vetoken = {
             "type": {
               "array": [
                 "u8",
-                240
+                32
               ]
             }
           }
@@ -2156,12 +2176,12 @@ export const IDL: Vetoken = {
     {
       "code": 6003,
       "name": "InvalidTokenDelegate",
-      "msg": "Invalid Timestamp"
+      "msg": "Invalid Token Delegate"
     },
     {
       "code": 6004,
       "name": "InvalidTimestamp",
-      "msg": "Invalid Token Delegate"
+      "msg": "Invalid Timestamp"
     },
     {
       "code": 6005,
