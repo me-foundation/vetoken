@@ -29,6 +29,6 @@
     "solana-bankrun": "^0.3.0",
     "tsx": "^4.20.3",
     "typescript": "^5.4.5",
-    "vitest": "^1.5.3"
+    "vitest": "^1.6.1"
   }
 }
