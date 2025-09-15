@@ -1,0 +1,36 @@
+name: ci_protocols
+
+on:
+  workflow_dispatch:
+
+jobs:
+  anchor_build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup_node
+        name: Set up node
+        id: setup_node
+      - uses: actions-rs/toolchain@v1.0.7
+        with:
+          profile: minimal
+          toolchain: "1.83.0"
+          override: true
+      - run: curl -sSfLJ "https://github.com/solana-labs/solana/releases/download/v1.18.26/solana-install-init-x86_64-unknown-linux-gnu" -o /tmp/solana-install-init && chmod +x /tmp/solana-install-init && /tmp/solana-install-init v1.17.6
+      - run: echo "/home/runner/.local/share/solana/install/active_release/bin" >> "$GITHUB_PATH"
+      - run: solana --version
+      - run: pnpm add --global @coral-xyz/anchor-cli@0.29.0
+      - name: Anchor Build
+        run: anchor build
+      - name: List Artifacts
+        run: ls -lh target/deploy
+      - name: Output SHA256 of .so
+        run: |
+          for f in target/deploy/*.so; do
+            echo "SHA256 for $f:"; openssl sha256 "$f";
+          done
+      - name: Upload Anchor Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: anchor-artifacts
+          path: target/deploy/*.so
