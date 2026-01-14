@@ -98,6 +98,7 @@ pub fn handle<'info>(
         args.end_ts,
         lockup.start_ts + (ns.lockup_max_saturation as i64),
     );
+    lockup.weighted_start_ts = lockup.start_ts;
     lockup.amount = args.amount;
     lockup.owner = ctx.accounts.owner.key();
     lockup.target_voting_pct = ns.lockup_default_target_voting_pct;

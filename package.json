@@ -25,6 +25,7 @@
     "dotenv": "^17.0.1"
   },
   "devDependencies": {
+    "@coral-xyz/anchor": "^0.29.0",
     "@types/bn.js": "^5.1.5",
     "solana-bankrun": "^0.3.0",
     "tsx": "^4.20.3",

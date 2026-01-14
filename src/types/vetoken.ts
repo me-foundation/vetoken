@@ -657,9 +657,13 @@ export type Vetoken = {
             "type": {
               "array": [
                 "u8",
-                240
+                232
               ]
             }
+          },
+          {
+            "name": "weightedStartTs",
+            "type": "i64"
           }
         ]
       }
@@ -1776,9 +1780,13 @@ export const IDL: Vetoken = {
             "type": {
               "array": [
                 "u8",
-                240
+                232
               ]
             }
+          },
+          {
+            "name": "weightedStartTs",
+            "type": "i64"
           }
         ]
       }

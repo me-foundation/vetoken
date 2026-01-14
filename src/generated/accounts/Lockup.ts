@@ -13,6 +13,7 @@ export interface LockupFields {
   targetRewardsPct: number
   targetVotingPct: number
   padding: Array<number>
+  weightedStartTs: BN
 }
 
 export interface LockupJSON {
@@ -24,6 +25,7 @@ export interface LockupJSON {
   targetRewardsPct: number
   targetVotingPct: number
   padding: Array<number>
+  weightedStartTs: string
 }
 
 export class Lockup {
@@ -35,6 +37,7 @@ export class Lockup {
   readonly targetRewardsPct: number
   readonly targetVotingPct: number
   readonly padding: Array<number>
+  readonly weightedStartTs: BN
 
   static readonly discriminator = Buffer.from([1, 45, 32, 32, 57, 81, 88, 67])
 
@@ -46,7 +49,8 @@ export class Lockup {
     borsh.i64("endTs"),
     borsh.u16("targetRewardsPct"),
     borsh.u16("targetVotingPct"),
-    borsh.array(borsh.u8(), 240, "padding"),
+    borsh.i64("weightedStartTs"),
+    borsh.array(borsh.u8(), 232, "padding"),
   ])
 
   constructor(fields: LockupFields) {
@@ -58,6 +62,7 @@ export class Lockup {
     this.targetRewardsPct = fields.targetRewardsPct
     this.targetVotingPct = fields.targetVotingPct
     this.padding = fields.padding
+    this.weightedStartTs = fields.weightedStartTs
   }
 
   static async fetch(
@@ -112,6 +117,7 @@ export class Lockup {
       targetRewardsPct: dec.targetRewardsPct,
       targetVotingPct: dec.targetVotingPct,
       padding: dec.padding,
+      weightedStartTs: dec.weightedStartTs,
     })
   }
 
@@ -125,6 +131,7 @@ export class Lockup {
       targetRewardsPct: this.targetRewardsPct,
       targetVotingPct: this.targetVotingPct,
       padding: this.padding,
+      weightedStartTs: this.weightedStartTs.toString(),
     }
   }
 
@@ -138,6 +145,7 @@ export class Lockup {
       targetRewardsPct: obj.targetRewardsPct,
       targetVotingPct: obj.targetVotingPct,
       padding: obj.padding,
+      weightedStartTs: new BN(obj.weightedStartTs),
     })
   }
 }

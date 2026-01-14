@@ -66,8 +66,14 @@ pub struct Stake<'info> {
 }
 
 pub fn handle<'info>(ctx: Context<'_, '_, '_, 'info, Stake<'info>>, args: StakeArgs) -> Result<()> {
-    let lockup = &mut ctx.accounts.lockup;
     let ns = &mut ctx.accounts.ns;
+    let now = ns.now();
+
+    // Get the data length before creating the mutable borrow
+    let data_len = ctx.accounts.lockup.to_account_info().data_len();
+    let lockup = &mut ctx.accounts.lockup;
+
+    lockup.normalize_weighted_start_ts(data_len);
 
     if args.amount > 0 {
         anchor_spl::token_interface::transfer_checked(
@@ -90,24 +96,92 @@ pub fn handle<'info>(ctx: Context<'_, '_, '_, 'info, Stake<'info>>, args: StakeA
     if lockup.amount == 0 {
         lockup.target_rewards_pct = ns.lockup_default_target_rewards_pct;
         lockup.target_voting_pct = ns.lockup_default_target_voting_pct;
-        lockup.start_ts = ns.now();
-    }
-
-    // Staker can only extend the lockup period, not reduce it.
-    if args.end_ts > lockup.end_ts {
+        lockup.start_ts = now;
+        lockup.weighted_start_ts = now;
         lockup.end_ts = min(
             args.end_ts,
-            lockup.start_ts + (ns.lockup_max_saturation as i64),
+            lockup.start_ts
+                .checked_add(ns.lockup_max_saturation as i64)
+                .expect("should not overflow"),
         );
+        lockup.amount = args.amount;
+    } else {
+        // Additional stake: conserve time-weighted area and forbid shortening end_ts
+        require!(args.end_ts > now, CustomError::InvalidTimestamp);
+        
+        let old_amount = lockup.amount as u128;
+        let delta_amount = args.amount as u128;
+        let new_amount = old_amount
+            .checked_add(delta_amount)
+            .expect("should not overflow");
+
+        let capped_end = min(
+            args.end_ts,
+            lockup
+                .start_ts
+                .checked_add(ns.lockup_max_saturation as i64)
+                .expect("should not overflow"),
+        );
+
+        // Special case: if old end_ts was 0 (unset), treat as first-time setting
+        if lockup.end_ts == 0 {
+            lockup.end_ts = capped_end;
+            lockup.weighted_start_ts = now;
+            lockup.amount = new_amount as u64;
+        } else {
+            // Normal case: old lockup has valid end_ts, use weighted area conservation
+            require!(lockup.end_ts > lockup.start_ts, CustomError::InvalidTimestamp);
+            require!(
+                args.end_ts >= lockup.end_ts,
+                CustomError::InvalidTimestamp
+            );
+
+            let effective_start = lockup.effective_start_ts() as i128;
+            let old_duration = (lockup.end_ts as i128)
+                .checked_sub(effective_start)
+                .expect("duration should be positive");
+            
+            // Guard against negative or excessively large duration
+            require!(old_duration >= 0, CustomError::InvalidTimestamp);
+            require!(old_duration <= i64::MAX as i128, CustomError::InvalidTimestamp);
+            
+            let old_tw = old_amount
+                .checked_mul(old_duration as u128)
+                .expect("should not overflow");
+
+            // If we extend end_ts, the existing amount gains extra area; account for it.
+            let extension = (capped_end as i128)
+                .checked_sub(lockup.end_ts as i128)
+                .unwrap_or(0);
+            let extension_tw = old_amount
+                .checked_mul(extension.max(0) as u128)
+                .expect("should not overflow");
+
+            let remaining = (capped_end as i128)
+                .checked_sub(now as i128)
+                .expect("remaining should be non-negative");
+            let added_tw = delta_amount
+                .checked_mul(remaining as u128)
+                .expect("should not overflow");
+
+            let new_tw = old_tw
+                .checked_add(extension_tw)
+                .expect("should not overflow")
+                .checked_add(added_tw)
+                .expect("should not overflow");
+            let new_weighted_start = (capped_end as i128)
+                .checked_sub((new_tw / new_amount) as i128)
+                .expect("should not underflow");
+
+            lockup.amount = new_amount as u64;
+            lockup.end_ts = capped_end;
+            lockup.weighted_start_ts = new_weighted_start as i64;
+        }
     }
 
     lockup.ns = ns.key();
     lockup.owner = ctx.accounts.owner.key();
 
-    lockup.amount = lockup
-        .amount
-        .checked_add(args.amount)
-        .expect("should not overflow");
     ns.lockup_amount = ns
         .lockup_amount
         .checked_add(args.amount)
